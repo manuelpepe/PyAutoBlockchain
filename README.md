@@ -1,7 +1,7 @@
-# PolyCompounder
+# PyAutoBlockchain (PAB)
 
 
-[![Tests](https://github.com/manuelpepe/PolyCompounder/actions/workflows/python-app.yml/badge.svg)](https://github.com/manuelpepe/PolyCompounder/actions/workflows/python-app.yml) 
+[![Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/python-app.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/python-app.yml) 
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
 
 Pool Auto Compounder for the Polygon (MATIC) network.
@@ -27,7 +27,7 @@ Clone the repo and install dependencies.
 
 ```bash
 $ git clone https://github.com/manuelpepe/PolyAutoCompounder
-$ cd PolyCompounder
+$ cd PyAutoBlockchain
 $ python3 -m venv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
@@ -101,7 +101,7 @@ and the contracts `PZAP`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
 
 Strategies are dictionaries with:
 
-* `strategy`: Class name of strategy (must be subclass of `PolyCompounder.strategy.CompoundStrategy`, see `polycompound list-strategies`)
+* `strategy`: Class name of strategy (must be subclass of `pab.strategy.CompoundStrategy`, see `polycompound list-strategies`)
 * `name`: Name, just for logging.
 * `params`: Dictionary with strategy parameters. (see `polycompound list-strategies -v`)
 * `repeat_every`: _Optional_. Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.

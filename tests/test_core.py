@@ -3,12 +3,17 @@ import pytest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
-from PolyCompounder.strategy import CompoundStrategy, HarvestNotAvailable
-from PolyCompounder.core import Compounder
-from PolyCompounder.queue import Queue, QueueItem
+from pab.strategy import CompoundStrategy, SpecificTimeRescheduleError
+from pab.core import Compounder
+from pab.queue import Queue, QueueItem
 
 RANDOM_DELTA = timedelta(days=1)
 RANDOM_DATE = datetime.now() + RANDOM_DELTA
+
+
+class HarvestNotAvailable(SpecificTimeRescheduleError): 
+    """ Harvest wasn't available. Should retry when it unlocks. """
+    pass
 
 
 class StrategyTestHarvestNotAvailable(CompoundStrategy):

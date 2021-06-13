@@ -1,4 +1,4 @@
-from PolyCompounder.queue import Queue, QueueItem, QueueLoader
+from pab.queue import Queue, QueueItem, QueueLoader
 
 
 def test_queue_loader_creation(blockchain):

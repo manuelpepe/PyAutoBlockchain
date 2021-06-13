@@ -1,0 +1,9 @@
+[
+    {
+        "strategy": "CustomStrategy",
+        "name": "Test task",
+        "params": {
+            "test_var": "Hi :)"
+        }
+    }
+]

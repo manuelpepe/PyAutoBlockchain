@@ -1,2 +1,2 @@
 #!/bin/bash
-pytest --cov=PolyCompounder tests/
+pytest --cov=pab tests/

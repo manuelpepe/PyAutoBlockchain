@@ -3,19 +3,19 @@
 from distutils.core import setup
 
 setup(
-    name='PolyCompounder',
+    name='PyAutoBlockchain',
     version='1.0',
     description='Pool Auto Compounder for the Polygon (MATIC) network',
     author='Manuel Pepe',
     author_email='manuelpepe-dev@outlook.com.ar',
     entry_points={
         'console_scripts': [
-            'polycompound = PolyCompounder.cli:main',
+            'pab = pab.cli:main',
         ],
     },
     packages=[
-        'PolyCompounder',
-        'PolyCompounder.resources',
+        'pab',
+        'pab.resources',
     ],
     install_requires=[
         "web3",

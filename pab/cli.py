@@ -14,12 +14,12 @@ from pathlib import Path
 from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from PolyCompounder.blockchain import Blockchain
-from PolyCompounder.core import Compounder
-from PolyCompounder.config import ENDPOINT, MY_ADDRESS, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, KEY_FILE
-from PolyCompounder.utils import create_keyfile, KeyfileOverrideException
-from PolyCompounder.alert import alert_exception
-from PolyCompounder.queue import QueueLoader
+from pab.blockchain import Blockchain
+from pab.core import Compounder
+from pab.config import ENDPOINT, MY_ADDRESS, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, KEY_FILE
+from pab.utils import create_keyfile, KeyfileOverrideException
+from pab.alert import alert_exception
+from pab.queue import QueueLoader
 
 
 def _create_logger():
@@ -86,7 +86,7 @@ def run(args, logger):
 
 
 def parser():
-    p = ArgumentParser("PolyCompounder", description=__doc__, formatter_class=RawDescriptionHelpFormatter)
+    p = ArgumentParser("pab", description=__doc__, formatter_class=RawDescriptionHelpFormatter)
     subparsers = p.add_subparsers(help="subcommands for compounder")
 
     p_create = subparsers.add_parser("list-strategies", help="List strategies and parameters")

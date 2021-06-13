@@ -5,10 +5,10 @@ import logging
 from typing import List, Union
 from datetime import datetime, timedelta
 
-from PolyCompounder.strategy import CompoundStrategy, RescheduleError, SpecificTimeRescheduleError
-from PolyCompounder.config import DATETIME_FORMAT
-from PolyCompounder.alert import alert_exception
-from PolyCompounder.queue import Queue, QueueItem
+from pab.strategy import CompoundStrategy, RescheduleError, SpecificTimeRescheduleError
+from pab.config import DATETIME_FORMAT
+from pab.alert import alert_exception
+from pab.queue import Queue, QueueItem
 
 
 class Compounder:

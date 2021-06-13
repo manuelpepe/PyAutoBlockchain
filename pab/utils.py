@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 from contextlib import contextmanager
 
-from PolyCompounder.config import ENDPOINT
-from PolyCompounder.blockchain import Blockchain
+from pab.config import ENDPOINT
+from pab.blockchain import Blockchain
 
 
 class KeyfileOverrideException(Exception): pass

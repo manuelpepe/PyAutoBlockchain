@@ -8,10 +8,10 @@ from contextlib import contextmanager
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from PolyCompounder.config import ALERTS_ON, ALERTS_ADDRESS, ALERTS_HOST, ALERTS_PASSWORD, ALERTS_PORT, ALERTS_RECIPIENT
+from pab.config import ALERTS_ON, ALERTS_ADDRESS, ALERTS_HOST, ALERTS_PASSWORD, ALERTS_PORT, ALERTS_RECIPIENT
 
 
-logger = logging.getLogger("PolyCompounder.alert")
+logger = logging.getLogger("pab.alert")
 SSL_CONTEXT = ssl.create_default_context()
 
 
@@ -24,7 +24,7 @@ def smtp():
 
 
 def alert_exception(exception):
-    content = "Error on PolyCompounder:\n\n"
+    content = "Error on PyAutoBlockchain:\n\n"
     content += ''.join(traceback.format_tb(exception.__traceback__))
     content += f"\n{type(exception).__name__}: {exception}"
     send_email(content)
@@ -36,6 +36,6 @@ def send_email(content):
             msg = MIMEMultipart()
             msg['From'] = ALERTS_ADDRESS
             msg['To'] = ALERTS_RECIPIENT
-            msg['Subject'] = "Error on PolyCompounder"
+            msg['Subject'] = "Error on PyAutoBlockchain"
             msg.attach(MIMEText(content, 'plain'))
             _server.send_message(msg)

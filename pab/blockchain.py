@@ -7,9 +7,9 @@ from typing import Optional
 from web3 import Web3
 from web3.middleware.geth_poa import geth_poa_middleware
 
-from PolyCompounder.contract import ContractManager
-from PolyCompounder.transaction import TransactionHandler
-from PolyCompounder.config import KEY_FILE
+from pab.contract import ContractManager
+from pab.transaction import TransactionHandler
+from pab.config import KEY_FILE
 
 
 def load_wallet(w3: Web3, keyfile: Optional[str]):

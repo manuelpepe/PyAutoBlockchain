@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from PolyCompounder.exceptions import MissingConfig
+from pab.exceptions import MissingConfig
 
 
 class MissingConfigFile(Exception):

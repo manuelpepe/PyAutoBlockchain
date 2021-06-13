@@ -6,9 +6,9 @@ from typing import Optional, List
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from PolyCompounder.blockchain import Blockchain
-from PolyCompounder.strategy import CompoundStrategy
-from PolyCompounder.config import TASKS_FILE
+from pab.blockchain import Blockchain
+from pab.strategy import CompoundStrategy
+from pab.config import TASKS_FILE
 
 
 class QueueItem:
@@ -92,7 +92,7 @@ class QueueLoader:
             try:
                 self.imported_module = importlib.import_module("strategies")
             except ModuleNotFoundError as err:
-                raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD") from err
+                raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD.") from err
     
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:

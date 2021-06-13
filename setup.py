@@ -1,13 +1,15 @@
 #!/usr/bin/env python
+import setuptools
 
 from distutils.core import setup
 
 setup(
     name='PyAutoBlockchain',
     version='1.0',
-    description='Pool Auto Compounder for the Polygon (MATIC) network',
+    description='PAB is a framework for developing and running custom tasks in crypto blockchains.',
     author='Manuel Pepe',
     author_email='manuelpepe-dev@outlook.com.ar',
+    url = 'https://github.com/manuelpepe/PyAutoBlockchain',
     entry_points={
         'console_scripts': [
             'pab = pab.cli:main',

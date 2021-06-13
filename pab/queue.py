@@ -1,7 +1,9 @@
+import sys
 import json
 import logging
 import importlib
 
+from contextlib import contextmanager
 from typing import Optional, List
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -90,10 +92,18 @@ class QueueLoader:
     def import_local_strategies(self):
         if not self.imported_module:
             try:
-                self.imported_module = importlib.import_module("strategies")
+                with self._add_cwd_to_path():
+                    self.imported_module = importlib.import_module("strategies")
             except ModuleNotFoundError as err:
                 raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD.") from err
     
+    @contextmanager
+    def _add_cwd_to_path(self):
+        path = str(Path.cwd())
+        sys.path.append(path)
+        yield
+        sys.path.remove(path)
+
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:
             tasks = json.load(fp)

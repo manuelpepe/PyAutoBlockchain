@@ -9,3 +9,5 @@ venv2/
 .coverage
 polycompound.log
 !tests/resources/*config.json
+build/
+dist/

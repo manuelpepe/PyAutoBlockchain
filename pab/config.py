@@ -9,12 +9,6 @@ class MissingConfigFile(Exception):
 
 
 class JSONConfig:
-    @classmethod
-    def _create_from_cwd_or_default(cls, path: Path):
-        if path.is_file():
-            return JSONConfig(path)
-        raise MissingConfigFile(f"Config not found at '{path}'")
-
     def __init__(self, path: Path):
         self.path = path
         self.data = self._read_data()
@@ -47,10 +41,13 @@ KEY_FILE = Path("key.file")
 
 # Load from config file
 
-APP_CONFIG = JSONConfig(CONFIG_FILE)
+if CONFIG_FILE.is_file():
+    APP_CONFIG = JSONConfig(CONFIG_FILE)
+else:
+    APP_CONFIG = {}
 
-ENDPOINT = APP_CONFIG['endpoint']
-MY_ADDRESS = APP_CONFIG['myAddress']
+ENDPOINT = APP_CONFIG.get('endpoint', '')
+MY_ADDRESS = APP_CONFIG.get('myAddress', '')
 
 _EMAIL_CONFIG = APP_CONFIG.get("emails", {})
 

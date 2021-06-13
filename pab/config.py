@@ -29,7 +29,7 @@ DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 # Files and directories
 
-RESOURCES_DIR = Path("resources")
+RESOURCES_DIR = Path(__file__).parent / Path("resources")
 SAMPLE_CONFIG_FILE = RESOURCES_DIR / "config.sample.json" 
 
 ABIS_DIR = Path("abis")

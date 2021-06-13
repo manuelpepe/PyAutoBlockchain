@@ -13,7 +13,7 @@ Clone the repo and install dependencies.
 
 ```bash
 $ python3 -m venv venv
-$ pip install pab
+$ pip install PyAutoBlockchain
 ```
 
 

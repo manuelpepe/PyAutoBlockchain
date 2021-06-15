@@ -9,7 +9,7 @@ os.chdir(TESTS_WORKING_DIR)
 sys.path.append(str(TESTS_WORKING_DIR))
 
 from pab.exceptions import MissingConfig
-from pab.strategy import CompoundStrategy
+from pab.strategy import BaseStrategy
 
 try:
     from pab.config import ENDPOINT

@@ -59,13 +59,13 @@ to `contracts.json` the following:
 ### Adding extra strategies
 
 You can add strategies to execute at `strategies.json`.
-For example, the following example defines 1 estrategy to execute, using the strategy `CompoundStrategy` 
+For example, the following example defines 1 estrategy to execute, using the strategy `BaseStrategy` 
 and the contracts `BNB`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
 
 ```json
 [
     {
-        "strategy": "CompoundStrategy",
+        "strategy": "BaseStrategy",
         "name": "BNB-WBTC",
         "repeat_every": {
             "days": 1
@@ -83,7 +83,7 @@ and the contracts `BNB`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
 
 Strategies are dictionaries with:
 
-* `strategy`: Class name of strategy (must be subclass of `pab.strategy.CompoundStrategy`, see `pab list-strategies`)
+* `strategy`: Class name of strategy (must be subclass of `pab.strategy.BaseStrategy`, see `pab list-strategies`)
 * `name`: Name, just for logging.
 * `params`: Dictionary with strategy parameters. (see `pab list-strategies -v`)
 * `repeat_every`: _Optional_. Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.

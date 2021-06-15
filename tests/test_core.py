@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
-from pab.strategy import CompoundStrategy, SpecificTimeRescheduleError
+from pab.strategy import BaseStrategy, SpecificTimeRescheduleError
 from pab.core import Compounder
 from pab.queue import Queue, QueueItem
 
@@ -16,12 +16,12 @@ class HarvestNotAvailable(SpecificTimeRescheduleError):
     pass
 
 
-class StrategyTestHarvestNotAvailable(CompoundStrategy):
+class StrategyTestHarvestNotAvailable(BaseStrategy):
     def compound(self):
         raise HarvestNotAvailable("TEST", RANDOM_DATE.timestamp())
 
 
-class StrategyTestWorks(CompoundStrategy):
+class StrategyTestWorks(BaseStrategy):
     def compound(self):
         return True
 

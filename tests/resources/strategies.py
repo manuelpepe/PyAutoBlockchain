@@ -1,10 +1,10 @@
 from typing import List
 
-from pab.strategy import CompoundStrategy
+from pab.strategy import BaseStrategy
 from pab.blockchain import Blockchain
 
 
-class CustomStrategy(CompoundStrategy):
+class CustomStrategy(BaseStrategy):
     """ Compound strategy for PZAP Pools """
 
     def __init__(self, blockchain: Blockchain, name: str, test_var: List[str]):

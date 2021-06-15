@@ -12,14 +12,14 @@ from pab.utils import *
 
 
 __all__ = [
-    "CompoundStrategy",
+    "BaseStrategy",
     "CompoundError",
     "RescheduleError",
     "SpecificTimeRescheduleError",
 ]
 
 
-class CompoundStrategy:
+class BaseStrategy:
     """ Base class for compound strategies """
     def __init__(self, blockchain: Blockchain, name: str):
         self.logger = logging.getLogger(f"{self.__class__.__name__}-{name}")
@@ -27,7 +27,7 @@ class CompoundStrategy:
         self.name = name
 
     def compound(self):
-        raise NotImplementedError("Childs of CompoundStrategy must implement 'compound'")
+        raise NotImplementedError("Childs of BaseStrategy must implement 'compound'")
 
     def _transact(self, func: callable, args: tuple):
         res = self.blockchain.transact(func, args)

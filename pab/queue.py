@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 from pab.blockchain import Blockchain
-from pab.strategy import CompoundStrategy
+from pab.strategy import BaseStrategy
 from pab.config import TASKS_FILE
 
 
@@ -20,7 +20,7 @@ class QueueItem:
     RUN_ASAP = -10
     RUN_NEVER = -20
 
-    def __init__(self, id_: int, strat: CompoundStrategy, next_at: int, repeat_every: Optional[dict] = None):
+    def __init__(self, id_: int, strat: BaseStrategy, next_at: int, repeat_every: Optional[dict] = None):
         self.id = id_
         self.strategy = strat
         self.next_at = next_at
@@ -124,19 +124,19 @@ class QueueLoader:
             out.append(item)
         return Queue(out)
 
-    def _create_strat_from_data(self, data: dict) -> CompoundStrategy:
+    def _create_strat_from_data(self, data: dict) -> BaseStrategy:
         strat_class = self._find_strat_by_name(data["strategy"])
         return strat_class(self.blockchain, data["name"], **data.get("params", {}))
 
     def _find_strat_by_name(self, name: str):
-        for class_ in CompoundStrategy.__subclasses__():
+        for class_ in BaseStrategy.__subclasses__():
             if class_.__name__ == name:
                 return class_
         raise UnkownStrategyError(f"Can't find strategy '{name}'")
 
     @classmethod
     def list_strats(cls):
-        return CompoundStrategy.__subclasses__()
+        return BaseStrategy.__subclasses__()
 
 
 class QueueLoadError(Exception):

@@ -5,7 +5,7 @@ import logging
 from typing import List, Union
 from datetime import datetime, timedelta
 
-from pab.strategy import CompoundStrategy, RescheduleError, SpecificTimeRescheduleError
+from pab.strategy import BaseStrategy, RescheduleError, SpecificTimeRescheduleError
 from pab.config import DATETIME_FORMAT
 from pab.alert import alert_exception
 from pab.queue import Queue, QueueItem

@@ -38,7 +38,7 @@ PAB loads your strategies from a `strategies` module at your current working dir
 
 Create a `strategies.py` file and write the following:
 
-```
+```python
 from pab.strategy import BaseStrategy
 
 
@@ -62,14 +62,14 @@ class LogBalanceToFileStrategy(BaseStrategy):
 ```
 
 
-Here we're create a very basic strategy that will query the balance yout balance in a contract 
+Here we're creating a basic strategy that will query the your wallet's balance in a contract 
 and write it to a file so you can use it for logging or analysis.
 
 In the constructor we're requesting the `filepath` and `contract_name` arguments, storing the `filepath` for later and
 using the `contract_name` with `self.blockchain.read_contract` to store a reference to the Web3 contract.
 
 The `run` method, which **must** be defined, is the start point of the strategy. Here we're using two separate
-methods to first get the balance from the contract (using the `balanceOf` function), and then writing it to a file.
+methods to first get the balance from the contract (using the `balanceOf` contract function), and then writing it to a file.
 We're also logging the balance to get some info on the screen without needing to read the output file.
 
 
@@ -89,6 +89,8 @@ For this guide we'll use a configuration such as:
 
 ```json
 {
+    "blockchain": "ETHEREUM",
+    "chainId": 1,
     "endpoint": "https://mainnet.infura.io/v3/YOUR_API",
     "myAddress": "0xYOUR_ADDRESS"
 }
@@ -112,7 +114,7 @@ To do this you'll need it's contract address and ABI.
 
 For this example, add this to your `contracts.json` file:
 
-```
+```json
 {
     "MATIC": {
         "address": "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
@@ -134,7 +136,7 @@ A list of tasks to run will be loaded from a `tasks.json` file at your CWD.
 
 Create a `tasks.json` file with the following content:
 
-```
+```json
 [
     {
         "strategy": "LogBalanceToFileStrategy",

@@ -1,4 +1,6 @@
 {
+    "blockchain": "POLYGON",
+    "chainId": 137,
     "endpoint": "https://rpc-mainnet.maticvigil.com/v1/your-api",
     "myAddress": "0xYOUR-WALLET",
     "emails": {

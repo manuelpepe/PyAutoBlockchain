@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from contextlib import contextmanager
 
-from pab.config import ENDPOINT
+from pab.config import ENDPOINT, APP_CONFIG
 from pab.blockchain import Blockchain
 
 
@@ -35,7 +35,7 @@ def PZAPToAmount(pzap: str) -> int:
 def create_keyfile(path: Path, private_key: str, password: str):
     if path.is_file():
         raise KeyfileOverrideException("Warning, trying to overwrite existing keyfile")
-    blockchain = Blockchain(ENDPOINT, 137, "POLYGON")
+    blockchain = Blockchain(ENDPOINT, int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
     keydata = blockchain.w3.eth.account.encrypt(private_key, password)
     with path.open("w") as fp:
         json.dump(keydata, fp)

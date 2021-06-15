@@ -106,8 +106,14 @@ class QueueLoader:
 
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:
-            tasks = json.load(fp)
+            tasks = self._load_tasks_json_or_exception(fp)
             return self._create_queue_from_list(tasks)
+        
+    def _load_tasks_json_or_exception(self, fhandle):
+        try:
+            return json.load(fhandle)
+        except json.JSONDecodeError as err:
+            raise QueueLoadError("Error loading tasks.json") from err
 
     def _create_queue_from_list(self, tasks: List[dict]):
         out = []
@@ -120,7 +126,7 @@ class QueueLoader:
 
     def _create_strat_from_data(self, data: dict) -> CompoundStrategy:
         strat_class = self._find_strat_by_name(data["strategy"])
-        return strat_class(self.blockchain, data["name"], **data.get("params", []))
+        return strat_class(self.blockchain, data["name"], **data.get("params", {}))
 
     def _find_strat_by_name(self, name: str):
         for class_ in CompoundStrategy.__subclasses__():
@@ -132,6 +138,9 @@ class QueueLoader:
     def list_strats(cls):
         return CompoundStrategy.__subclasses__()
 
+
+class QueueLoadError(Exception):
+    pass
 
 class QueuedItemNotReady(Exception):
     pass

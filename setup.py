@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name='PyAutoBlockchain',
-    version='0.1',
+    version='0.2',
     description='PAB is a framework for developing and running custom tasks in crypto blockchains.',
     author='Manuel Pepe',
     author_email='manuelpepe-dev@outlook.com.ar',

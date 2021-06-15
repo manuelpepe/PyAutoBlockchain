@@ -1,4 +1,4 @@
-# Introduction
+## Introduction
 
 This document will guide you through the first steps on creating your own strategies.
 
@@ -9,12 +9,9 @@ This guide assumes you're using an [unix system](https://www.youtube.com/watch?v
 The cli to interact with PyAutoBlockchain is `pab`.
 
 
-# The strategy
+## Setup
 
-
-# Setup
-
-## 1. Creating a virtualenv for your project
+### 1. Creating a virtualenv for your project
 
 Create a directory and virtualenv for your project:
 
@@ -24,7 +21,7 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 ```
 
-## 2. Install PyAutoBlockchain
+### 2. Install PyAutoBlockchain
 
 Using pip:
 
@@ -32,7 +29,7 @@ Using pip:
 (venv) $ pip install PyAutoBlockchain
 ```
 
-# Strategy Development
+## Strategy Development
 
 Custom strategies are automatically loaded when runing `pab run`.
 PAB loads your strategies from a `strategies` module at your current working directory.
@@ -74,9 +71,9 @@ methods to first get the balance from the contract (using the `balanceOf` functi
 We're also logging the balance to get some info on the screen without needing to read the output file.
 
 
-# Configuration
+## Configuration
 
-## 1. Basic configuration (config.json)
+### 1. Basic configuration (config.json)
 
 You can change PyAutoBlockchain basic configs, such as the RPC endpoint and your wallet address, in the `config.json` file.
 
@@ -97,7 +94,7 @@ For this guide we'll use a configuration such as:
 
 You can get a free RPC endpoint for most known blockchains (e.g. [Infura](https://infura.io/) or [MaticVigil](https://rpc.maticvigil.com/)).
 
-## 2. Create keyfile
+### 2. Create keyfile
 
 To make transactions in the blockchain you'll need a keyfile.
 You can use this utility to create one from your private key and a password:
@@ -106,7 +103,7 @@ You can use this utility to create one from your private key and a password:
 (venv) $ pab create-keyfile
 ```
 
-## 3. Register contracts
+### 3. Register contracts
 
 Registering a contract allows your strategies to call its functions.
 To do this you'll need it's contract address and ABI.
@@ -129,7 +126,7 @@ and create the abi file in the `abis` directory:
 (venv) $ curl "http://api.etherscan.io/api?module=contract&action=getabi&address=0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0&format=raw" > abis/matic.abi
 ```
 
-## 4. Create tasks
+### 4. Create tasks
 
 A list of tasks to run will be loaded from a `tasks.json` file at your CWD.
 
@@ -157,7 +154,7 @@ in `params`, passing them as keyword arguments the strategy constructor, and rep
 Here we're telling it to read the balance from the `MATIC` contract (defined in `contracts.json` and `abis/`) and write it to
 the `balance-history.txt` file every hour.
 
-# Run
+## Run
 
 Now you can just execute `pab run` and you should see output like this:
 

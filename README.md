@@ -6,6 +6,7 @@
 
 PAB is a framework for developing and running custom tasks in crypto blockchains.
 
+For a more in-depth guide see [GUIDE.md](GUIDE.md) 
 
 ## Installation
 
@@ -37,7 +38,19 @@ Create project config and keyfile:
 (venv) $ pab create-keyfile
 ```
 
-You can get register at [MaticVigil](https://rpc.maticvigil.com/) for a free RPC account.
+A basic config file without alerts enabled might look like:
+
+```json
+{
+    "blockchain": "POLYGON",
+    "chainId": 137,
+    "endpoint": "https://mainnet.infura.io/v3/your_key",
+    "myAddress": "0xyour_address"
+}
+
+```
+
+You can get a free RPC endpoint for most known blockchains (e.g. [Infura](https://infura.io/) or [MaticVigil](https://rpc.maticvigil.com/)).
 
 ### Adding extra contracts
 

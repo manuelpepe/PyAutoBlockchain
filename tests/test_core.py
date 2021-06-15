@@ -17,12 +17,12 @@ class HarvestNotAvailable(SpecificTimeRescheduleError):
 
 
 class StrategyTestHarvestNotAvailable(BaseStrategy):
-    def compound(self):
+    def run(self):
         raise HarvestNotAvailable("TEST", RANDOM_DATE.timestamp())
 
 
 class StrategyTestWorks(BaseStrategy):
-    def compound(self):
+    def run(self):
         return True
 
 
@@ -33,12 +33,12 @@ def test_compounder_is_created(queue):
 
 def test_item_runs():
     strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
-    strat.compound = MagicMock(name="compound")
+    strat.run = MagicMock(name="run")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP)
     compounder = Compounder(Queue([item]))
     assert len(compounder.queue) == 1
     compounder.run()
-    strat.compound.assert_called_once()
+    strat.run.assert_called_once()
 
 
 def test_that_fails_is_rescheduled():
@@ -48,14 +48,14 @@ def test_that_fails_is_rescheduled():
     compounder.run()
     assert compounder.queue[0].next_at == int(RANDOM_DATE.timestamp())
     # Should wait RANDOM_DELTA before calling compound again
-    strat.compound = MagicMock(name="compound")
+    strat.run = MagicMock(name="run")
     compounder.run()
-    strat.compound.assert_not_called()
+    strat.run.assert_not_called()
     # If we change the next_at time it should process it
     some_passed_date = (datetime.now() - timedelta(days=1)).timestamp()
     compounder.queue[0].schedule_for(int(some_passed_date))
     compounder.run()
-    strat.compound.assert_called_once()
+    strat.run.assert_called_once()
 
 
 def test_failed_strategty_reschedules_using_repeat_every():

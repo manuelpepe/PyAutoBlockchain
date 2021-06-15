@@ -56,7 +56,7 @@ class QueueItem:
         if self.is_ready():
             self.logger.info(f"Running strategy {self.strategy}")
             self.last_start = datetime.now().timestamp()
-            self.strategy.compound()
+            self.strategy.run()
             self.logger.info(f"Done with {self.strategy}")
 
     def __str__(self):

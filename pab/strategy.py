@@ -26,8 +26,8 @@ class BaseStrategy:
         self.blockchain = blockchain
         self.name = name
 
-    def compound(self):
-        raise NotImplementedError("Childs of BaseStrategy must implement 'compound'")
+    def run(self):
+        raise NotImplementedError("Childs of BaseStrategy must implement 'run'")
 
     def _transact(self, func: callable, args: tuple):
         res = self.blockchain.transact(func, args)

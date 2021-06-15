@@ -8,6 +8,8 @@ This guide assumes you're using an [unix system](https://www.youtube.com/watch?v
 
 The cli to interact with PyAutoBlockchain is `pab`.
 
+You can find the complete implementation of the guide in [examples](examples/guide-example) or a more complex implementation at [PolyCompounder](https://github.com/manuelpepe/PolyCompounder).
+
 
 ## Setup
 

@@ -6,7 +6,7 @@
 
 PAB is a framework for developing and running custom tasks in crypto blockchains.
 
-For a more in-depth guide see [GUIDE.md](GUIDE.md) 
+For a more in-depth guide see [GUIDE.md](GUIDE.md), the example at [examples](examples/guide-example) or a more complex implementation at [PolyCompounder](https://github.com/manuelpepe/PolyCompounder).
 
 ## Installation
 

@@ -1,0 +1,13 @@
+[
+    {
+        "strategy": "LogBalanceToFileStrategy",
+        "name": "MATIC Balance",
+        "repeat_every": {
+            "hours": 1
+        },
+        "params": {
+            "filepath": "balance-history.txt",
+            "contract": "MATIC"
+        }
+    }
+]

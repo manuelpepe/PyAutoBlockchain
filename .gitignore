@@ -11,3 +11,6 @@ polycompound.log
 !tests/resources/*config.json
 build/
 dist/
+
+# Allow config file in example
+!examples/guide-example/config.json

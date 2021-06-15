@@ -3,6 +3,7 @@
     "chainId": 137,
     "endpoint": "https://rpc-mainnet.maticvigil.com/v1/your-api",
     "myAddress": "0xYOUR-WALLET",
+    "transactionTimeout": 200,
     "emails": {
         "enabled": false,
         "host": "localhost",

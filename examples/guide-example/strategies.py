@@ -1,13 +1,13 @@
-from pab.strategy import CompoundStrategy
+from pab.strategy import BaseStrategy
 
 
-class LogBalanceToFileStrategy(CompoundStrategy):
+class LogBalanceToFileStrategy(BaseStrategy):
     def __init__(self, *args, filepath: str = "/tmp/default.log", contract: str = None):
         super().__init__(*args)
         self.filepath = filepath
         self.contract = self.blockchain.read_contract(contract)
 
-    def compound(self):
+    def run(self):
         balance = self.get_balance()
         self.write_to_file(balance)
         self.logger.info(f"Current balance is {balance}")

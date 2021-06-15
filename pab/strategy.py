@@ -13,14 +13,14 @@ from pab.utils import *
 
 __all__ = [
     "BaseStrategy",
-    "CompoundError",
+    "PABError",
     "RescheduleError",
     "SpecificTimeRescheduleError",
 ]
 
 
 class BaseStrategy:
-    """ Base class for compound strategies """
+    """ Base class for strategies """
     def __init__(self, blockchain: Blockchain, name: str):
         self.logger = logging.getLogger(f"{self.__class__.__name__}-{name}")
         self.blockchain = blockchain
@@ -37,14 +37,14 @@ class BaseStrategy:
         return f"{self.name} on {self.blockchain}"
 
 
-class CompoundError(Exception):
-    """ Base class for errors while compounding. 
-    Unhandleded CompoundErrors will prevent further excecutions of a strategy. """
+class PABError(Exception):
+    """ Base class for errors while running tasks. 
+    Unhandleded PABErrors will prevent further excecutions of a strategy. """
     pass
 
 
-class RescheduleError(CompoundError):
-    """ Strategies can raise this exception to tell the compounder to optionally reschedule them in known scenarios. """
+class RescheduleError(PABError):
+    """ Strategies can raise this exception to tell PAB to optionally reschedule them in known scenarios. """
     pass
 
 

@@ -1,6 +1,5 @@
 """
-Pool Auto Compounder for the Polygon (MATIC) network.
-Currently works for PZAP only.
+PAB is a framework for developing and running custom tasks in crypto blockchains.
 """
 import os
 import sys
@@ -15,7 +14,7 @@ from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pab.blockchain import Blockchain
-from pab.core import Compounder
+from pab.core import PAB
 from pab.config import APP_CONFIG, ENDPOINT, MY_ADDRESS, DATETIME_FORMAT, CONFIG_FILE, SAMPLE_CONFIG_FILE, KEY_FILE
 from pab.utils import create_keyfile, KeyfileOverrideException
 from pab.alert import alert_exception
@@ -23,7 +22,7 @@ from pab.queue import QueueLoader
 
 
 def _create_logger():
-    fhandler = logging.FileHandler("polycompound.log", "a", "utf-8")
+    fhandler = logging.FileHandler("pab.log", "a", "utf-8")
     fhandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt=DATETIME_FORMAT))
 
     shandler = logging.StreamHandler(sys.stdout)
@@ -81,23 +80,23 @@ def run(args, logger):
     blockchain = Blockchain(ENDPOINT, int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
     blockchain.load_wallet(MY_ADDRESS, args.keyfile)
     queue = QueueLoader(blockchain).load()
-    pounder = Compounder(queue)
+    pounder = PAB(queue)
     pounder.start()
 
 
 def parser():
     p = ArgumentParser("pab", description=__doc__, formatter_class=RawDescriptionHelpFormatter)
-    subparsers = p.add_subparsers(help="subcommands for compounder")
+    subparsers = p.add_subparsers(help="subcommands for pab")
 
     p_create = subparsers.add_parser("list-strategies", help="List strategies and parameters")
     p_create.add_argument("-v", "--verbose", action="store_true", help="Print strategy parameters")
     p_create.set_defaults(func=print_strats)
 
-    p_run = subparsers.add_parser("run", help="Run compounding process")
+    p_run = subparsers.add_parser("run", help="Run tasks")
     p_run.add_argument("-k", "--keyfile", action="store", help="Wallet Encrypted Private Key. If not used will load from resources/key.file as default.", default=None)
     p_run.set_defaults(func=run)
 
-    p_createkf = subparsers.add_parser("create-keyfile", help="Create keyfile for compounder. You'll need your private key and a new password for the keyfile.")
+    p_createkf = subparsers.add_parser("create-keyfile", help="Create keyfile. You'll need your private key and a new password for the keyfile.")
     p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default=str(KEY_FILE))
     p_createkf.set_defaults(func=_create_keyfile)
 

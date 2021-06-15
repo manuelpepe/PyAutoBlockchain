@@ -11,7 +11,7 @@ from pab.alert import alert_exception
 from pab.queue import Queue, QueueItem
 
 
-class Compounder:
+class PAB:
     """ Runs a list of strategies sequentially """
     ITERATION_SLEEP = 60
 

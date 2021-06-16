@@ -10,10 +10,9 @@ For a more in-depth guide see [GUIDE.md](GUIDE.md), the example at [examples](ex
 
 ## Installation
 
-Clone the repo and install dependencies.
+Using pip:
 
 ```bash
-$ python3 -m venv venv
 $ pip install PyAutoBlockchain
 ```
 

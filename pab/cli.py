@@ -26,7 +26,7 @@ def _create_logger():
     fhandler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s - %(message)s", datefmt=DATETIME_FORMAT))
 
     shandler = logging.StreamHandler(sys.stdout)
-    shandler.setFormatter(logging.Formatter("%(message)s"))
+    shandler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
 
     logger = logging.getLogger()
     logger.addHandler(shandler)

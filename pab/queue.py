@@ -27,6 +27,10 @@ class QueueItem:
         self.repeat_every = repeat_every
         self.last_start = 0
 
+    def reschedule(self):
+        next_run = self.next_repetition_time() if self.repeats() else self.RUN_NEVER
+        self.schedule_for(next_run)
+
     def repeats(self):
         return bool(self.repeat_every)
 
@@ -54,9 +58,10 @@ class QueueItem:
 
     def process(self):
         if self.is_ready():
-            self.logger.info(f"Running strategy {self.strategy}")
+            self.logger.info(f"Running task {self.strategy}")
             self.last_start = datetime.now().timestamp()
             self.strategy.run()
+            self.reschedule()
             self.logger.info(f"Done with {self.strategy}")
 
     def __str__(self):

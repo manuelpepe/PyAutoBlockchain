@@ -7,7 +7,7 @@ from pab.strategy import BaseStrategy, SpecificTimeRescheduleError
 from pab.core import PAB
 from pab.queue import Queue, QueueItem
 
-RANDOM_DELTA = timedelta(days=1)
+RANDOM_DELTA = timedelta(hours=4)
 RANDOM_DATE = datetime.now() + RANDOM_DELTA
 
 
@@ -58,7 +58,7 @@ def test_that_fails_is_rescheduled():
     strat.run.assert_called_once()
 
 
-def test_failed_strategty_reschedules_using_repeat_every():
+def test_failed_strategy_reschedules_using_repeat_every():
     strat = StrategyTestWorks(None, "Test Strategy that works")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP, repeat_every={"days": 1, "hours": 1})
     pab = PAB(Queue([item]))

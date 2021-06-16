@@ -32,23 +32,16 @@ class PAB:
     def process_item(self, item: QueueItem):
         try:
             item.process()
-            self._reschedule_item(item)
         except SpecificTimeRescheduleError as err:
             self.logger.warning(err)
             item.schedule_for(int(err.next_at))
         except RescheduleError as err:
             self.logger.warning(err)
-            self._reschedule_item(item)
+            item.reschedule()
         except Exception as err:
             self.logger.exception(err)
             alert_exception(err)
             raise err
-    
-    def _reschedule_item(self, item: QueueItem):
-        next_run = QueueItem.RUN_NEVER
-        if item.repeats():
-            next_run = item.next_repetition_time()
-        item.schedule_for(next_run)
 
     def _sleep(self):
         self.logger.debug(f"Sleeping for {self.ITERATION_SLEEP} seconds.")

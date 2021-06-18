@@ -29,6 +29,8 @@ class TransactionHandler:
         rcpt = self.w3.eth.wait_for_transaction_receipt(sent, timeout=timeout)
         self.logger.info(f"Block Hash: {rcpt.blockHash.hex()}")
         self.logger.info(f"Gas Used: {rcpt.gasUsed}")
+        if rcpt["status"] != 1:
+            raise TransactionError(f"Transaction status is not 1 ({rcpt['status']})")
         return sent, rcpt
     
     def _build_signed_txn(self, func: callable, args: tuple) -> SignedTransaction:

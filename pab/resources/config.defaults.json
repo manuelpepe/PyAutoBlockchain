@@ -10,7 +10,7 @@
             "unit": "gwei"
         },
         "gas": {
-            "estimate": true,
+            "useEstimate": false,
             "exact": 200000
         }
     },

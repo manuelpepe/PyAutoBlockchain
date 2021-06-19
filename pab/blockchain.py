@@ -31,7 +31,7 @@ class Blockchain:
         self.id = id_
         self.name = name
         self.w3 = self._connect_web3()
-        self.txn_handler = txn_handler_class(self.w3, self.id, 239185)
+        self.txn_handler = txn_handler_class(self.w3, self.id)
         self.contract_manager = ContractManager(self.w3)
         self.wallet = None
         self.owner = None

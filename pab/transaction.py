@@ -12,13 +12,12 @@ class TransactionError(Exception):
 
 
 class TransactionHandler:
-    def __init__(self, w3: Web3, chain_id: int, gas: int = 1, owner: str = None, private_key: HexBytes = None):
+    def __init__(self, w3: Web3, chain_id: int, owner: str = None, private_key: HexBytes = None):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
+        self.chain_id = chain_id
         self.owner = owner
         self.private_key = private_key
-        self.chain_id = chain_id
-        self.gas = gas
         
     def transact(self, func: callable, args: tuple, timeout: int = APP_CONFIG.get("transactions.timeout")):
         """ Submits transaction and prints hash """
@@ -42,10 +41,21 @@ class TransactionHandler:
     def _txn_details(self, call: callable):
         return {
             "chainId" : self.chain_id,
-            "gas" : self._estimate_call_gas(call),
-            "gasPrice" : self.w3.toWei('1', 'gwei'),
+            "gas" : self.gas(call),
+            "gasPrice" : self.gas_price(),
             "nonce" : self.w3.eth.getTransactionCount(self.owner),
         }
 
+    def gas(self, call: callable) -> int:
+        if APP_CONFIG.get("transactions.gas.useEstimate"):
+            return self._estimate_call_gas(call)
+        return APP_CONFIG.get("transactions.gas.exact")
+    
     def _estimate_call_gas(self, call: callable) -> int:
         return int(call.estimateGas())
+
+    def gas_price(self):
+        return self.w3.toWei(
+            APP_CONFIG.get('transactions.gasPrice.number'), 
+            APP_CONFIG.get('transactions.gasPrice.unit')
+        )

@@ -3,10 +3,21 @@
     "chainId": 137,
     "endpoint": "https://rpc-mainnet.maticvigil.com/v1/your-api",
     "myAddress": "0xYOUR-WALLET",
-    "transactionTimeout": 200,
+    "transactions": {
+        "timeout": 200,
+        "gasPrice": {
+            "number": "1.1",
+            "unit": "gwei"
+        },
+        "gas": {
+            "estimate": true,
+            "exact": 200000
+        }
+    },
     "emails": {
         "enabled": false,
         "host": "localhost",
+        "port": 587,
         "address": "",
         "password": "",
         "recipient": ""

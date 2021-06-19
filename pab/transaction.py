@@ -20,7 +20,7 @@ class TransactionHandler:
         self.chain_id = chain_id
         self.gas = gas
         
-    def transact(self, func: callable, args: tuple, timeout: int = APP_CONFIG.get("transactionTimeout", 200)):
+    def transact(self, func: callable, args: tuple, timeout: int = APP_CONFIG.get("transactions.timeout")):
         """ Submits transaction and prints hash """
         if not self.private_key:
             raise TransactionError("Private key not set")

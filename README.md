@@ -68,10 +68,10 @@ to `contracts.json` the following:
 }
 ```
 
-### Adding extra strategies
+### Setting up tasks
 
-You can add strategies to execute at `strategies.json`.
-For example, the following example defines 1 estrategy to execute, using the strategy `BaseStrategy` 
+You can add tasks to execute at `tasks.json`.
+For example, the following example defines 1 task to execute, using the strategy `BaseStrategy` 
 and the contracts `BNB`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
 
 ```json
@@ -93,7 +93,7 @@ and the contracts `BNB`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
 ]
 ```
 
-Strategies are dictionaries with:
+Tasks are defined as dictionaries with:
 
 * `strategy`: Class name of strategy (must be subclass of `pab.strategy.BaseStrategy`, see `pab list-strategies`)
 * `name`: Name, just for logging.
@@ -101,6 +101,16 @@ Strategies are dictionaries with:
 * `repeat_every`: _Optional_. Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.
 
 Run `pab list-strategies -v` to see available strategies and parameters.
+
+
+### Creating custom strategies
+
+`pab` will load custom strategies at startup from a `strategies` module in the current working directory.
+Custom strategies must be childs of `pab.strategy.BaseStrategy`.
+
+For more info on creating strategies see [GUIDE.md](GUIDE.md) and [PolyCompounder](https://github.com/manuelpepe/PolyCompounder) 
+for a different example.
+
 
 ### Email alerts
 
@@ -117,6 +127,27 @@ Add the following to your `config.json`:
         "password": "password",
         "recipient": "me@host.com"
     }   
+}
+```
+
+
+### Transaction settings
+
+Transaction options are available in `config.json`:
+
+```
+{
+    "transactions": {
+        "timeout": 200,
+        "gasPrice": {
+            "number": "1.1",
+            "unit": "gwei"
+        },
+        "gas": {
+            "useEstimate": false,
+            "exact": 200000
+        }
+    }
 }
 ```
 

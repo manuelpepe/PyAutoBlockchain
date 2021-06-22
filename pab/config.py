@@ -52,7 +52,7 @@ DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 # Files and directories
 RESOURCES_DIR = Path(__file__).parent / Path("resources")
-DEFAULTS_CONFIG_FILE = RESOURCES_DIR / "config.defaults.json" 
+DEFAULTS_CONFIG_FILE = RESOURCES_DIR / "config.sample.json" 
 
 ABIS_DIR = Path("abis")
 CONFIG_FILE = Path("config.json")

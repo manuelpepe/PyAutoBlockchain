@@ -1,3 +1,7 @@
+## 0.3.1 (2021-06-22)
+
+* Fix exception "config.defaults.json not found" (renamed to config.sample.json)
+
 ## 0.3 (2021-06-20)
 
 Transaction gas customization improved. New option to estimate gas usage for transaction.

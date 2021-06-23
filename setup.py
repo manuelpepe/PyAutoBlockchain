@@ -10,7 +10,7 @@ with open(README, "r") as fp:
 
 setup(
     name='PyAutoBlockchain',
-    version='0.3.2',
+    version='0.3.3',
     description='PAB is a framework for developing and running custom tasks in crypto blockchains.',
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -18,6 +18,9 @@ setup(
     author_email='manuelpepe-dev@outlook.com.ar',
     url = 'https://github.com/manuelpepe/PyAutoBlockchain',
     include_package_data=True,
+    package_data={
+        "pab": ["resources/config.defaults.json"]
+    },
     entry_points={
         'console_scripts': [
             'pab = pab.cli:main',

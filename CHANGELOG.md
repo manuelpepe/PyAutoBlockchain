@@ -1,3 +1,7 @@
+## 0.3.2 (2021-06-22)
+
+* Correctly fix defaults config file
+
 ## 0.3.1 (2021-06-22)
 
 * Fix exception "config.defaults.json not found" (renamed to config.sample.json)

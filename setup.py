@@ -10,7 +10,7 @@ with open(README, "r") as fp:
 
 setup(
     name='PyAutoBlockchain',
-    version='0.3.1',
+    version='0.3.2',
     description='PAB is a framework for developing and running custom tasks in crypto blockchains.',
     long_description=long_description,
     long_description_content_type="text/markdown",

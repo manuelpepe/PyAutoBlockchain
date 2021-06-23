@@ -1,1 +1,1 @@
-include resources/config.sample.json
+include resources/config.defaults.json

@@ -1,3 +1,8 @@
+## 0.4 (ON-DEV)
+
+* Usage without private keys, if you are going to use read-only abis.
+
+
 ## 0.3.3 (2021-06-22)
 
 * Removed MANIFEST.in in favor of `package_data`

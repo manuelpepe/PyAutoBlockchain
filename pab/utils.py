@@ -1,4 +1,5 @@
 import json
+import warnings
 
 from pathlib import Path
 from contextlib import contextmanager
@@ -16,19 +17,39 @@ class KeyfileOverrideException(Exception): pass
 UNIT_MULTIPLIER = 1000000000000000000
 
 
+def amountToDecimal(amount: int, decimals: int = 18) -> float:
+    return amount / 10 ** decimals
+
+
 def amountToPZAP(amount: int) -> str:
+    warnings.warn(
+        "amountToPZAP will be deprecated in version 0.4, use amountToDecimal instead",
+        PendingDeprecationWarning
+    )
     return f"{amount / UNIT_MULTIPLIER:.8f}"
 
 
 def amountToWBTC(amount: int) -> str:
+    warnings.warn(
+        "amountToWBTC will be deprecated in version 0.4, use amountToDecimal instead",
+        PendingDeprecationWarning
+    )
     return f"{amount / 100000000:.8f}"
 
 
 def amountToLPs(amount: int) -> str:
+    warnings.warn(
+        "amountToLPs will be deprecated in version 0.4, use amountToDecimal instead",
+        PendingDeprecationWarning
+    )
     return f"{amount / UNIT_MULTIPLIER:.25f}"
 
 
 def PZAPToAmount(pzap: str) -> int:
+    warnings.warn(
+        "PZAPToAmount will be deprecated in version 0.4, use amountToDecimal instead",
+        PendingDeprecationWarning
+    )
     return int(float(pzap) * UNIT_MULTIPLIER)
 
 

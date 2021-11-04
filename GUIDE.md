@@ -43,8 +43,8 @@ from pab.strategy import BaseStrategy
 
 
 class LogBalanceToFileStrategy(BaseStrategy):
-    def __args__(self, *args, filepath: str = "/tmp/default.log", contract_name: str = None):
-        super().__init__(args)
+    def __init__(self, *args, filepath: str = "/tmp/default.log", contract_name: str = None):
+        super().__init__(*args)
         self.filepath = filepath
         self.contract = self.blockchain.read_contract(contract_name)
 
@@ -146,7 +146,7 @@ Create a `tasks.json` file with the following content:
         },
         "params": {
             "filepath": "balance-history.txt",
-            "contract": "MATIC"
+            "contract_name": "MATIC"
         }
     }
 ]

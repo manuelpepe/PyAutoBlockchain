@@ -1,5 +1,6 @@
 import os
 import getpass
+import logging
 
 from os.path import isfile
 from typing import Optional
@@ -12,11 +13,15 @@ from pab.transaction import TransactionHandler
 from pab.config import KEY_FILE
 
 
+_logger = logging.getLogger("pab.blockchain")
+
+
 def load_wallet(w3: Web3, keyfile: Optional[str]):
     if keyfile is None:
         keyfile = KEY_FILE
     if not isfile(keyfile):
-        raise Exception(f"Keyfile at '{keyfile}' not found.")
+        _logger.warning(f"Keyfile at '{keyfile}' not found. Loading without wallet.")
+        return
     with open(keyfile) as fp:
         wallet_pass = os.environ.get("POLYCOMP_KEY")
         if not wallet_pass:

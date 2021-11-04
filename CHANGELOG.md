@@ -1,7 +1,6 @@
-## 0.4 (ON-DEV)
+## 0.3.4 (2021-11-04)
 
 * Usage without private keys, if you are going to use read-only abis.
-
 
 ## 0.3.3 (2021-06-22)
 

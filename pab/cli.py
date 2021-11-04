@@ -64,7 +64,7 @@ def edit_config(args, logger):
 def print_strats(args, logger):
     NOSHOW = ["blockchain", "name"]
     logger.info("Available strategies:")
-    for strat in QueueLoader.list_strats():
+    for strat in QueueLoader().list_strats():
         logger.info(f"* {strat.__name__}{':' if args.verbose else ''}")
         if args.verbose:
             params = inspect.signature(strat).parameters

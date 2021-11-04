@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 from pab.blockchain import Blockchain
 from pab.strategy import BaseStrategy
-from pab.config import TASKS_FILE
+from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
 class QueueItem:
@@ -44,6 +44,9 @@ class QueueItem:
             raise ValueError("Schedule for must receive an integer timestamp")
         if next_at == self.RUN_NEVER:
             self.logger.warning(f"{self} disabled")
+        else:
+            timestamp = datetime.fromtimestamp(next_at).strftime(DATETIME_FORMAT)
+            self.logger.info(f"Next run of {self} will be at {timestamp}")
         self.next_at = next_at
     
     def is_ready(self):
@@ -88,7 +91,7 @@ class Queue:
 
 class QueueLoader:
     """ Loads a Queue from raw data """
-    def __init__(self, blockchain: Blockchain, import_local_strategies: bool = True):
+    def __init__(self, blockchain: Blockchain = None, import_local_strategies: bool = True):
         self.blockchain = blockchain
         self.imported_module = None
         if import_local_strategies:
@@ -146,6 +149,7 @@ class QueueLoader:
 
 class QueueLoadError(Exception):
     pass
+
 
 class QueuedItemNotReady(Exception):
     pass

@@ -1,3 +1,7 @@
+## NEXT
+
+* Fix `edit-config` command.
+
 ## 0.3.4 (2021-11-04)
 
 * Usage without private keys, if you are going to use read-only abis.

@@ -1,7 +1,5 @@
 ## Remove deprecated functions from pab.utils
 
-## `pab edit-config` fails if config.json is not found or is not valid json. Should create it.
-
 ## Give more descriptive error when unexpected parameters are passed to tasks. E.g. traceback:
 ```
 Traceback (most recent call last):

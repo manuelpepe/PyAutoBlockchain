@@ -1,9 +1,27 @@
 import json
+from json.decoder import JSONDecodeError
 
 from typing import List, Any
 from pathlib import Path
 
 from pab.exceptions import MissingConfig
+
+
+def valid_config_found():
+    if CONFIG_FILE.is_file():
+        try:
+            with CONFIG_FILE.open("r") as fp:
+                json.load(fp)
+                return True
+        except JSONDecodeError:
+            pass
+    return False
+
+
+def override_config_with_defaults():
+    with CONFIG_FILE.open("w") as fp:
+        data = DEFAULTS_CONFIG_FILE.open("r").read()
+        fp.write(data)
 
 
 class MissingConfigFile(Exception):
@@ -18,8 +36,9 @@ class JSONConfig:
     def _read_datas(self) -> List[dict]:
         out = []
         for path in self.paths:
-            with open(path, "r") as fp:
-                out.append(json.load(fp))
+            if path.is_file():
+                with open(path, "r") as fp:
+                    out.append(json.load(fp))
         return out
     
     def get(self, name) -> Any:

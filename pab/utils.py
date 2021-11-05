@@ -11,9 +11,6 @@ from pab.blockchain import Blockchain
 class KeyfileOverrideException(Exception): pass
 
 
-# To transform between the 'amount' unit and PZAP you need this UNIT_MULTIPLIER
-#   AMOUNT = PZAP * UNIT_MULTIPLIER
-#   20000000000000000 = 0.02 * 1000000000000000000
 UNIT_MULTIPLIER = 1000000000000000000
 
 

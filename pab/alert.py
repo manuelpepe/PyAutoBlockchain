@@ -2,7 +2,6 @@ import ssl
 import logging
 import smtplib
 import traceback
-import time 
 
 from contextlib import contextmanager
 from email.mime.multipart import MIMEMultipart

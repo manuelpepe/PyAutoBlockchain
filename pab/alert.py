@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from pab.config import ALERTS_ON, ALERTS_ADDRESS, ALERTS_HOST, ALERTS_PASSWORD, ALERTS_PORT, ALERTS_RECIPIENT
+from pab.config import APP_CONFIG
 
 
 logger = logging.getLogger("pab.alert")
@@ -16,9 +16,9 @@ SSL_CONTEXT = ssl.create_default_context()
 
 @contextmanager
 def smtp():
-    with smtplib.SMTP(ALERTS_HOST, port=ALERTS_PORT) as _server:
+    with smtplib.SMTP(APP_CONFIG.get("emails.host"), port=APP_CONFIG.get("emails.port")) as _server:
         _server.starttls(context=SSL_CONTEXT)
-        _server.login(ALERTS_ADDRESS, ALERTS_PASSWORD)
+        _server.login(APP_CONFIG.get("emails.address"), APP_CONFIG.get("emails.password"))
         yield _server
 
 
@@ -30,11 +30,11 @@ def alert_exception(exception):
 
 
 def send_email(content):
-    if ALERTS_ON:
+    if APP_CONFIG.get("emails.enabled"):
         with smtp() as _server:
             msg = MIMEMultipart()
-            msg['From'] = ALERTS_ADDRESS
-            msg['To'] = ALERTS_RECIPIENT
+            msg['From'] = APP_CONFIG.get("emails.address")
+            msg['To'] = APP_CONFIG.get("emails.recipient")
             msg['Subject'] = "Error on PyAutoBlockchain"
             msg.attach(MIMEText(content, 'plain'))
             _server.send_message(msg)

@@ -84,14 +84,10 @@ KEY_FILE = Path("key.file")
 if not CONFIG_FILE.is_file:
     raise MissingConfigFile("Please create a config.json in your cwd.")
     
-APP_CONFIG = JSONConfig([CONFIG_FILE, DEFAULTS_CONFIG_FILE])
+try:
+    APP_CONFIG = JSONConfig([CONFIG_FILE, DEFAULTS_CONFIG_FILE])
+except Exception:
+    APP_CONFIG = JSONConfig([DEFAULTS_CONFIG_FILE])
 
 ENDPOINT = APP_CONFIG.get('endpoint')
-MY_ADDRESS = APP_CONFIG.get('myAddress')
 
-ALERTS_ON = APP_CONFIG.get("emails.enabled")
-ALERTS_HOST = APP_CONFIG.get("emails.host")
-ALERTS_PORT = APP_CONFIG.get("emails.port")
-ALERTS_ADDRESS = APP_CONFIG.get("emails.address")
-ALERTS_PASSWORD = APP_CONFIG.get("emails.password")
-ALERTS_RECIPIENT = APP_CONFIG.get("emails.recipient")

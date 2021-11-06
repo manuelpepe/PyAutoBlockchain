@@ -14,7 +14,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pab.blockchain import Blockchain
 from pab.core import PAB
-from pab.config import APP_CONFIG, ENDPOINT, MY_ADDRESS, DATETIME_FORMAT, CONFIG_FILE, KEY_FILE, override_config_with_defaults, valid_config_found
+from pab.config import APP_CONFIG, DATETIME_FORMAT, CONFIG_FILE, KEY_FILE, override_config_with_defaults, valid_config_found
 from pab.utils import create_keyfile, KeyfileOverrideException
 from pab.alert import alert_exception
 from pab.queue import QueueLoader
@@ -73,8 +73,8 @@ def print_strats(args, logger):
 
 
 def run(args, logger):
-    blockchain = Blockchain(ENDPOINT, int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
-    blockchain.load_wallet(MY_ADDRESS, args.keyfile)
+    blockchain = Blockchain(APP_CONFIG.get('endpoint'), int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
+    blockchain.load_wallet(APP_CONFIG.get('myAddress'), args.keyfile)
     queue = QueueLoader(blockchain).load()
     pounder = PAB(queue)
     pounder.start()

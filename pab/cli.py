@@ -1,9 +1,9 @@
 """
 PAB is a framework for developing and running custom tasks in crypto blockchains.
 """
+import json
 import os
 import sys
-import inspect
 import getpass
 import logging
 import subprocess
@@ -15,7 +15,8 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from pab.blockchain import Blockchain
 from pab.core import PAB
 from pab.config import APP_CONFIG, DATETIME_FORMAT, CONFIG_FILE, KEY_FILE, override_config_with_defaults, valid_config_found
-from pab.utils import create_keyfile, KeyfileOverrideException
+from pab.strategy import import_local_strategies
+from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
 from pab.alert import alert_exception
 from pab.queue import QueueLoader
 
@@ -57,19 +58,13 @@ def edit_config(args, logger):
     subprocess.call([editor, CONFIG_FILE])
 
 
-def print_strats(args, logger):
-    NOSHOW = ["blockchain", "name"]
-    logger.info("Available strategies:")
-    for strat in QueueLoader().list_strats():
-        logger.info(f"* {strat.__name__}{':' if args.verbose else ''}")
-        if args.verbose:
-            params = inspect.signature(strat).parameters
-            for name, param in params.items():
-                if name in NOSHOW:
-                    continue
-                logger.info(f"\t- {param}")
-    if not args.verbose:
-        logger.info("use -v to see strategy parameters")
+def list_strats(args, logger):
+    import_local_strategies()
+    if args.json:
+        json.dump(json_strats(), sys.stdout)
+        print()
+    else:
+        print_strats(args.verbose)
 
 
 def run(args, logger):
@@ -86,7 +81,8 @@ def parser():
 
     p_create = subparsers.add_parser("list-strategies", help="List strategies and parameters")
     p_create.add_argument("-v", "--verbose", action="store_true", help="Print strategy parameters")
-    p_create.set_defaults(func=print_strats)
+    p_create.add_argument("-j", "--json", action="store_true", help="Print strategies as JSON")
+    p_create.set_defaults(func=list_strats)
 
     p_run = subparsers.add_parser("run", help="Run tasks")
     p_run.add_argument("-k", "--keyfile", action="store", help="Wallet Encrypted Private Key. If not used will load from resources/key.file as default.", default=None)

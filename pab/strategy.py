@@ -1,8 +1,11 @@
+import sys
 import time
 import logging
+import importlib
+
+from pathlib import Path
 
 from pab.blockchain import Blockchain
-from pab.utils import *
 
 
 __all__ = [
@@ -10,7 +13,18 @@ __all__ = [
     "PABError",
     "RescheduleError",
     "SpecificTimeRescheduleError",
+    "import_local_strategies",
 ]
+
+
+def import_local_strategies():
+    try:
+        path = str(Path.cwd())
+        sys.path.append(path)
+        importlib.import_module("strategies")
+        sys.path.remove(path)
+    except ModuleNotFoundError as err:
+        raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD.") from err
 
 
 class BaseStrategy:

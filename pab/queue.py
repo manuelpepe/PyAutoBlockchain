@@ -1,7 +1,5 @@
-import sys
 import json
 import logging
-import importlib
 
 from contextlib import contextmanager
 from typing import Optional, List
@@ -9,7 +7,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 from pab.blockchain import Blockchain
-from pab.strategy import BaseStrategy
+from pab.strategy import BaseStrategy, import_local_strategies
 from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
@@ -93,24 +91,8 @@ class QueueLoader:
     """ Loads a Queue from raw data """
     def __init__(self, blockchain: Blockchain = None, import_local_strategies: bool = True):
         self.blockchain = blockchain
-        self.imported_module = None
         if import_local_strategies:
-            self.import_local_strategies()
-    
-    def import_local_strategies(self):
-        if not self.imported_module:
-            try:
-                with self._add_cwd_to_path():
-                    self.imported_module = importlib.import_module("strategies")
-            except ModuleNotFoundError as err:
-                raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD.") from err
-    
-    @contextmanager
-    def _add_cwd_to_path(self):
-        path = str(Path.cwd())
-        sys.path.append(path)
-        yield
-        sys.path.remove(path)
+            import_local_strategies()
 
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:

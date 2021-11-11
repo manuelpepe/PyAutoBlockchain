@@ -1,6 +1,8 @@
-## NEXT
+## 0.4 (2021-11-11)
 
 * Fix `edit-config` command.
+* Removed eager config loading.
+* New `-j/--json` parameter in `list-strategies` to export strategy data in JSON format for PABUI or other tools. 
 
 ## 0.3.4 (2021-11-04)
 

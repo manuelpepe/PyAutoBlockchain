@@ -17,6 +17,21 @@ $ pip install PyAutoBlockchain
 ```
 
 
+### With PABUI
+
+Install with [PABUI](https://github.com/manuelpepe/pabui) extension:
+
+```bash
+$ pip install PyAutoBlockchain[ui]
+```
+
+And run PABUI from your projects directory:
+```bash
+$ ls
+abis/  config.json  contracts.json  strategies.py  tasks.json  venv/
+$ pabui
+```
+
 ## Usage
 
 ```bash

@@ -33,5 +33,8 @@ setup(
     install_requires=[
         "web3",
         "hexbytes"
-    ]
+    ],
+    extras_require={
+        "ui": ["pabui"]
+    }
 )

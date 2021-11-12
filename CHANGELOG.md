@@ -1,3 +1,9 @@
+## 0.4.1 (***WIP***)
+
+* New `init` command.
+* New optional `PyAutoBlockchain[ui]` extension to install [PABUI](https://github.com/manuelpepe/PABUI).
+* Removed `edit-config` command.
+
 ## 0.4 (2021-11-11)
 
 * Fix `edit-config` command.

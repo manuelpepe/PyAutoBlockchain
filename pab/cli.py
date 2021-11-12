@@ -19,6 +19,7 @@ from pab.strategy import import_local_strategies
 from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
 from pab.alert import alert_exception
 from pab.queue import QueueLoader
+from pab.init import initialize_project as _initialize_project
 
 
 def _create_logger():
@@ -66,6 +67,10 @@ def list_strats(args, logger):
     else:
         print_strats(args.verbose)
 
+def initialize_project(args, logger):
+    # TODO: handle args.directory
+    _initialize_project()
+
 
 def run(args, logger):
     blockchain = Blockchain(APP_CONFIG.get('endpoint'), int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
@@ -92,8 +97,9 @@ def parser():
     p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default=str(KEY_FILE))
     p_createkf.set_defaults(func=_create_keyfile)
 
-    p_edit = subparsers.add_parser("edit-config", help="Create or edit config file.")
-    p_edit.set_defaults(func=edit_config)
+    p_init = subparsers.add_parser("init", help="Initialize PAB project in current directory.")
+    p_createkf.add_argument("-d", "--directory", action="store", help="Initialize project in diferent directory.", default=str(KEY_FILE))
+    p_init.set_defaults(func=initialize_project)
     return p
 
 

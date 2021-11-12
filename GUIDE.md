@@ -62,11 +62,11 @@ class LogBalanceToFileStrategy(BaseStrategy):
 ```
 
 
-Here we're creating a basic strategy that will query the your wallet's balance in a contract 
+Here we're creating a basic strategy that will query your wallet's balance in a contract 
 and write it to a file so you can use it for logging or analysis.
 
 In the constructor we're requesting the `filepath` and `contract_name` arguments, storing the `filepath` for later and
-using the `contract_name` with `self.blockchain.read_contract` to store a reference to the Web3 contract.
+using the `contract_name` with `self.blockchain.read_contract()` to store a reference to the Web3 contract.
 
 The `run` method, which **must** be defined, is the start point of the strategy. Here we're using two separate
 methods to first get the balance from the contract (using the `balanceOf` contract function), and then writing it to a file.
@@ -100,8 +100,10 @@ You can get a free RPC endpoint for most known blockchains (e.g. [Infura](https:
 
 ### 2. Create keyfile
 
-To make transactions in the blockchain you'll need a keyfile.
-You can use this utility to create one from your private key and a password:
+To submit transactions to the blockchain you'll need a keyfile. 
+A keyfile is like a file that acts as a wallet. It will hold your private key, encrypted with a password.
+
+You can use this utility to create one from a private key and a password:
 
 ```
 (venv) $ pab create-keyfile
@@ -109,7 +111,7 @@ You can use this utility to create one from your private key and a password:
 
 ### 3. Register contracts
 
-Registering a contract allows your strategies to call its functions.
+Registering a contract allows your strategies to easily load the contracts by name.
 To do this you'll need it's contract address and ABI.
 
 For this example, add this to your `contracts.json` file:
@@ -152,8 +154,9 @@ Create a `tasks.json` file with the following content:
 ]
 ```
 
-This will make PAB run a task using the strategy we defined previously. It will create the strategy using the parameters
-in `params`, passing them as keyword arguments the strategy constructor, and repeat the tasks every hour.
+This will make PAB run a task using the strategy we defined previously. 
+The dictionary in `params` will be passed as keyword arguments to the Strategy constructor.
+The task will repeat the every hour.
 
 Here we're telling it to read the balance from the `MATIC` contract (defined in `contracts.json` and `abis/`) and write it to
 the `balance-history.txt` file every hour.

@@ -3,10 +3,10 @@ import getpass
 import logging
 
 from os.path import isfile
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from web3 import Web3
-from web3.middleware.geth_poa import geth_poa_middleware
+if TYPE_CHECKING:
+    from web3 import Web3
 
 from pab.contract import ContractManager
 from pab.transaction import TransactionHandler
@@ -16,7 +16,7 @@ from pab.config import KEY_FILE
 _logger = logging.getLogger("pab.blockchain")
 
 
-def load_wallet(w3: Web3, keyfile: Optional[str]):
+def load_wallet(w3: "Web3", keyfile: Optional[str]):
     if keyfile is None:
         keyfile = KEY_FILE
     if not isfile(keyfile):
@@ -42,6 +42,8 @@ class Blockchain:
         self.owner = None
 
     def _connect_web3(self):
+        from web3 import Web3
+        from web3.middleware.geth_poa import geth_poa_middleware
         w3 = Web3(Web3.HTTPProvider(self.rpc))
         w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         return w3

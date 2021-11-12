@@ -1,8 +1,10 @@
 import json
+import typing
 
 from pathlib import Path
 
-from web3 import Web3
+if typing.TYPE_CHECKING:
+    from web3 import Web3
 
 from pab.config import ABIS_DIR, CONTRACTS_FILE
 
@@ -13,7 +15,7 @@ class ContractManager:
     Reads and returns contracts from the network.
     """
 
-    def __init__(self, w3: Web3, parent: Path = ABIS_DIR):
+    def __init__(self, w3: "Web3", parent: Path = ABIS_DIR):
         self.w3 = w3
         self.parent = parent
         self.contracts = self.load_contracts()
@@ -24,6 +26,7 @@ class ContractManager:
         return self.contracts
 
     def read_contract(self, name: str):
+        from web3 import Web3
         if not name in self.contracts.keys():
             raise ValueError("Contract not found.")
         contract = self.contracts[name] 

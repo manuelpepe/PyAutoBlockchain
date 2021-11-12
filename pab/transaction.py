@@ -1,6 +1,9 @@
 import logging
+import typing
 
-from web3 import Web3
+if typing.TYPE_CHECKING:
+    from web3 import Web3
+
 from hexbytes import HexBytes
 from eth_account.datastructures import SignedTransaction
 
@@ -12,7 +15,7 @@ class TransactionError(Exception):
 
 
 class TransactionHandler:
-    def __init__(self, w3: Web3, chain_id: int, owner: str = None, private_key: HexBytes = None):
+    def __init__(self, w3: "Web3", chain_id: int, owner: str = None, private_key: HexBytes = None):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
         self.chain_id = chain_id

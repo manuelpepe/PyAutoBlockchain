@@ -3,6 +3,9 @@
 * New `init` command. (***WIP***: Must add `--directory` handling)
 * New optional `PyAutoBlockchain[ui]` extension to install [PABUI](https://github.com/manuelpepe/PABUI).
 * Removed `edit-config` command.
+* TODO: Add config loading from ENVVARS to avoid sensitive data in it (Personal 0xAddress, RPC, SMTP). 
+    * `PAB_ICONFIG_PATH_TO_CONFIG=1` sets `path.to.config` to the integer `1` or the equivallent JSON: `{"path": {"to": {"config": 1}}}`
+    * `PAB_SCONFIG_PATH_TO_CONFIG="my value"` sets `path.to.config` to the string `my value` or the equivallent JSON: `{"path": {"to": {"config": "my value"}}}`
 
 ## 0.4 (2021-11-11)
 

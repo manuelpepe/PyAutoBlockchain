@@ -14,7 +14,7 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pab.blockchain import Blockchain
 from pab.core import PAB
-from pab.config import APP_CONFIG, DATETIME_FORMAT, CONFIG_FILE, KEY_FILE, override_config_with_defaults, valid_config_found
+from pab.config import APP_CONFIG, DATETIME_FORMAT, CONFIG_FILE, KEY_FILE
 from pab.strategy import import_local_strategies
 from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
 from pab.alert import alert_exception
@@ -52,13 +52,6 @@ def _create_keyfile(args, logger):
     logger.info(f"Keyfile written to '{out}'")
 
 
-def edit_config(args, logger):
-    if not valid_config_found():
-        override_config_with_defaults()
-    editor = os.environ.get("EDITOR", "vim")
-    subprocess.call([editor, CONFIG_FILE])
-
-
 def list_strats(args, logger):
     import_local_strategies()
     if args.json:
@@ -76,8 +69,8 @@ def run(args, logger):
     blockchain = Blockchain(APP_CONFIG.get('endpoint'), int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
     blockchain.load_wallet(APP_CONFIG.get('myAddress'), args.keyfile)
     queue = QueueLoader(blockchain).load()
-    pounder = PAB(queue)
-    pounder.start()
+    pab = PAB(queue)
+    pab.start()
 
 
 def parser():

@@ -1,27 +1,9 @@
 import json
-from json.decoder import JSONDecodeError
 
 from typing import List, Any
 from pathlib import Path
 
 from pab.exceptions import MissingConfig
-
-
-def valid_config_found():
-    if CONFIG_FILE.is_file():
-        try:
-            with CONFIG_FILE.open("r") as fp:
-                json.load(fp)
-                return True
-        except JSONDecodeError:
-            pass
-    return False
-
-
-def override_config_with_defaults():
-    with CONFIG_FILE.open("w") as fp:
-        data = DEFAULTS_CONFIG_FILE.open("r").read()
-        fp.write(data)
 
 
 class MissingConfigFile(Exception):
@@ -82,12 +64,9 @@ KEY_FILE = Path("key.file")
 
 # Load config
 if not CONFIG_FILE.is_file:
-    raise MissingConfigFile("Please create a config.json in your cwd.")
+    raise MissingConfigFile("Config not found. Run pab init to initialize project.")
     
 try:
     APP_CONFIG = JSONConfig([CONFIG_FILE, DEFAULTS_CONFIG_FILE])
 except Exception:
     APP_CONFIG = JSONConfig([DEFAULTS_CONFIG_FILE])
-
-ENDPOINT = APP_CONFIG.get('endpoint')
-

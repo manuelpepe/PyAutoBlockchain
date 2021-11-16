@@ -60,6 +60,7 @@ def list_strats(args, logger):
     else:
         print_strats(args.verbose)
 
+
 def initialize_project(args, logger):
     # TODO: handle args.directory
     _initialize_project()

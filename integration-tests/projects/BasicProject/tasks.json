@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Example Task",
+        "strategy": "SampleStrategy",
+        "params": {
+            "contract_name": "PABTest"
+        },
+        "repeat_every": {
+            "hours": 1
+        }
+    }
+]

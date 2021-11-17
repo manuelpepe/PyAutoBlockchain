@@ -4,8 +4,6 @@ import warnings
 
 from pathlib import Path
 
-from pab.config import APP_CONFIG
-from pab.blockchain import Blockchain
 from pab.strategy import BaseStrategy
 
 
@@ -79,9 +77,9 @@ def PZAPToAmount(pzap: str) -> int:
 
 
 def create_keyfile(path: Path, private_key: str, password: str):
+    from web3 import Web3
     if path.is_file():
         raise KeyfileOverrideException("Warning, trying to overwrite existing keyfile")
-    blockchain = Blockchain(APP_CONFIG.get('endpoint'), int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
-    keydata = blockchain.w3.eth.account.encrypt(private_key, password)
+    keydata = Web3().eth.account.encrypt(private_key, password)
     with path.open("w") as fp:
         json.dump(keydata, fp)

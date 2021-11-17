@@ -1,13 +1,11 @@
 import logging
-import typing
 
-if typing.TYPE_CHECKING:
+from typing import TYPE_CHECKING, Optional
+if TYPE_CHECKING:
     from web3 import Web3
 
 from hexbytes import HexBytes
 from eth_account.datastructures import SignedTransaction
-
-from pab.config import APP_CONFIG
 
 
 class TransactionError(Exception): 
@@ -15,17 +13,20 @@ class TransactionError(Exception):
 
 
 class TransactionHandler:
-    def __init__(self, w3: "Web3", chain_id: int, owner: str = None, private_key: HexBytes = None):
+    def __init__(self, w3: "Web3", chain_id: int, defaults: dict):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
         self.chain_id = chain_id
-        self.owner = owner
-        self.private_key = private_key
+        self.defaults = defaults
+        self.owner: Optional[str] = None
+        self.private_key: Optional[HexBytes] = None
         
-    def transact(self, func: callable, args: tuple, timeout: int = APP_CONFIG.get("transactions.timeout")):
+    def transact(self, func: callable, args: tuple, timeout: Optional[int] = None):
         """ Submits transaction and prints hash """
         if not self.private_key:
             raise TransactionError("Private key not set")
+        if not timeout:
+            timeout = self.defaults.get("timeout")
         stxn = self._build_signed_txn(func, args)
         sent = self.w3.eth.send_raw_transaction(stxn.rawTransaction)
         rcpt = self.w3.eth.wait_for_transaction_receipt(sent, timeout=timeout)
@@ -50,15 +51,15 @@ class TransactionHandler:
         }
 
     def gas(self, call: callable) -> int:
-        if APP_CONFIG.get("transactions.gas.useEstimate"):
+        if self.defaults.get('gas.useEstimate'):
             return self._estimate_call_gas(call)
-        return APP_CONFIG.get("transactions.gas.exact")
+        return self.defaults.get('gas.exact')
     
     def _estimate_call_gas(self, call: callable) -> int:
         return int(call.estimateGas())
 
     def gas_price(self):
         return self.w3.toWei(
-            APP_CONFIG.get('transactions.gasPrice.number'), 
-            APP_CONFIG.get('transactions.gasPrice.unit')
+            self.defaults.get('gasPrice.number'), 
+            self.defaults.get('gasPrice.unit')
         )

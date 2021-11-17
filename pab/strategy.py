@@ -13,13 +13,13 @@ __all__ = [
     "PABError",
     "RescheduleError",
     "SpecificTimeRescheduleError",
-    "import_local_strategies",
+    "import_strategies",
 ]
 
 
-def import_local_strategies():
+def import_strategies(root: Path):
     try:
-        path = str(Path.cwd())
+        path = str(root)
         sys.path.append(path)
         importlib.import_module("strategies")
         sys.path.remove(path)

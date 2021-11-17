@@ -1,19 +1,29 @@
 import time
 import logging
 
+from pathlib import Path
+from typing import Optional
 
-from pab.strategy import RescheduleError, SpecificTimeRescheduleError
+from pab.blockchain import Blockchain
+from pab.config import load_configs
+from pab.strategy import RescheduleError, SpecificTimeRescheduleError, import_strategies
 from pab.alert import alert_exception
-from pab.queue import Queue, QueueItem
+from pab.queue import QueueItem, QueueLoader
 
 
 class PAB:
     """ Runs a list of strategies sequentially """
     ITERATION_SLEEP = 60
 
-    def __init__(self, queue: Queue):
+    def __init__(self, root: Path, keyfile: Optional[str] = None):
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.queue = queue
+        self.root = root
+        self.keyfile = keyfile
+        self.config = load_configs(root)
+        import_strategies(root)
+        self.blockchain = Blockchain(self.root, self.config)
+        self.blockchain.load_wallet(self.config.get('myAddress'), keyfile)
+        self.queue = QueueLoader(self).load()
 
     def start(self):
         while True:

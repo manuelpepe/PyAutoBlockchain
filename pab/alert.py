@@ -1,3 +1,7 @@
+"""
+Module temporarily disabled
+"""
+
 import ssl
 import logging
 import smtplib
@@ -7,8 +11,8 @@ from contextlib import contextmanager
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from pab.config import APP_CONFIG
-
+#from pab.config import APP_CONFIG
+APP_CONFIG = None
 
 logger = logging.getLogger("pab.alert")
 SSL_CONTEXT = ssl.create_default_context()

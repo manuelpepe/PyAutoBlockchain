@@ -60,13 +60,10 @@ CONFIG_FILE = Path("config.json")
 TASKS_FILE = Path("tasks.json")
 CONTRACTS_FILE = Path("contracts.json")
 KEY_FILE = Path("key.file")
-APP_CONFIG = None
 
-def load_configs():
-    global APP_CONFIG
-    if not CONFIG_FILE.is_file:
+def load_configs(root: Path):
+    cpath = root / CONFIG_FILE
+    if not cpath.is_file():
         raise MissingConfigFile("Config not found. Run pab init to initialize project.")
-    APP_CONFIG = JSONConfig([CONFIG_FILE, DEFAULTS_CONFIG_FILE])
-
-# Load config
-load_configs()
+    config = JSONConfig([cpath, DEFAULTS_CONFIG_FILE])
+    return config

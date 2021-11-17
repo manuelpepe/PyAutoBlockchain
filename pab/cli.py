@@ -11,13 +11,11 @@ from pathlib import Path
 from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from pab.blockchain import load_blockchain
 from pab.core import PAB
-from pab.config import APP_CONFIG, DATETIME_FORMAT, KEY_FILE
-from pab.strategy import import_local_strategies
+from pab.config import DATETIME_FORMAT, KEY_FILE
+from pab.strategy import import_strategies
 from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
-from pab.alert import alert_exception
-from pab.queue import QueueLoader
+# from pab.alert import alert_exception
 from pab.init import initialize_project as _initialize_project
 
 
@@ -52,7 +50,7 @@ def _create_keyfile(args, logger):
 
 
 def list_strats(args, logger):
-    import_local_strategies()
+    import_strategies(Path.cwd())
     if args.json:
         json.dump(json_strats(), sys.stdout)
         print()
@@ -66,10 +64,7 @@ def initialize_project(args, logger):
 
 
 def run(args, logger):
-    blockchain = load_blockchain()
-    blockchain.load_wallet(APP_CONFIG.get('myAddress'), args.keyfile)
-    queue = QueueLoader(blockchain).load()
-    pab = PAB(queue)
+    pab = PAB(Path.cwd(), args.keyfile)
     pab.start()
 
 
@@ -114,7 +109,7 @@ def exception_handler(logger):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
         logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-        alert_exception(exc_value)
+        # alert_exception(exc_value)  Temporary disabled
     return _handle_exceptions
 
 

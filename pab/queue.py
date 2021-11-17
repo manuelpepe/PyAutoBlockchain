@@ -6,7 +6,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 from pab.blockchain import Blockchain
-from pab.strategy import BaseStrategy, import_local_strategies as _import_local_strategies
+from pab.strategy import BaseStrategy
 from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
@@ -88,10 +88,8 @@ class Queue:
 
 class QueueLoader:
     """ Loads a Queue from raw data """
-    def __init__(self, blockchain: Blockchain = None, import_local_strategies: bool = True):
+    def __init__(self, blockchain: Blockchain = None):
         self.blockchain = blockchain
-        if import_local_strategies:
-            _import_local_strategies()
 
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:

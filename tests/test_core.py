@@ -1,5 +1,3 @@
-import pytest
-
 from datetime import datetime, timedelta
 from unittest.mock import MagicMock
 
@@ -26,25 +24,22 @@ class StrategyTestWorks(BaseStrategy):
         return True
 
 
-def test_pab_is_created(queue):
-    pab = PAB(queue)
-    assert pab
-
-
-def test_item_runs():
+def test_item_runs(blockchain):
     strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
     strat.run = MagicMock(name="run")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP)
-    pab = PAB(Queue([item]))
+    pab = PAB(blockchain.root)
+    pab.queue = Queue([item])
     assert len(pab.queue) == 1
     pab.run()
     strat.run.assert_called_once()
 
 
-def test_that_fails_is_rescheduled():
+def test_that_fails_is_rescheduled(blockchain):
     strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP)
-    pab = PAB(Queue([item]))
+    pab = PAB(blockchain.root)
+    pab.queue = Queue([item])
     pab.run()
     assert pab.queue[0].next_at == int(RANDOM_DATE.timestamp())
     # Should wait RANDOM_DELTA before calling strat.run again
@@ -58,10 +53,11 @@ def test_that_fails_is_rescheduled():
     strat.run.assert_called_once()
 
 
-def test_failed_strategy_reschedules_using_repeat_every():
+def test_failed_strategy_reschedules_using_repeat_every(blockchain):
     strat = StrategyTestWorks(None, "Test Strategy that works")
     item = QueueItem(0, strat, QueueItem.RUN_ASAP, repeat_every={"days": 1, "hours": 1})
-    pab = PAB(Queue([item]))
+    pab = PAB(blockchain.root)
+    pab.queue = Queue([item])
     pab.run()
     item_next_exec = datetime.fromtimestamp(pab.queue[0].next_at)
     difference_in_time = item_next_exec - datetime.now()

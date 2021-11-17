@@ -10,10 +10,14 @@ if TYPE_CHECKING:
 
 from pab.contract import ContractManager
 from pab.transaction import TransactionHandler
-from pab.config import KEY_FILE
+from pab.config import APP_CONFIG, KEY_FILE
 
 
 _logger = logging.getLogger("pab.blockchain")
+
+
+def load_blockchain() -> "Blockchain":
+    return Blockchain(APP_CONFIG.get('endpoint'), int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
 
 
 def load_wallet(w3: "Web3", keyfile: Optional[str]):

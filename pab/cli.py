@@ -6,15 +6,14 @@ import os
 import sys
 import getpass
 import logging
-import subprocess
 
 from pathlib import Path
 from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from pab.blockchain import Blockchain
+from pab.blockchain import load_blockchain
 from pab.core import PAB
-from pab.config import APP_CONFIG, DATETIME_FORMAT, CONFIG_FILE, KEY_FILE
+from pab.config import APP_CONFIG, DATETIME_FORMAT, KEY_FILE
 from pab.strategy import import_local_strategies
 from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
 from pab.alert import alert_exception
@@ -67,7 +66,7 @@ def initialize_project(args, logger):
 
 
 def run(args, logger):
-    blockchain = Blockchain(APP_CONFIG.get('endpoint'), int(APP_CONFIG.get("chainId")), APP_CONFIG.get("blockchain"))
+    blockchain = load_blockchain()
     blockchain.load_wallet(APP_CONFIG.get('myAddress'), args.keyfile)
     queue = QueueLoader(blockchain).load()
     pab = PAB(queue)

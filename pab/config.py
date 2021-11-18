@@ -1,10 +1,11 @@
+import os
 import json
 
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any
 from pathlib import Path
 
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -83,12 +84,12 @@ class ENVSource(ConfigSource):
     def _load_data(self) -> Dict[str, Any]:
         if self.env and not self.envfile.is_file():
             raise FileNotFoundError(f"File '{self.envfile}' not found.")
-        data = dotenv_values(self.envfile)
-        return self._parse_envvars(data)
+        load_dotenv(self.envfile)
+        return self._parse_environ()
         
-    def _parse_envvars(self, envvars: dict) -> dict:
+    def _parse_environ(self) -> dict:
         output = {}
-        for name, value in envvars.items():
+        for name, value in os.environ.items():
             if name.startswith(ENVSource.PREFIX):
                 cname = self._get_config_name(name)
                 output[cname] = value

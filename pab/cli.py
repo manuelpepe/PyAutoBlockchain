@@ -59,8 +59,10 @@ def list_strats(args, logger):
 
 
 def initialize_project(args, logger):
-    # TODO: handle args.directory
-    _initialize_project()
+    directory = args.directory
+    if directory is None:
+        directory = Path.cwd()
+    _initialize_project(directory)
 
 
 def run(args, logger):
@@ -87,7 +89,7 @@ def parser():
     p_createkf.set_defaults(func=_create_keyfile)
 
     p_init = subparsers.add_parser("init", help="Initialize PAB project in current directory.")
-    p_createkf.add_argument("-d", "--directory", action="store", help="Initialize project in diferent directory.", default=str(KEY_FILE))
+    p_init.add_argument("-d", "--directory", action="store", help="Initialize project in diferent directory.", default=None)
     p_init.set_defaults(func=initialize_project)
     return p
 

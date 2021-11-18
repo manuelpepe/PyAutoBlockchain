@@ -14,13 +14,13 @@ def chdir_into_temp():
 
 def test_create_empty_directory():
     with chdir_into_temp() as tmpdir:
-        Tree([Directory("MyDir")]).create()
+        Tree([Directory("MyDir")]).create(tmpdir)
         assert Path("MyDir").is_dir()
         
 
 def test_create_file():
     with chdir_into_temp() as tmpdir:
-        Tree([File("MyFile.txt", "My data")]).create()
+        Tree([File("MyFile.txt", "My data")]).create(tmpdir)
         assert Path("MyFile.txt").is_file()
         assert Path("MyFile.txt").read_text() == "My data"
 
@@ -35,7 +35,7 @@ def test_create_complex_tree():
                 File("MyFile.txt", "My sample data")
             ]),
             File("README.md", "Read me first"),
-        ]).create()
+        ]).create(tmpdir)
 
         assert Path("MyDir").is_dir()
         assert Path("MyDir/MySubDir").is_dir()
@@ -59,11 +59,11 @@ def test_create_optional_file():
     should_be_created = mocked_file(FILENAME,  OLD_DATA, optional=True, warning=WARNING)
     should_not_be_created = mocked_file(FILENAME,  NEW_DATA, optional=True, warning=WARNING)
     with chdir_into_temp() as tmpdir:
-        Tree([should_be_created]).create()
+        Tree([should_be_created]).create(tmpdir)
         assert Path(FILENAME).read_text() == OLD_DATA
         should_be_created.warn.assert_not_called()
 
-        Tree([should_not_be_created]).create()
+        Tree([should_not_be_created]).create(tmpdir)
         # assert data was not overwritten and user was warned
         assert Path(FILENAME).read_text() == OLD_DATA
         should_not_be_created.warn.assert_called_once()

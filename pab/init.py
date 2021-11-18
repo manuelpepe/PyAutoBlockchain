@@ -73,9 +73,10 @@ class Tree:
     def __init__(self, nodes: List[Node]):
         self.nodes = nodes
 
-    def create(self):
-        for node in self.nodes:
-            node.create()
+    def create(self, directory: Path):
+        with chdir(directory):
+            for node in self.nodes:
+                node.create()
 
 
 SAMPLE_ABI_DATA = '[{"This ABI is not valid. Only serves as an example."}]'
@@ -136,7 +137,7 @@ TREE = [
 ]
 
 
-def initialize_project():
+def initialize_project(directory: Path):
     tree = Tree(TREE)
-    tree.create()
+    tree.create(directory)
         

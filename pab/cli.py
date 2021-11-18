@@ -12,10 +12,10 @@ from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pab.core import PAB
-from pab.config import DATETIME_FORMAT, KEY_FILE
+from pab.config import DATETIME_FORMAT, KEY_FILE, Config
 from pab.strategy import import_strategies
 from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
-# from pab.alert import alert_exception
+from pab.alert import alert_exception
 from pab.init import initialize_project as _initialize_project
 
 
@@ -65,6 +65,7 @@ def initialize_project(args, logger):
 
 def run(args, logger):
     pab = PAB(Path.cwd(), args.keyfile)
+    sys.excepthook = exception_handler(logger, pab.config)
     pab.start()
 
 
@@ -103,20 +104,19 @@ def _catch_ctrlc():
             os._exit(1)
 
 
-def exception_handler(logger):
+def exception_handler(logger, config: Config):
     def _handle_exceptions(exc_type, exc_value, exc_traceback):
         if issubclass(exc_type, KeyboardInterrupt):
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
         logger.critical("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-        # alert_exception(exc_value)  Temporary disabled
+        alert_exception(exc_value, config)
     return _handle_exceptions
 
 
 def main():
     logger = _create_logger()
     args = parser().parse_args()
-    sys.excepthook = exception_handler(logger)
     if hasattr(args, 'func'):
         with _catch_ctrlc():
             args.func(args, logger)

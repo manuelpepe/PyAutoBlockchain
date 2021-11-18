@@ -1,59 +1,16 @@
 import json
 
-from typing import List, Any
+from abc import ABC, abstractmethod
+from typing import Dict, List, Any
 from pathlib import Path
 
-from pab.exceptions import MissingConfig
-
-
-class MissingConfigFile(Exception):
-    pass
-
-
-class JSONConfig:
-    def __init__(self, paths: List[Path]):
-        self.paths = paths
-        self.datas = self._read_datas()
-    
-    def _read_datas(self) -> List[dict]:
-        out = []
-        for path in self.paths:
-            if path.is_file():
-                with open(path, "r") as fp:
-                    out.append(json.load(fp))
-        return out
-    
-    def get(self, name) -> Any:
-        """ Returns config value from `name`. """
-        path = name.split(".")
-        for data in self.datas:
-            try:
-                return self._get_dict_value_from_path(path, data)
-            except NameError:
-                pass
-        raise MissingConfig(f"Could not find '{name}' in config.")
-
-    def _get_dict_value_from_path(self, path: List[str], store: dict) -> Any:
-        """ Tries to find the value for a given `path` in the `store` dictionary.
-        Path can be a series of key names in the dictionary (e.g: `transaction.timeout`). 
-        If any key can't be found it raises NameError. """
-        current = store
-        for key in path:
-            if not isinstance(current, dict) or key not in current.keys():
-                raise NameError(f"'{path}' not found.")
-            current = current[key]
-        return current
-
-    def __getitem__(self, key):
-        return self.get(key)
+from dotenv import dotenv_values
 
 
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
-
-# Files and directories
 RESOURCES_DIR = Path(__file__).parent / Path("resources")
-DEFAULTS_CONFIG_FILE = RESOURCES_DIR / "config.defaults.json" 
+DEFAULTS_SCHEMA_FILE = RESOURCES_DIR / "config.schema.json" 
 
 ABIS_DIR = Path("abis")
 CONFIG_FILE = Path("config.json")
@@ -61,9 +18,215 @@ TASKS_FILE = Path("tasks.json")
 CONTRACTS_FILE = Path("contracts.json")
 KEY_FILE = Path("key.file")
 
+
+class LCDict(dict):
+    """ Lowercase dictionary for case-insensitive config names. """
+    def __setitem__(self, key: str, value: Any) -> None:
+        return super().__setitem__(key.lower(), value)
+
+    def __getitem__(self, key: str):
+        return super().__getitem__(key.lower())
+    
+
+def flatten(dict_: dict, base_path: str = '') -> dict:
+    out = {}
+    for key, value in dict_.items():
+        cur_path = base_path + '.' + key
+        cur_path = cur_path.strip('.')
+        if isinstance(value, dict):
+            out |= flatten(value, cur_path)
+        else:
+            out[cur_path] = value
+    return out
+
+
+class ConfigSource(ABC):
+    """ All childs of ConfigSource should implement `_load_data()` returning a 
+    1-dimensional mapping of `path: value`. """
+    def __init__(self):
+        self.data = self._load_data()
+    
+    def items(self):
+        return self.data.items()
+
+    @abstractmethod
+    def _load_data(self) -> Dict[str, Any]:
+        """ Must return a dict of `path: value` mappings. """
+        pass
+
+
+class JSONSource(ConfigSource):
+    """ Loads configs from `config.json` file. """
+    def __init__(self, root: Path):
+        self.file = root / CONFIG_FILE
+        super().__init__()
+    
+    def _load_data(self) -> Dict[str, Any]:
+        if not self.file.is_file():
+            raise FileNotFoundError(f"File '{self.file}' not found.")
+        with self.file.open('r') as fp:
+            data = json.load(fp)
+        return flatten(data)
+
+
+class ENVSource(ConfigSource):
+    """ Loads configs from `.env` files. """
+    PREFIX = "PAB_CONF_"
+
+    def __init__(self, root: Path, env: str = ''):
+        self.root = root
+        self.env = env
+        self.envfile_name = f'.env.{self.env}' if self.env else '.env'
+        self.envfile = root / self.envfile_name
+        super().__init__()
+    
+    def _load_data(self) -> Dict[str, Any]:
+        if self.env and not self.envfile.is_file():
+            raise FileNotFoundError(f"File '{self.envfile}' not found.")
+        data = dotenv_values(self.envfile)
+        return self._parse_envvars(data)
+        
+    def _parse_envvars(self, envvars: dict) -> dict:
+        output = {}
+        for name, value in envvars.items():
+            if name.startswith(ENVSource.PREFIX):
+                cname = self._get_config_name(name)
+                output[cname] = value
+        return output
+
+    def _get_config_name(self, name: str) -> str:
+        name = name.strip(ENVSource.PREFIX)
+        return name.replace('_', '.')
+
+
+def _list_formatter(value):
+    if isinstance(value, str):
+        return value.split(',')
+    elif isinstance(value, list):
+        return value
+    raise InvalidConfigValue("Invalid value for list.")
+
+
+def _bool_formatter(value):
+    if isinstance(value, str):
+        value = value.lower()
+        if value in ('1', '0', 'true', 'false'):
+            return value in ('1', 'true')
+        raise InvalidConfigValue("Invalid value for bool. Accepted string values are: 1, 0, true, false")
+    return bool(value)
+
+
+FORMATTERS = {
+    "int": int,
+    "string": str,
+    "float": float,
+    "bool": _bool_formatter,
+    "list": _list_formatter,
+}
+
+
+def _get_formatter(format: str):
+    if format in FORMATTERS.keys():
+        return FORMATTERS[format]
+    raise ValueError(f"Invalid config formatter: {format}")
+
+
+class ConfigDef:
+    def __init__(self, path: str, doc: str, format: str, default: Any):
+        self.path = path
+        self.doc = doc
+        self.format = _get_formatter(format)
+        self.default = default
+
+
+class ConfigSchema:
+    """ Loads default schema. `schema` is a mapping of `path: ConfigDef`. """
+    def __init__(self):
+        self.schema: LCDict = self._load()
+
+    def __getitem__(self, path: str) -> Any:
+        if path in self.schema.keys():
+            return self.schema[path]
+        raise ConfigNotDefined(f"'{path}' not defined in the config schema")
+
+    def _load(self) -> LCDict[str, ConfigDef]:
+        output = LCDict()
+        data = json.loads(DEFAULTS_SCHEMA_FILE.read_text())
+        for path, definition in data.items():
+            output[path] = ConfigDef(path=path, **definition)
+        return output
+
+    def format_value(self, path: str, value: Any) -> Any:
+        return self.schema[path].format(value)
+
+    def keys(self):
+        return self.schema.keys()
+    
+    def items(self):
+        return self.schema.items()
+
+    def defaults(self):
+        defaults = {}
+        for path, def_ in self.items():
+            _add_path_to_tree(defaults, path, def_.default)
+        return defaults
+
+
+def _merge_sources_and_format(schema: ConfigSchema, sources: List[ConfigSource]) -> LCDict:
+    data = LCDict()
+    for config in sources:
+        for path, value in config.items():
+            formatted = schema.format_value(path, value)
+            data[path.lower()] = formatted
+    return data
+
+
+def _add_path_to_tree(tree: dict, path: str, value: Any):
+    curnode = tree
+    parts = path.split('.')
+    for part in parts[:-1]:
+        curnode = curnode.setdefault(part, {})
+    curnode[parts[-1]] = value
+    return tree
+
+
+class Config:
+    """ Readonly config interface. Loads and merges config data from multiple sources."""
+    def __init__(self, root: Path, env: str = ''):
+        self.root = root
+        self.env = env
+        self.schema = ConfigSchema()
+        self.data: LCDict = _merge_sources_and_format(self.schema,
+            [
+                JSONSource(root),
+                ENVSource(root, env)
+            ]
+        )
+    
+    def get(self, path: str):
+        path = path.lower()
+        if path in self.data.keys():
+            return self.data[path]
+        if any((name.startswith(path) for name in self.schema.keys())):
+            return self._get_tree(path)
+        return self.schema[path].default
+     
+    def _get_tree(self, path: str):
+        tree = {}
+        for name, def_ in self.schema.items():
+            if name.startswith(path):
+                value = self.data.get(name, def_.default)
+                subpath = name[len(path) + 1:]  # +1 accounts for last '.'
+                tree = _add_path_to_tree(tree, subpath, value)
+        return tree
+
+
 def load_configs(root: Path):
-    cpath = root / CONFIG_FILE
-    if not cpath.is_file():
-        raise MissingConfigFile("Config not found. Run pab init to initialize project.")
-    config = JSONConfig([cpath, DEFAULTS_CONFIG_FILE])
-    return config
+    return Config(root)
+
+
+class InvalidConfigValue(ValueError):
+    pass
+
+class ConfigNotDefined(ValueError):
+    pass

@@ -1,11 +1,14 @@
 import logging
 
 from typing import TYPE_CHECKING, Optional
+
 if TYPE_CHECKING:
     from web3 import Web3
 
 from hexbytes import HexBytes
 from eth_account.datastructures import SignedTransaction
+
+from pab.config import Config
 
 
 class TransactionError(Exception): 
@@ -13,11 +16,11 @@ class TransactionError(Exception):
 
 
 class TransactionHandler:
-    def __init__(self, w3: "Web3", chain_id: int, defaults: dict):
+    def __init__(self, w3: "Web3", chain_id: int, config: Config):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
         self.chain_id = chain_id
-        self.defaults = defaults
+        self.config = config
         self.owner: Optional[str] = None
         self.private_key: Optional[HexBytes] = None
         
@@ -26,14 +29,12 @@ class TransactionHandler:
         if not self.private_key:
             raise TransactionError("Private key not set")
         if not timeout:
-            timeout = self.defaults.get("timeout")
+            timeout = self.config.get("transactions.timeout")
         stxn = self._build_signed_txn(func, args)
         sent = self.w3.eth.send_raw_transaction(stxn.rawTransaction)
         rcpt = self.w3.eth.wait_for_transaction_receipt(sent, timeout=timeout)
         self.logger.info(f"Block Hash: {rcpt.blockHash.hex()}")
         self.logger.info(f"Gas Used: {rcpt.gasUsed}")
-        if rcpt["status"] != 1:
-            raise TransactionError(f"Transaction status is not 1 ({rcpt['status']})")
         return sent, rcpt
     
     def _build_signed_txn(self, func: callable, args: tuple) -> SignedTransaction:
@@ -51,15 +52,15 @@ class TransactionHandler:
         }
 
     def gas(self, call: callable) -> int:
-        if self.defaults.get('gas.useEstimate'):
+        if self.config.get('transactions.gas.useEstimate'):
             return self._estimate_call_gas(call)
-        return self.defaults.get('gas.exact')
+        return self.config.get('transactions.gas.exact')
     
     def _estimate_call_gas(self, call: callable) -> int:
         return int(call.estimateGas())
 
     def gas_price(self):
         return self.w3.toWei(
-            self.defaults.get('gasPrice.number'), 
-            self.defaults.get('gasPrice.unit')
+            self.config.get('transactions.gasPrice.number'), 
+            self.config.get('transactions.gasPrice.unit')
         )

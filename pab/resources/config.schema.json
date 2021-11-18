@@ -1,0 +1,77 @@
+{
+    "blockchain": {
+        "doc": "Network name",
+        "format": "string",
+        "default": ""
+    },
+    "chainId": {
+        "doc": "Chain ID",
+        "format": "int",
+        "default": 0
+    },
+    "endpoint": {
+        "doc": "RPC Endpoint",
+        "format": "string",
+        "default": ""
+    },
+    "myAddress": {
+        "doc": "Address owner of the private key.",
+        "format": "string",
+        "default": ""
+    },
+    "transactions.timeout": {
+        "doc": "A blocking timeout after making a transaction. Defined in seconds.",
+        "format": "int",
+        "default": 200
+    },
+    "transactions.gasPrice.number": {
+        "doc": "Gas multiplier",
+        "format": "float",
+        "default": 1.1
+    },
+    "transactions.gasPrice.unit": {
+        "doc": "Gas unit",
+        "format": "string",
+        "default": "gwei"
+    },
+    "transactions.gas.useEstimate": {
+        "doc": "If true, gas is estimated using `web3.eth.estimateGas()`",
+        "format": "bool",
+        "default": false
+    },
+    "transactions.gas.exact": {
+        "doc": "If useEstimate is disabled, this exact amount will be available as gas for all txs.",
+        "format": "int",
+        "default": 200000
+    },
+    "emails.enabled": {
+        "doc": "If true, emails will be sent on failures.",
+        "format": "bool",
+        "default": false
+    },
+    "emails.host": {
+        "doc": "SMTP host",
+        "format": "string",
+        "default": "localhost"
+    },
+    "emails.port": {
+        "doc": "SMTP port",
+        "format": "int",
+        "default": 587
+    },
+    "emails.user": {
+        "doc": "SMTP user. Used to login and as FROM value.",
+        "format": "string",
+        "default": ""
+    },
+    "emails.password": {
+        "doc": "SMTP password",
+        "format": "string",
+        "default": ""
+    },
+    "emails.recipient": {
+        "doc": "Recipient for email alerts",
+        "format": "string",
+        "default": ""
+    }
+}

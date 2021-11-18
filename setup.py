@@ -19,7 +19,7 @@ setup(
     url = 'https://github.com/manuelpepe/PyAutoBlockchain',
     include_package_data=True,
     package_data={
-        "pab": ["resources/config.defaults.json"]
+        "pab": ["resources/config.schema.json"]
     },
     entry_points={
         'console_scripts': [
@@ -32,7 +32,8 @@ setup(
     ],
     install_requires=[
         "web3",
-        "hexbytes"
+        "hexbytes",
+        "python-dotenv"
     ],
     extras_require={
         "ui": ["pabui"]

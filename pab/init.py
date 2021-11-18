@@ -1,10 +1,12 @@
 import os
+import json
+
 from abc import ABC, abstractmethod
 from contextlib import AbstractContextManager
 from pathlib import Path
 from typing import List, Optional
 
-from pab.config import DEFAULTS_CONFIG_FILE
+from pab.config import ConfigSchema
 
 
 class chdir(AbstractContextManager):
@@ -77,7 +79,7 @@ class Tree:
 
 
 SAMPLE_ABI_DATA = '[{"This ABI is not valid. Only serves as an example."}]'
-SAMPLE_CONFIG_DATA = DEFAULTS_CONFIG_FILE.read_text()
+SAMPLE_CONFIG_DATA = json.dumps(ConfigSchema().defaults(), indent=4)
 SAMPLE_TASKS_DATA = """{
     "name": "Example Task",
     "strategy": "SampleStrategy",

@@ -34,45 +34,52 @@ $ pabui
 
 ## Usage
 
+Create project: 
+
 ```bash
-(venv) $ pab create-keyfile [-o keyfile]  # Create keyfile
-(venv) $ pab edit-config  # Edit config file
-(venv) $ pab list-strategies -v  # List available strategies and parameters
+(venv) $ pab init 
+```
+
+Run project:
+
+```bash
 (venv) $ pab run  # Run tasks
 ```
 
 ## Configuration
 
-### Configure wallet and RPC 
+### config.json vs Environment Variables
 
-Create project config and keyfile:
+All configurations can be loaded from environment variables (optionally from a `.env` file) or the `config.json` file.
+Environment variables follow the name schema `PAB_CONF_<PATH>`.
+
+For example:
+
+* `transactions.timeout` is `PAB_CONF_TRANSACTIONS_TIMEOUT`
+
+### RPC
+
+An RPC is needed for PAB to communicate with the blockchain networks.
+Some known RPCs with free tiers are [Infura](https://infura.io/) and [MaticVigil](https://rpc.maticvigil.com/).
+
+RPC endpoint can be loaded from the `PAB_CONF_ENDPOINT` environment variable or from the `endpoint` config.
+
+### Wallet / Private Key
+
+Your private key is loaded from a `key.file` file in the projects root. This file will hold your private key, encrypted with a password of your choosing.
+
+If you need to create a keyfile,To create a keyfile (You will be prompted for a private key and a password):
 
 ```bash
-(venv) $ pab edit-config
 (venv) $ pab create-keyfile
 ```
 
-A basic config file without alerts enabled might look like:
 
-```json
-{
-    "blockchain": "POLYGON",
-    "chainId": 137,
-    "endpoint": "https://mainnet.infura.io/v3/your_key",
-    "myAddress": "0xyour_address"
-}
+### Contracts
 
-```
+To use contracts in the strategies you first need to add the abi file to `abis` and modify the `contracts.json` file to load it.
 
-You can get a free RPC endpoint for most known blockchains (e.g. [Infura](https://infura.io/) or [MaticVigil](https://rpc.maticvigil.com/)).
-
-### Adding extra contracts
-
-To use contracts in the strategies you first need to add the abi file to `abis` and 
-modify the `contracts.json` file to load it.
-
-For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `abis/mytoken.abi` and add
-to `contracts.json` the following:
+For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `abis/mytoken.abi` and add to `contracts.json` the following:
 
 ```json
 {
@@ -83,7 +90,7 @@ to `contracts.json` the following:
 }
 ```
 
-### Setting up tasks
+### Tasks
 
 You can add tasks to execute at `tasks.json`.
 For example, the following example defines 1 task to execute, using the strategy `BaseStrategy` 
@@ -118,7 +125,7 @@ Tasks are defined as dictionaries with:
 Run `pab list-strategies -v` to see available strategies and parameters.
 
 
-### Creating custom strategies
+### Custom Strategies
 
 `pab` will load custom strategies at startup from a `strategies` module in the current working directory.
 Custom strategies must be childs of `pab.strategy.BaseStrategy`.

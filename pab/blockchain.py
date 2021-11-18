@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 from pab.contract import ContractManager
 from pab.transaction import TransactionHandler
-from pab.config import KEY_FILE, JSONConfig
+from pab.config import KEY_FILE, Config
 
 
 _logger = logging.getLogger("pab.blockchain")
@@ -32,13 +32,13 @@ def load_wallet(w3: "Web3", keyfile: Optional[str]):
 class Blockchain:
     """ API for contracts and transactions """
 
-    def __init__(self, root: Path, config: JSONConfig):
+    def __init__(self, root: Path, config: Config):
         self.root = root
         self.rpc = config.get('endpoint')
         self.id = config.get('chainId')
         self.name = config.get('blockchain')
         self.w3 = self._connect_web3()
-        self.txn_handler = TransactionHandler(self.w3, self.id, config.get('transactions'))
+        self.txn_handler = TransactionHandler(self.w3, self.id, config)
         self.contract_manager = ContractManager(self.w3, root)
         self.wallet = None
         self.owner = None

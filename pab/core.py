@@ -23,7 +23,7 @@ class PAB:
         import_strategies(root)
         self.blockchain = Blockchain(self.root, self.config)
         self.blockchain.load_wallet(self.config.get('myAddress'), keyfile)
-        self.queue = QueueLoader(self).load()
+        self.queue = QueueLoader(self.blockchain).load()
 
     def start(self):
         while True:

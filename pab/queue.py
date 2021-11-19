@@ -121,10 +121,6 @@ class QueueLoader:
                 return class_
         raise UnkownStrategyError(f"Can't find strategy '{name}'")
 
-    @classmethod
-    def list_strats(cls):
-        return BaseStrategy.__subclasses__()
-
 
 class QueueLoadError(Exception):
     pass

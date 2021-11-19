@@ -46,7 +46,7 @@ class PAB:
             item.reschedule()
         except Exception as err:
             self.logger.exception(err)
-            alert_exception(err)
+            alert_exception(err, self.config)
             raise err
 
     def _sleep(self):

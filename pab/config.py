@@ -96,7 +96,7 @@ class ENVSource(ConfigSource):
         return output
 
     def _get_config_name(self, name: str) -> str:
-        name = name.strip(ENVSource.PREFIX)
+        name = name.replace(ENVSource.PREFIX, '')
         return name.replace('_', '.')
 
 

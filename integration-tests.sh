@@ -43,7 +43,7 @@ cat ../.contracts.map
 
 echo "[i] Running tests"
 cd ../..
-pytest integration-tests/ --cov=pab -sv
+pytest integration-tests/ --cov=pab --cov-report xml --cov-report term
 tests_result=$?
 
 echo "[i] Stopping ganache"

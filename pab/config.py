@@ -1,5 +1,6 @@
 import os
 import json
+import difflib
 
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any
@@ -64,14 +65,14 @@ class JSONSource(ConfigSource):
     
     def _load_data(self) -> Dict[str, Any]:
         if not self.file.is_file():
-            raise FileNotFoundError(f"File '{self.file}' not found.")
+            return {}
         with self.file.open('r') as fp:
             data = json.load(fp)
         return flatten(data)
 
 
 class ENVSource(ConfigSource):
-    """ Loads configs from `.env` files. """
+    """ Loads `.env` files, then reads configs from environment. """
     PREFIX = "PAB_CONF_"
 
     def __init__(self, root: Path, env: str = ''):
@@ -82,9 +83,8 @@ class ENVSource(ConfigSource):
         super().__init__()
     
     def _load_data(self) -> Dict[str, Any]:
-        if self.env and not self.envfile.is_file():
-            raise FileNotFoundError(f"File '{self.envfile}' not found.")
-        load_dotenv(self.envfile)
+        if self.envfile.is_file():
+            load_dotenv(self.envfile)
         return self._parse_environ()
         
     def _parse_environ(self) -> dict:
@@ -126,10 +126,21 @@ FORMATTERS = {
 }
 
 
+def _closest_formatter(format: str):
+    out = 0, None
+    for option in FORMATTERS.keys():
+        ratio = difflib.SequenceMatcher(None, format, option).ratio()
+        if ratio > out[0]:
+            out = ratio, option
+    return out[1]
+
+
 def _get_formatter(format: str):
     if format in FORMATTERS.keys():
         return FORMATTERS[format]
-    raise ValueError(f"Invalid config formatter: {format}")
+    closest = _closest_formatter(format)
+    hint = f" Did you mean '{closest}'?" if closest else ""
+    raise ValueError(f"Invalid config formatter: '{format}'.{hint}")
 
 
 class ConfigDef:
@@ -148,7 +159,7 @@ class ConfigSchema:
     def __getitem__(self, path: str) -> Any:
         if path in self.schema.keys():
             return self.schema[path]
-        raise ConfigNotDefined(f"'{path}' not defined in the config schema")
+        raise ConfigNotDefined(f"'{path}' not defined in the config schema.")
 
     def _load(self) -> LCDict[str, ConfigDef]:
         output = LCDict()
@@ -197,18 +208,22 @@ class Config:
         self.root = root
         self.env = env
         self.schema = ConfigSchema()
+        self.data: LCDict = LCDict()
+
+    def load(self):
         self.data: LCDict = _merge_sources_and_format(self.schema,
             [
-                JSONSource(root),
-                ENVSource(root, env)
+                JSONSource(self.root),
+                ENVSource(self.root, self.env)
             ]
         )
+        return self
     
     def get(self, path: str):
         path = path.lower()
         if path in self.data.keys():
             return self.data[path]
-        if any((name.startswith(path) for name in self.schema.keys())):
+        if any((name.startswith(path) and name != path for name in self.schema.keys())):
             return self._get_tree(path)
         return self.schema[path].default
      
@@ -223,7 +238,7 @@ class Config:
 
 
 def load_configs(root: Path):
-    return Config(root)
+    return Config(root).load()
 
 
 class InvalidConfigValue(ValueError):

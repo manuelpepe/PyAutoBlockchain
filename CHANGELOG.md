@@ -2,8 +2,9 @@
 
 * New `init` command.
 * New optional `PyAutoBlockchain[ui]` extension to install [PABUI](https://github.com/manuelpepe/PABUI).
-* Removed `edit-config` command.
 * New config loading from ENVVARS/.env file for sensitive data (Personal 0xAddress, RPC, SMTP). 
+* Removed `edit-config` command.
+* Removed deprecated functions from `pab.utils`.
 
 ## 0.4 (2021-11-11)
 

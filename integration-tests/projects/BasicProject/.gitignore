@@ -1,0 +1,6 @@
+# config.json holds your address and other authentication details (email, rcp).
+config.json
+
+# If you're using a keyfile, remember that it's probably not safe
+# to commit it to any remote. Keep that in mind if you're using a different name for it.
+key.file

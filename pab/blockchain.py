@@ -1,47 +1,30 @@
-import os
-import getpass
 import logging
 
-from os.path import isfile
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from web3 import Web3
+from typing import Dict
 
 from pab.contract import ContractManager
 from pab.transaction import TransactionHandler
-from pab.config import KEY_FILE, Config
+from pab.config import Config
+from eth_account.account import Account
 
 
 _logger = logging.getLogger("pab.blockchain")
 
 
-def load_wallet(w3: "Web3", keyfile: Optional[str]):
-    if keyfile is None:
-        keyfile = KEY_FILE
-    if not isfile(keyfile):
-        _logger.warning(f"Keyfile at '{keyfile}' not found. Loading without wallet.")
-        return
-    with open(keyfile) as fp:
-        wallet_pass = os.environ.get("POLYCOMP_KEY")
-        if not wallet_pass:
-            wallet_pass = getpass.getpass("Enter wallet password: ")
-        return w3.eth.account.decrypt(fp.read(), wallet_pass)
-
 class Blockchain:
     """ API for contracts and transactions """
 
-    def __init__(self, root: Path, config: Config):
+    def __init__(self, root: Path, config: Config, accounts: Dict[int, Account]):
         self.root = root
+        self.config = config
         self.rpc = config.get('endpoint')
         self.id = config.get('chainId')
         self.name = config.get('blockchain')
         self.w3 = self._connect_web3()
-        self.txn_handler = TransactionHandler(self.w3, self.id, config)
-        self.contract_manager = ContractManager(self.w3, root)
-        self.wallet = None
-        self.owner = None
+        self.accounts = accounts
+        self.contracts = ContractManager(self.w3, root)
+        self._txn_handler = TransactionHandler(self.w3, self.id, config)
 
     def _connect_web3(self):
         from web3 import Web3
@@ -50,23 +33,8 @@ class Blockchain:
         w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         return w3
 
-    def load_wallet(self, owner: str, keyfile: str):
-        if self.wallet:
-            raise Exception("Wallet already loaded")
-        self.wallet = load_wallet(self.w3, keyfile)
-        self.owner = owner
-        self.update_txn_handler()
-
-    def update_txn_handler(self):
-        if self.txn_handler:
-            self.txn_handler.private_key = self.wallet
-            self.txn_handler.owner = self.owner
-
-    def transact(self, func: callable, args: tuple):
-        return self.txn_handler.transact(func, args)
-
-    def read_contract(self, name):
-        return self.contract_manager.read_contract(name)
+    def transact(self, account: Account, func: callable, args: tuple):
+        return self._txn_handler.transact(account, func, args)
 
     def __str__(self):
         return f"{self.name}#{self.id}"

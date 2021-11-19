@@ -5,6 +5,12 @@
 * New config loading from ENVVARS/.env file for sensitive data (Personal 0xAddress, RPC, SMTP). 
 * Removed `edit-config` command.
 * Removed deprecated functions from `pab.utils`.
+* Multiple accounts.
+* Load accounts from ENVVARS named `PAB_PK<index>`. `index` will be the index in `BaseStrategy.accounts`.
+* Strategy API Change: Changed `BaseStrategy._transact(func, args)` to `BaseStrategy.transact(acc, func, args)`. First parameter should be an Account from `BaseStrategy.accounts`.
+* Strategy API Change: Removed `BaseStrategy.blockchain.read_contract`, now use `BaseStrategy.contracts.get`
+* Strategy API Change: New property `BaseStrategy.contracts`. 
+* Strategy API Change: New property `BaseStrategy.accounts`. 
 
 ## 0.4 (2021-11-11)
 

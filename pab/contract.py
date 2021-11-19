@@ -26,7 +26,7 @@ class ContractManager:
             self.contracts = json.load(fp)
         return self.contracts
 
-    def read_contract(self, name: str):
+    def get(self, name: str):
         from web3 import Web3
         if not name in self.contracts.keys():
             raise ValueError("Contract not found.")

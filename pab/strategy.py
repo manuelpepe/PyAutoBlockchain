@@ -1,5 +1,4 @@
 import sys
-import time
 import logging
 import importlib
 
@@ -34,12 +33,20 @@ class BaseStrategy:
         self.blockchain = blockchain
         self.name = name
 
+    @property
+    def accounts(self):
+        return self.blockchain.accounts
+
+    @property
+    def contracts(self):
+        return self.blockchain.contracts
+
     def run(self):
         raise NotImplementedError("Childs of BaseStrategy must implement 'run'")
 
-    def _transact(self, func: callable, args: tuple):
+    def transact(self, func: callable, args: tuple):
         res = self.blockchain.transact(func, args)
-        time.sleep(2)
+        return res
     
     def __str__(self):
         return f"{self.name} on {self.blockchain}"

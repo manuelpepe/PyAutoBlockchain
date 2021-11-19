@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from web3 import Web3
 
-from hexbytes import HexBytes
 from eth_account.datastructures import SignedTransaction
+from eth_account.account import Account
 
 from pab.config import Config
 
@@ -21,34 +21,32 @@ class TransactionHandler:
         self.w3 = w3
         self.chain_id = chain_id
         self.config = config
-        self.owner: Optional[str] = None
-        self.private_key: Optional[HexBytes] = None
         
-    def transact(self, func: callable, args: tuple, timeout: Optional[int] = None):
+    def transact(self, account: Account, func: callable, args: tuple, timeout: Optional[int] = None):
         """ Submits transaction and prints hash """
         if not self.private_key:
             raise TransactionError("Private key not set")
         if not timeout:
             timeout = self.config.get("transactions.timeout")
-        stxn = self._build_signed_txn(func, args)
+        stxn = self._build_signed_txn(account, func, args)
         sent = self.w3.eth.send_raw_transaction(stxn.rawTransaction)
         rcpt = self.w3.eth.wait_for_transaction_receipt(sent, timeout=timeout)
         self.logger.info(f"Block Hash: {rcpt.blockHash.hex()}")
         self.logger.info(f"Gas Used: {rcpt.gasUsed}")
         return sent, rcpt
     
-    def _build_signed_txn(self, func: callable, args: tuple) -> SignedTransaction:
+    def _build_signed_txn(self, account: Account, func: callable, args: tuple) -> SignedTransaction:
         call = func(*args)
-        details = self._txn_details(call)
+        details = self._txn_details(account, call)
         txn = call.buildTransaction(details)
-        return self.w3.eth.account.sign_transaction(txn, private_key=self.private_key)
+        return self.w3.eth.account.sign_transaction(txn, private_key=account.private_key)
 
-    def _txn_details(self, call: callable):
+    def _txn_details(self, account: Account, call: callable):
         return {
             "chainId" : self.chain_id,
             "gas" : self.gas(call),
             "gasPrice" : self.gas_price(),
-            "nonce" : self.w3.eth.getTransactionCount(self.owner),
+            "nonce" : self.w3.eth.getTransactionCount(account.address),
         }
 
     def gas(self, call: callable) -> int:

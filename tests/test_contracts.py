@@ -8,4 +8,4 @@ def test_contracts_load_from_file(blockchain):
 
 def test_contract_read(blockchain):
     mgr = ContractManager(blockchain.w3, blockchain.root)
-    assert mgr.read_contract("WBTC")
+    assert mgr.get("WBTC")

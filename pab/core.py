@@ -3,6 +3,7 @@ import logging
 
 from pathlib import Path
 from typing import Optional
+from pab.accounts import load_accounts
 
 from pab.blockchain import Blockchain
 from pab.config import load_configs
@@ -21,8 +22,7 @@ class PAB:
         self.keyfile = keyfile
         self.config = load_configs(root)
         import_strategies(root)
-        self.blockchain = Blockchain(self.root, self.config)
-        self.blockchain.load_wallet(self.config.get('myAddress'), keyfile)
+        self.blockchain = Blockchain(self.root, self.config, load_accounts([keyfile]))
         self.queue = QueueLoader(self.blockchain).load()
 
     def start(self):

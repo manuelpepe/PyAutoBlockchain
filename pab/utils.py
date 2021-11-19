@@ -1,10 +1,14 @@
 import inspect
 import json
-import warnings
 
 from pathlib import Path
 
 from pab.strategy import BaseStrategy
+
+
+def amountToDecimal(amount: int, decimals: int = 18) -> float:
+    """ Available for strategies to convert between integers and decimal values. """
+    return amount / 10 ** decimals
 
 
 def print_strats(print_params):
@@ -34,48 +38,6 @@ def json_strats():
     }
 
 
-class KeyfileOverrideException(Exception): pass
-
-
-UNIT_MULTIPLIER = 1000000000000000000
-
-
-def amountToDecimal(amount: int, decimals: int = 18) -> float:
-    return amount / 10 ** decimals
-
-
-def amountToPZAP(amount: int) -> str:
-    warnings.warn(
-        "amountToPZAP will be deprecated in version 0.4, use amountToDecimal instead",
-        PendingDeprecationWarning
-    )
-    return f"{amount / UNIT_MULTIPLIER:.8f}"
-
-
-def amountToWBTC(amount: int) -> str:
-    warnings.warn(
-        "amountToWBTC will be deprecated in version 0.4, use amountToDecimal instead",
-        PendingDeprecationWarning
-    )
-    return f"{amount / 100000000:.8f}"
-
-
-def amountToLPs(amount: int) -> str:
-    warnings.warn(
-        "amountToLPs will be deprecated in version 0.4, use amountToDecimal instead",
-        PendingDeprecationWarning
-    )
-    return f"{amount / UNIT_MULTIPLIER:.25f}"
-
-
-def PZAPToAmount(pzap: str) -> int:
-    warnings.warn(
-        "PZAPToAmount will be deprecated in version 0.4, use amountToDecimal instead",
-        PendingDeprecationWarning
-    )
-    return int(float(pzap) * UNIT_MULTIPLIER)
-
-
 def create_keyfile(path: Path, private_key: str, password: str):
     from web3 import Web3
     if path.is_file():
@@ -83,3 +45,7 @@ def create_keyfile(path: Path, private_key: str, password: str):
     keydata = Web3().eth.account.encrypt(private_key, password)
     with path.open("w") as fp:
         json.dump(keydata, fp)
+
+
+class KeyfileOverrideException(Exception): 
+    pass

@@ -3,6 +3,7 @@ import logging
 import importlib
 
 from pathlib import Path
+from eth_account.account import Account
 
 from pab.blockchain import Blockchain
 
@@ -44,8 +45,8 @@ class BaseStrategy:
     def run(self):
         raise NotImplementedError("Childs of BaseStrategy must implement 'run'")
 
-    def transact(self, func: callable, args: tuple):
-        res = self.blockchain.transact(func, args)
+    def transact(self, account: Account, func: callable, args: tuple):
+        res = self.blockchain.transact(account, func, args)
         return res
     
     def __str__(self):

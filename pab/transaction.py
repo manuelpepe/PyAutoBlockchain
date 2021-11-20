@@ -24,8 +24,6 @@ class TransactionHandler:
         
     def transact(self, account: Account, func: callable, args: tuple, timeout: Optional[int] = None):
         """ Submits transaction and prints hash """
-        if not self.private_key:
-            raise TransactionError("Private key not set")
         if not timeout:
             timeout = self.config.get("transactions.timeout")
         stxn = self._build_signed_txn(account, func, args)
@@ -39,7 +37,7 @@ class TransactionHandler:
         call = func(*args)
         details = self._txn_details(account, call)
         txn = call.buildTransaction(details)
-        return self.w3.eth.account.sign_transaction(txn, private_key=account.private_key)
+        return self.w3.eth.account.sign_transaction(txn, private_key=account.key)
 
     def _txn_details(self, account: Account, call: callable):
         return {

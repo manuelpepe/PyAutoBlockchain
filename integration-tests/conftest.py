@@ -79,7 +79,7 @@ def _setup_project(project_name: str) -> PAB:
     with TemporaryDirectory() as tmpdir:
         project_path = _copy_project(project_name, Path(tmpdir))
         _set_dev_contract_addresses(project_path)
-        _set_envfile(project_path, ENVS.get(project_name, {}))
+        _set_envfile(project_path, ENVS.get('GLOBAL', {}) | ENVS.get(project_name, {}))
         with temp_environ():
             with chdir(project_path):
                 yield PAB(project_path)

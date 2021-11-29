@@ -14,11 +14,6 @@
         "format": "string",
         "default": ""
     },
-    "myAddress": {
-        "doc": "Address owner of the private key.",
-        "format": "string",
-        "default": ""
-    },
     "transactions.timeout": {
         "doc": "A blocking timeout after making a transaction. Defined in seconds.",
         "format": "int",

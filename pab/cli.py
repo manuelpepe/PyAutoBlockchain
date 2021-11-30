@@ -120,9 +120,9 @@ def exception_handler(logger, config: Config):
     return _handle_exceptions
 
 
-def main():
+def main(args):
     logger = _create_logger()
-    args = parser().parse_args()
+    args = parser().parse_args(args)
     if hasattr(args, 'func'):
         with _catch_ctrlc():
             args.func(args, logger)
@@ -131,4 +131,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

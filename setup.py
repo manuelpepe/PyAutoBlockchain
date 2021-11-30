@@ -23,7 +23,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'pab = pab.cli:main',
+            'pab = pab.cli:ep',
         ],
     },
     packages=[

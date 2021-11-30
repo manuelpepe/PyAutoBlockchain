@@ -130,5 +130,9 @@ def main(args):
         parser().print_help()
 
 
-if __name__ == "__main__":
+def ep():
     main(sys.argv[1:])
+
+
+if __name__ == "__main__":
+    ep()

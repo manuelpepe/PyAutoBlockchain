@@ -2,7 +2,7 @@ import time
 import logging
 
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 from pab.accounts import load_accounts
 
 from pab.blockchain import Blockchain
@@ -16,13 +16,13 @@ class PAB:
     """ Runs a list of strategies sequentially """
     ITERATION_SLEEP = 60
 
-    def __init__(self, root: Path, keyfile: Optional[str] = None):
+    def __init__(self, root: Path, keyfiles: Optional[list[Path]] = None, envs: Optional[List[str]] = None):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.root = root
-        self.keyfile = keyfile
-        self.config = load_configs(root)
+        self.config = load_configs(root, envs)
         import_strategies(root)
-        self.blockchain = Blockchain(self.root, self.config, load_accounts([keyfile]))
+        self.accounts = load_accounts(keyfiles or [])
+        self.blockchain = Blockchain(self.root, self.config, self.accounts)
         self.queue = QueueLoader(self.blockchain).load()
 
     def start(self):

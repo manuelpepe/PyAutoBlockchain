@@ -3,7 +3,7 @@ import json
 import difflib
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -18,7 +18,6 @@ ABIS_DIR = Path("abis")
 CONFIG_FILE = Path("config.json")
 TASKS_FILE = Path("tasks.json")
 CONTRACTS_FILE = Path("contracts.json")
-KEY_FILE = Path("key.file")
 
 
 class LCDict(dict):
@@ -72,19 +71,23 @@ class JSONSource(ConfigSource):
 
 
 class ENVSource(ConfigSource):
-    """ Loads `.env` files, then reads configs from environment. """
+    """ Loads `.env` files and parses configs from environment. """
     PREFIX = "PAB_CONF_"
 
-    def __init__(self, root: Path, env: str = ''):
+    def __init__(self, root: Path, envs: Optional[List[str]] = None):
         self.root = root
-        self.env = env
-        self.envfile_name = f'.env.{self.env}' if self.env else '.env'
-        self.envfile = root / self.envfile_name
+        self.envs = set(envs or [])
+        self.base_envfile = root / '.env'
         super().__init__()
     
     def _load_data(self) -> Dict[str, Any]:
-        if self.envfile.is_file():
-            load_dotenv(self.envfile)
+        if self.base_envfile.is_file():
+            load_dotenv(self.base_envfile)
+        for env in self.envs:
+            envfile = self.root / f".env.{env}"
+            if not envfile.is_file():
+                raise FileNotFoundError(str(envfile))
+            load_dotenv(envfile)
         return self._parse_environ()
         
     def _parse_environ(self) -> dict:
@@ -204,9 +207,9 @@ def _add_path_to_tree(tree: dict, path: str, value: Any):
 
 class Config:
     """ Readonly config interface. Loads and merges config data from multiple sources."""
-    def __init__(self, root: Path, env: str = ''):
+    def __init__(self, root: Path, envs: Optional[List[str]] = None):
         self.root = root
-        self.env = env
+        self.envs = envs
         self.schema = ConfigSchema()
         self.data: LCDict = LCDict()
 
@@ -214,7 +217,7 @@ class Config:
         self.data: LCDict = _merge_sources_and_format(self.schema,
             [
                 JSONSource(self.root),
-                ENVSource(self.root, self.env)
+                ENVSource(self.root, self.envs)
             ]
         )
         return self
@@ -237,8 +240,8 @@ class Config:
         return tree
 
 
-def load_configs(root: Path):
-    return Config(root).load()
+def load_configs(root: Path, envs: Optional[List[str]] = None):
+    return Config(root, envs).load()
 
 
 class InvalidConfigValue(ValueError):

@@ -53,7 +53,8 @@ def test_load_from_envfile():
 
 def test_load_from_custom_envfile():
     with temp_environ() as tmpdir:
-        conf = Config(Path(tmpdir), "sandbox")
+        Path(".env.sandbox").write_text('')
+        conf = Config(Path(tmpdir), ["sandbox"])
         conf.schema = CustomSchema()
         conf.load()
         assert conf.get("my.config") == 0  # Defaults to 0 by schema

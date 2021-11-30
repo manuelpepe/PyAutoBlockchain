@@ -12,7 +12,7 @@ from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
 from pab.core import PAB
-from pab.config import DATETIME_FORMAT, KEY_FILE, Config
+from pab.config import DATETIME_FORMAT, Config
 from pab.strategy import import_strategies
 from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
 from pab.alert import alert_exception
@@ -66,13 +66,17 @@ def initialize_project(args, logger):
 
 
 def run(args, logger):
-    pab = PAB(Path.cwd(), args.keyfile)
+    envs = filter(lambda e: e != '', [env.strip() for env in args.envs.split(',')])
+    keyfiles = filter(lambda kf: kf != '', [kf.strip() for kf in args.keyfiles.split(',')])
+    keyfiles_paths = [Path(kf) for kf in keyfiles]
+    pab = PAB(Path.cwd(), keyfiles_paths, envs)
     sys.excepthook = exception_handler(logger, pab.config)
     pab.start()
 
 
 def parser():
     p = ArgumentParser("pab", description=__doc__, formatter_class=RawDescriptionHelpFormatter)
+    p.add_argument("-e", "--envs", help="List of environments separated by commas.", default="")
     subparsers = p.add_subparsers(help="subcommands for pab")
 
     p_create = subparsers.add_parser("list-strategies", help="List strategies and parameters")
@@ -81,11 +85,11 @@ def parser():
     p_create.set_defaults(func=list_strats)
 
     p_run = subparsers.add_parser("run", help="Run tasks")
-    p_run.add_argument("-k", "--keyfile", action="store", help="Wallet Encrypted Private Key. If not used will load from resources/key.file as default.", default=None)
+    p_run.add_argument("-k", "--keyfiles", action="store", help="List of keyfiles separated by commas.", default='')
     p_run.set_defaults(func=run)
 
     p_createkf = subparsers.add_parser("create-keyfile", help="Create keyfile. You'll need your private key and a new password for the keyfile.")
-    p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default=str(KEY_FILE))
+    p_createkf.add_argument("-o", "--output", action="store", help="Output location for keyfile.", default="key.file")
     p_createkf.set_defaults(func=_create_keyfile)
 
     p_init = subparsers.add_parser("init", help="Initialize PAB project in current directory.")

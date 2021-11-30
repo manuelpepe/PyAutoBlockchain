@@ -1,6 +1,8 @@
 ## 0.5 (***WIP***)
 
 * New `init` command.
+* New `pab [-e/--envs]` option to load .env* files.
+* Renamed `--keyfile` to `--keyfiles` to allow multiple accounts.
 * New optional `PyAutoBlockchain[ui]` extension to install [PABUI](https://github.com/manuelpepe/PABUI).
 * New config loading from ENVVARS/.env file for sensitive data (Personal 0xAddress, RPC, SMTP). 
 * Removed `edit-config` command.

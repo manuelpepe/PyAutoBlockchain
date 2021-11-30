@@ -104,22 +104,20 @@ class SampleStrategy(BaseStrategy):
     def __init__(self, *args, contract_name: str = '', some_param: int = -1):
         super().__init__(*args)
         self.some_param = some_param
-        self.contract = self.blockchain.read_contract(contract_name)
+        self.contract = self.contracts.get(contract_name)
 
     def run(self):
-        # Processing here
-        ...
+        args = (self.some_param, "another_param")
+        self.transact(self.accounts[0], self.contract.functions.some_function, args)
 """
-GITIGNORE_CONTENT = """# config.json holds your address and other authentication details (email, rcp).
-config.json
+GITIGNORE_CONTENT = """# .env* files hold sensitive data.
+.env*
 
 # If you're using a keyfile, remember that it's probably not safe
 # to commit it to any remote. Keep that in mind if you're using a different name for it.
 key.file
 """
-GITIGNORE_WARNING = """Warning! .gitignore was not created because it already exists.
-If you're versioning this project, remember that your key.file and the config.json files might not be secure to version and should be .gitignored or similar.
-Commit them at your own discretion."""
+GITIGNORE_WARNING = "Warning! .gitignore was not created because it already exists. You should probably gitignore .env* files."
 
 
 

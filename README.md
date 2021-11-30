@@ -6,7 +6,9 @@
 
 PAB is a framework that helps with development and automation of periodic tasks on blockchains.
 
-For a more in-depth guide see [GUIDE.md](GUIDE.md), the example at [examples](examples/guide-example) or a more complex implementation at [PolyCompounder](https://github.com/manuelpepe/PolyCompounder).
+PAB allows you to quickly implement strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
+
+For a sample guide see [GUIDE.md](GUIDE.md), the example at [examples](examples/guide-example) or a more complex implementation at [PolyCompounder](https://github.com/manuelpepe/PolyCompounder).
 
 ## Installation
 
@@ -34,7 +36,7 @@ $ pabui
 
 ## Usage
 
-Create project: 
+Create project in current directory: 
 
 ```bash
 (venv) $ pab init 
@@ -43,19 +45,35 @@ Create project:
 Run project:
 
 ```bash
-(venv) $ pab run  # Run tasks
+(venv) $ pab run
 ```
 
-## Configuration
+## Basic Concepts
+
 
 ### config.json vs Environment Variables
 
 All configurations can be loaded from environment variables (optionally from a `.env` file) or the `config.json` file.
 Environment variables follow the name schema `PAB_CONF_<PATH>`.
 
-For example:
+For example, `transactions.timeout` can be set in `.env` as:
 
-* `transactions.timeout` is `PAB_CONF_TRANSACTIONS_TIMEOUT`
+```
+PAB_CONF_TRANSACTIONS_TIMEOUT=100
+```
+
+or in `config.json` as:
+
+```
+{
+    "transactions": {
+        "timeout": 100
+    }
+}
+```
+
+Multiple `.env.name` files can be loaded with `pab -e name,name2 run`.
+
 
 ### RPC
 
@@ -64,24 +82,23 @@ Some known RPCs with free tiers are [Infura](https://infura.io/) and [MaticVigil
 
 RPC endpoint can be loaded from the `PAB_CONF_ENDPOINT` environment variable or from the `endpoint` config.
 
-### Wallet / Private Key
 
-Your private key is loaded from a `key.file` file in the projects root. This file will hold your private key, encrypted with a password of your choosing.
+### Accounts
 
-If you need to create a keyfile,To create a keyfile (You will be prompted for a private key and a password):
+Multiple accounts can be loaded dynamically loaded from the environment or keyfiles to use in the strategies.
 
-```bash
-(venv) $ pab create-keyfile
-```
+You can set the environment variables `PAB_PK1`, `PAB_PK2`, etc as the private keys for the accounts.
+
+Another option is to use keyfiles, which can be created with `pab create-keyfile`. You can specify keyfiles to load with `pab run --keyfiles key1.file,key2.file`. Accounts loaded through keyfiles require a one-time interactive authentication at the start of the execution.
+
+All accounts are then loaded into `BaseStrategy.accounts`.
 
 
 ### Contracts
 
-To use contracts in the strategies you first need to add the abi file to `abis` and modify the `contracts.json` file to load it.
+Contracts are loaded from the `contracts.json` file at the project root. An example would be:
 
-For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at `abis/mytoken.abi` and add to `contracts.json` the following:
-
-```json
+```
 {
     "MYTOKEN": {
         "address": "0x12345",
@@ -90,17 +107,22 @@ For example, given the contract for `MYTOKEN` at `0x12345` create the abifile at
 }
 ```
 
+In this example, you also need to create the abifile at `abis/mytoken.abi` with the ABI data. You need to do this for all contracts.
+Strategies can then use the contracts through `BaseStrategy.contracts`.
+
+
 ### Tasks
 
-You can add tasks to execute at `tasks.json`.
-For example, the following example defines 1 task to execute, using the strategy `BaseStrategy` 
-and the contracts `BNB`, `WBTC`, `PAIR`, `MASTERCHEF` and `ROUTER`.
+Tasks are loaded from the `tasks.json` file at the project root.
+The  following example defines a single task to execute, using the strategy `BasicCompound` that repeats every 24hs.
+
+Multiple contract names (BNB, WBTC, PAIR, MASTERCHEF, ROUTER) are passed to the strategy as params. The strategy later uses these names to query the contracts from `BaseStrategy.contracts`.
 
 ```json
 [
     {
-        "strategy": "BaseStrategy",
-        "name": "BNB-WBTC",
+        "strategy": "BasicCompound",
+        "name": "Compound BNB-WBTC",
         "repeat_every": {
             "days": 1
         },
@@ -128,7 +150,9 @@ Run `pab list-strategies -v` to see available strategies and parameters.
 ### Custom Strategies
 
 `pab` will load custom strategies at startup from a `strategies` module in the current working directory.
-Custom strategies must be childs of `pab.strategy.BaseStrategy`.
+This module can be a single `strategies.py` file or a `strategies` directory with an `__init__.py` file.
+
+All subclasses of `pab.strategy.BaseStrategy` are loaded as available strategies for tasks.
 
 For more info on creating strategies see [GUIDE.md](GUIDE.md) and [PolyCompounder](https://github.com/manuelpepe/PolyCompounder) 
 for a different example.
@@ -136,7 +160,7 @@ for a different example.
 
 ### Email alerts
 
-You can setup email alerts for when something goes wrong.
+You can setup email alerts for unhandled and handled exceptions.
 Add the following to your `config.json`:
 
 ```json
@@ -155,7 +179,7 @@ Add the following to your `config.json`:
 
 ### Transaction settings
 
-Transaction options are available in `config.json`:
+Default transaction options are available through the following configs:
 
 ```
 {

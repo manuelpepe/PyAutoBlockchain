@@ -1,13 +1,4 @@
 {
     "blockchain": "ETHEREUM",
-    "chainId": 1,
-    "endpoint": "https://mainnet.infura.io/v3/YOUR_API",
-    "myAddress": "0xYOUR_WALLET",
-    "emails": {
-        "enabled": false,
-        "host": "localhost",
-        "address": "",
-        "password": "",
-        "recipient": ""
-    }
+    "chainId": 1
 }

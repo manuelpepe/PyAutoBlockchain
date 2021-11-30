@@ -1,0 +1,9 @@
+## .env* files hold sensitive data.
+# .env*  # This should be uncommented in a real project.
+
+## If you're using a keyfile, remember that it's probably not safe
+## to commit it to any remote. Keep that in mind if you're using a different name for it.
+key.file
+
+## Probably don't want to version the log
+pab.log

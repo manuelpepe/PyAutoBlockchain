@@ -110,12 +110,15 @@ class SampleStrategy(BaseStrategy):
         args = (self.some_param, "another_param")
         self.transact(self.accounts[0], self.contract.functions.some_function, args)
 """
-GITIGNORE_CONTENT = """# .env* files hold sensitive data.
+GITIGNORE_CONTENT = """## .env* files hold sensitive data.
 .env*
 
-# If you're using a keyfile, remember that it's probably not safe
-# to commit it to any remote. Keep that in mind if you're using a different name for it.
+## If you're using a keyfile, remember that it's probably not safe
+## to commit it to any remote. Keep that in mind if you're using a different name for it.
 key.file
+
+## Probably don't want to version the log
+pab.log
 """
 GITIGNORE_WARNING = "Warning! .gitignore was not created because it already exists. You should probably gitignore .env* files."
 

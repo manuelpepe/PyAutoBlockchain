@@ -1,13 +1,14 @@
 [
     {
-        "strategy": "LogBalanceToFileStrategy",
-        "name": "MATIC Balance",
+        "strategy": "CompoundAndLog",
+        "name": "Compound MATIC in PoolsInc",
         "repeat_every": {
             "hours": 1
         },
         "params": {
-            "filepath": "balance-history.txt",
-            "contract": "MATIC"
+            "filepath": "compound-history.txt",
+            "token": "MATIC",
+            "masterchef": "MASTERCHEF-PI"
         }
     }
 ]

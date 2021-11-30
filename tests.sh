@@ -1,2 +1,2 @@
 #!/bin/bash
-pytest --cov=pab tests/
+pytest tests/ --cov=pab --cov-report xml --cov-report term

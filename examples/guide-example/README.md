@@ -16,4 +16,4 @@ Two contracts are used by the strategy, so both of them are defined in `contract
 their corresponding ABIs inside the `abis/` directory.
 
 A single task is defined in `tasks.json` to run the `CompoundAndLog` strategy, passing the names of the
-needed contracts as parameters. This task is set to repeat every 24hs.
+needed contracts as parameters. This task is set to repeat every hour.

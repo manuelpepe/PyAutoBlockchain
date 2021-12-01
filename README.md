@@ -273,7 +273,7 @@ $ act -j integration-tests
 to run integration from the github actions tests inside a docker container.
 
 
-The other way is to use local installations of (truffle)[https://github.com/trufflesuite/truffle] and ganache [ganache](https://github.com/trufflesuite/ganache) and run:
+The other way is to use local installations of [truffle](https://github.com/trufflesuite/truffle) and [ganache](https://github.com/trufflesuite/ganache) and run:
 
 ```
 $ ./integration-tests.sh

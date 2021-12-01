@@ -107,7 +107,7 @@ class CompoundAndLog(BaseStrategy):
 ```
 
 
-### Accounts
+## Accounts
 
 Multiple accounts can be loaded dynamically loaded from the environment or keyfiles to use in the strategies.
 

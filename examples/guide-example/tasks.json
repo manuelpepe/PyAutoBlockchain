@@ -1,14 +1,28 @@
 [
     {
         "strategy": "CompoundAndLog",
-        "name": "Compound MATIC in PoolsInc",
+        "name": "Compound MATIC in PoolsInc for Acc1",
         "repeat_every": {
             "hours": 1
         },
         "params": {
-            "filepath": "compound-history.txt",
+            "filepath": "compound-history-0.txt",
             "token": "MATIC",
-            "masterchef": "MASTERCHEF-PI"
+            "masterchef": "MASTERCHEF-PI",
+            "accounts_index": 0
+        }
+    },
+    {
+        "strategy": "CompoundAndLog",
+        "name": "Compound MATIC in PoolsInc for Acc2",
+        "repeat_every": {
+            "hours": 1
+        },
+        "params": {
+            "filepath": "compound-history-1.txt",
+            "token": "MATIC",
+            "masterchef": "MASTERCHEF-PI",
+            "accounts_index": 1
         }
     }
 ]

@@ -23,11 +23,32 @@ Interacting with systems can mean:
 * `contracts/`: Source code for solidity contracts. Truffle project structure.
 * `projects/`: PAB Projects.
 * `tests/`: Pytest integration tests.
-* `.secrets.example.toml`: Example `.secrets.toml` file. (See [Secrets](#secrets))
+* `envs.toml`: Environment variables set for each project.
 * `conftest.py`: Pytest fixtures.
 
 
-## Solidity Smart Contracts
+## Running tests
+
+The recommended way to run integration tests is using [act](https://github.com/nektos/act).
+
+With act you can run:
+
+```
+$ act -j integration-tests
+```
+
+to run integration from the github actions tests inside a docker container.
+
+The other way is to use local installations of (truffle)[https://github.com/trufflesuite/truffle] and ganache [ganache](https://github.com/trufflesuite/ganache) and just run:
+
+```
+$ ./integration-tests.sh
+```
+
+
+## Parts
+
+### Solidity Smart Contracts
 
 To fully test integrations, solidity smart contracts are built and deployed
 from the `contracts/` directory.
@@ -35,11 +56,11 @@ from the `contracts/` directory.
 [Truffle Suite](https://trufflesuite.com/) is used to aid in the development, testing and 
 deployment of the Smart Contracts.
 
-### Local Setup
+#### Local Setup
 
 Install truffle and ganache-cli.
 
-### Building, testing and deploying contracts to the local network
+#### Building, testing and deploying contracts to the local network
 
 Run ganache-cli on a separate terminal to start the local network.
 Then, from the `contracts/` directory:
@@ -48,13 +69,13 @@ Then, from the `contracts/` directory:
 * `truffle migrate` to deploy using migration scripts
 
 
-## PAB Projects
+### PAB Projects
 
 Integration tests run PAB projects against a local development blockchain.
 Multiple testing projects can be found in the `projects/` directory, and new
 ones can be added.
 
-### Contracts
+#### Contracts
 
 Contract addresses may change between test runs, as they are redeployed every time the integration
 tests run. The way to always point to the correct contract is by using the `{ContractName}` syntax in the 
@@ -72,21 +93,7 @@ populate to the correct address when the tests run:
 }
 ```
 
-### Secrets
-
-Some sensitive data is needed to run PAB projects. Namely, a (sometimes private) RPC,
-your private key, your public address, SMTP details, etc.
-
-To avoid setting these values inside the each testing project, and making them 
-publicly available, Environment Variables are loaded from a `.secrets.toml` file.
-
-This file is populated by the CI when running in a pipeline, or can be manually populated
-if you wish to run outside of CI.
-
-For an usage example, see `secrets.example.toml`.
-
-
-## Tests
+### Tests
 
 PAB provides a `setup_project(project_name)` fixture that automatically sets up 
 the corresponding project (from `projects/{project_name}`).
@@ -99,13 +106,6 @@ The setup includes:
     * blockchain: Ganache
     * chainId: 1337
     * endpoint: `http://127.0.0.1:8545/`
-    * myAddress: *address 0 on ganache*
-    * Private Key: *private key for address 0 on ganache*
-* Setting all environments variables related to the given project, as defined in the `.secrets.toml` file.
-* Replacing the contract addresses in `contracts.json` from the current addresses in the development network.
-
-
-Once setup, you can use the helper methods in `pab.test` to run tasks on-demand and make assertions agains the contracts
-state or anything else (files, services, values).
-
-For example, you can run a task that will set a value, and then assert that the value was setted.
+    * accounts from ganache
+* Setting all environments variables related to the given project, as defined in the `envs.toml` file.
+* Replacing the contract addresses in `contracts.json` with the matching addresses in the development network.

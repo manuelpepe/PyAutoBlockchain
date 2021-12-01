@@ -8,7 +8,7 @@
 
 PAB is a framework that helps with development and automation of periodic tasks on blockchains.
 
-PAB allows you to quickly implement strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
+PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
 
 For a sample guide see [GUIDE.md](GUIDE.md), the example at [examples](examples/guide-example) or a more complex implementation at [PolyCompounder](https://github.com/manuelpepe/PolyCompounder).
 
@@ -50,39 +50,61 @@ Run project:
 (venv) $ pab run
 ```
 
-## Basic Concepts
+
+## Sample Strategy
 
 
-### config.json vs Environment Variables
+PAB will load custom strategies at startup from a `strategies` module in the current working directory.
+This module can be a single `strategies.py` file or a `strategies` directory with an `__init__.py` file.
 
-All configurations can be loaded from environment variables (optionally from a `.env` file) or the `config.json` file.
-Environment variables follow the name schema `PAB_CONF_<PATH>`.
+All subclasses of `pab.strategy.BaseStrategy` are loaded as available strategies for tasks, and all must implement
+the `run()` method.
 
-For example, `transactions.timeout` can be set in `.env` as:
+Here's a basic sample strategy to give you an idea of the Strategy API:
 
+```python
+import csv
+from datetime import datetime
+from pab.strategy import BaseStrategy
+
+class CompoundAndLog(BaseStrategy):
+    """ Finds pool in `masterchef` for `token`, compounds the given pool for 
+    `self.accounts[account_index]` and logs relevant data into some csv file. """
+
+    def __init__(self, *args, filepath: str = "compound.csv", token: str = '', masterchef: str = '', account_index: int = 0):
+        super().__init__(*args)
+        self.filepath = filepath
+        self.account = self.accounts[account_index]
+        self.token = self.contracts.get(token)
+        self.masterchef = self.contracts.get(masterchef)
+        self.pool_id = self.masterchef.functions.getPoolId(self.token.address).call()
+        if not self.pool_id:
+            raise Exception(f"Pool not found for {self.token} in {self.masterchef}")
+
+    def run(self):
+        """ Strategy entrypoint. """
+        balance = self.get_balance()
+        new_balance = self.compound()
+        self.write_to_file(balance, new_balance)
+        self.logger.info(f"Current balance is {balance}")
+
+    def compound(self) -> int:
+        self.transact(self.account, self.masterchef.functions.compound, (self.pool_id, ))
+        return self.get_balance()
+
+    def get_balance(self) -> int:
+        return self.masterchef.functions.balanceOf(
+            self.account.address,
+            self.pool_id
+        ).call()
+    
+    def write_to_file(self, old_balance: int, new_balance: int):
+        now = datetime.now().strftime('%Y-%m-%d %I:%M:%S')
+        diff = new_balance - old_balance
+        with open(self.filepath, 'a') as fp:
+            writer = csv.writer(fp)
+            writer.writerow([now, new_balance, diff])
 ```
-PAB_CONF_TRANSACTIONS_TIMEOUT=100
-```
-
-or in `config.json` as:
-
-```
-{
-    "transactions": {
-        "timeout": 100
-    }
-}
-```
-
-Multiple `.env.name` files can be loaded with `pab -e name,name2 run`.
-
-
-### RPC
-
-An RPC is needed for PAB to communicate with the blockchain networks.
-Some known RPCs with free tiers are [Infura](https://infura.io/) and [MaticVigil](https://rpc.maticvigil.com/).
-
-RPC endpoint can be loaded from the `PAB_CONF_ENDPOINT` environment variable or from the `endpoint` config.
 
 
 ### Accounts
@@ -93,10 +115,10 @@ You can set the environment variables `PAB_PK1`, `PAB_PK2`, etc as the private k
 
 Another option is to use keyfiles, which can be created with `pab create-keyfile`. You can specify keyfiles to load with `pab run --keyfiles key1.file,key2.file`. Accounts loaded through keyfiles require a one-time interactive authentication at the start of the execution.
 
-All accounts are then loaded into `BaseStrategy.accounts`.
+All accounts are then loaded for all strategies into `self.accounts[0]`, `self.accounts[1]`, etc...
 
 
-### Contracts
+## Contracts
 
 Contracts are loaded from the `contracts.json` file at the project root. An example would be:
 
@@ -110,10 +132,11 @@ Contracts are loaded from the `contracts.json` file at the project root. An exam
 ```
 
 In this example, you also need to create the abifile at `abis/mytoken.abi` with the ABI data. You need to do this for all contracts.
-Strategies can then use the contracts through `BaseStrategy.contracts`.
+
+Strategies can then get and use this contract with `self.contracts.get("MYTOKEN")`.
 
 
-### Tasks
+## Tasks
 
 Tasks are loaded from the `tasks.json` file at the project root.
 The  following example defines a single task to execute, using the strategy `BasicCompound` that repeats every 24hs.
@@ -149,34 +172,37 @@ Tasks are defined as dictionaries with:
 Run `pab list-strategies -v` to see available strategies and parameters.
 
 
-### Custom Strategies
+## Configuration
 
-`pab` will load custom strategies at startup from a `strategies` module in the current working directory.
-This module can be a single `strategies.py` file or a `strategies` directory with an `__init__.py` file.
+Configs can be loaded from environment variables (optionally from a `.env` file) or from the `config.json` file.
 
-All subclasses of `pab.strategy.BaseStrategy` are loaded as available strategies for tasks.
+Environment variables follow the name schema `PAB_CONF_<PATH>`.
 
-For more info on creating strategies see [GUIDE.md](GUIDE.md) and [PolyCompounder](https://github.com/manuelpepe/PolyCompounder) 
-for a different example.
+For example, `transactions.timeout` can be set in `.env` as:
 
+```
+PAB_CONF_TRANSACTIONS_TIMEOUT=100
+```
 
-### Email alerts
+or in `config.json` as:
 
-You can setup email alerts for unhandled and handled exceptions.
-Add the following to your `config.json`:
-
-```json
+```
 {
-    "emails": {
-        "enabled": true,
-        "host": "smtp.host.com",
-        "port": 465,
-        "address": "email@host.com",
-        "password": "password",
-        "recipient": "me@host.com"
-    }   
+    "transactions": {
+        "timeout": 100
+    }
 }
 ```
+
+Multiple `.env.name` files can be loaded with `pab -e name,name2 run`.
+
+
+### RPC
+
+An RPC is needed for PAB to communicate with the blockchain networks.
+Some known RPCs with free tiers are [Infura](https://infura.io/) and [MaticVigil](https://rpc.maticvigil.com/).
+
+RPC endpoint can be loaded from the `PAB_CONF_ENDPOINT` environment variable or from the `endpoint` config.
 
 
 ### Transaction settings
@@ -199,17 +225,58 @@ Default transaction options are available through the following configs:
 }
 ```
 
+### Email alerts
+
+You can setup email alerts for unhandled and handled exceptions.
+Add the following to your `config.json`:
+
+```json
+{
+    "emails": {
+        "enabled": true,
+        "host": "smtp.host.com",
+        "port": 465,
+        "user": "email@host.com",
+        "password": "password",
+        "recipient": "me@host.com"
+    }   
+}
+```
+
 
 ## Developing
 
 For details see [ARCHITECTURE.md](ARCHITECTURE.md)
 
 
-### Running tests
+### Testing
 
-Using pytest:
+#### Unit Tests
+
+To run unit tests:
 
 ```bash
 (venv) $ pip install -e requirements-dev.txt
 (venv) $ ./tests.sh
 ```
+
+#### Integration tests
+
+The recommended way to run integration-tests is with [act](https://github.com/nektos/act).
+
+With act you can run:
+
+```
+$ act -j integration-tests
+```
+
+to run integration from the github actions tests inside a docker container.
+
+
+The other way is to use local installations of (truffle)[https://github.com/trufflesuite/truffle] and ganache [ganache](https://github.com/trufflesuite/ganache) and run:
+
+```
+$ ./integration-tests.sh
+```
+
+For more information on integration tests see [Integration Tests README](integration-tests/README.md).

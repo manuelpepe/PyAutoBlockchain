@@ -5,10 +5,12 @@ from pab.strategy import BaseStrategy
 
 class CompoundAndLog(BaseStrategy):
     """ Finds pool in `masterchef` for `token`, compounds the given pool for 
-    `self.accounts[0]` and logs relevant into file. """
-    def __init__(self, *args, filepath: str = "/tmp/compound.csv", token: str = '', masterchef: str = ''):
+    `self.accounts[account_index]` and logs relevant data into some csv file. """
+
+    def __init__(self, *args, filepath: str = "compound.csv", token: str = '', masterchef: str = '', account_index: int = 0):
         super().__init__(*args)
         self.filepath = filepath
+        self.account = self.accounts[account_index]
         self.token = self.contracts.get(token)
         self.masterchef = self.contracts.get(masterchef)
         self.pool_id = self.masterchef.functions.getPoolId(self.token.address).call()
@@ -22,12 +24,12 @@ class CompoundAndLog(BaseStrategy):
         self.logger.info(f"Current balance is {balance}")
 
     def compound(self) -> int:
-        self.transact(self.accounts[0], self.masterchef.functions.compound, (self.pool_id, ))
+        self.transact(self.account, self.masterchef.functions.compound, (self.pool_id, ))
         return self.get_balance()
 
     def get_balance(self) -> int:
         return self.masterchef.functions.balanceOf(
-            self.accounts[0].address,
+            self.account.address,
             self.pool_id
         ).call()
     

@@ -88,8 +88,9 @@ class Queue:
 
 class QueueLoader:
     """ Loads a Queue from raw data """
-    def __init__(self, blockchain: Blockchain = None):
+    def __init__(self, blockchain: Blockchain, strategies: list[BaseStrategy]):
         self.blockchain = blockchain
+        self.strategies = strategies
 
     def load(self):
         with open(Path.cwd() / TASKS_FILE, "r") as fp:
@@ -116,7 +117,7 @@ class QueueLoader:
         return strat_class(self.blockchain, data["name"], **data.get("params", {}))
 
     def _find_strat_by_name(self, name: str):
-        for class_ in BaseStrategy.__subclasses__():
+        for class_ in self.strategies:
             if class_.__name__ == name:
                 return class_
         raise UnkownStrategyError(f"Can't find strategy '{name}'")

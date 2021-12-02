@@ -17,6 +17,11 @@ __all__ = [
 ]
 
 
+def load_strategies(root: Path) -> list['BaseStrategy']:
+    import_strategies(root)
+    return BaseStrategy.__subclasses__()
+
+
 def import_strategies(root: Path):
     try:
         path = str(root)

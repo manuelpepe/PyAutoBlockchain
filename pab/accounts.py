@@ -15,13 +15,22 @@ _logger = logging.getLogger("pab.accounts")
 ENVS_PREFIX = re.compile(r"^PAB_PK([0-9]*)")
 
 
+def create_keyfile(path: Path, private_key: str, password: str):
+    from web3 import Web3
+    if path.is_file():
+        raise KeyfileOverrideException("Warning, trying to overwrite existing keyfile")
+    keydata = Web3().eth.account.encrypt(private_key, password)
+    with path.open("w") as fp:
+        json.dump(keydata, fp)
+
+
 def _load_keyfile(keyfile: Path) -> Optional[Account]:
     if keyfile is None or not keyfile.is_file():
         _logger.warning(f"Keyfile at '{keyfile}' not found.")
         return
     with open(keyfile) as fp:
         wallet_pass = getpass.getpass("Enter wallet password: ")
-        return Account.decrypt(json.load(fp), wallet_pass)
+        return Account.from_key(Account.decrypt(json.load(fp), wallet_pass))
 
 
 def _get_ix_from_name(name) -> Optional[int]:
@@ -57,4 +66,8 @@ def load_accounts(keyfiles: list[Path]) -> Dict[int, Account]:
 
 
 class AccountsError(Exception):
+    pass
+
+
+class KeyfileOverrideException(Exception): 
     pass

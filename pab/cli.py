@@ -14,9 +14,10 @@ from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from pab.core import PAB
 from pab.config import DATETIME_FORMAT, Config
 from pab.strategy import import_strategies
-from pab.utils import create_keyfile, KeyfileOverrideException, print_strats, json_strats
+from pab.utils import print_strats, json_strats
 from pab.alert import alert_exception
 from pab.init import initialize_project as _initialize_project
+from pab.accounts import create_keyfile, KeyfileOverrideException
 
 
 def _create_logger():

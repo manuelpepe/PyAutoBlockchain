@@ -36,16 +36,3 @@ def json_strats():
         } 
         for strat in BaseStrategy.__subclasses__()
     }
-
-
-def create_keyfile(path: Path, private_key: str, password: str):
-    from web3 import Web3
-    if path.is_file():
-        raise KeyfileOverrideException("Warning, trying to overwrite existing keyfile")
-    keydata = Web3().eth.account.encrypt(private_key, password)
-    with path.open("w") as fp:
-        json.dump(keydata, fp)
-
-
-class KeyfileOverrideException(Exception): 
-    pass

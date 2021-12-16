@@ -3,7 +3,13 @@ import logging
 import importlib
 
 from pathlib import Path
-from eth_account.account import Account
+from typing import Dict, Union, TYPE_CHECKING
+from abc import ABC, abstractmethod
+
+if TYPE_CHECKING:
+    from eth_account.account import Account
+    from eth_account.signers.local import LocalAccount
+    from pab.contract import ContractManager
 
 from pab.blockchain import Blockchain
 
@@ -14,6 +20,7 @@ __all__ = [
     "RescheduleError",
     "SpecificTimeRescheduleError",
     "import_strategies",
+    "load_strategies",
 ]
 
 
@@ -32,25 +39,32 @@ def import_strategies(root: Path):
         raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD.") from err
 
 
-class BaseStrategy:
-    """ Base class for strategies """
+class BaseStrategy(ABC):
+    """ Base class for strategies. """
     def __init__(self, blockchain: Blockchain, name: str):
         self.logger = logging.getLogger(f"{self.__class__.__name__}-{name}")
         self.blockchain = blockchain
         self.name = name
 
     @property
-    def accounts(self):
+    def accounts(self) -> Dict[int, Union['Account', 'LocalAccount']]:
+        """ Returns available accounts in current blockchain. 
+        You can access specific accounts with numeric indexes"""
         return self.blockchain.accounts
 
     @property
-    def contracts(self):
+    def contracts(self) -> 'ContractManager':
+        """ Returns a :ref:`pab.contract.ContractManager`. You can use `self.contracts.get(name)`
+        to retrieve a contract by name. """
         return self.blockchain.contracts
 
+    @abstractmethod
     def run(self):
+        """ Strategy entrypoint. Must be defined by all childs. """
         raise NotImplementedError("Childs of BaseStrategy must implement 'run'")
 
-    def transact(self, account: Account, func: callable, args: tuple):
+    def transact(self, account: 'Account', func: callable, args: tuple):
+        """ Makes a transaction on the current blockchain. """
         res = self.blockchain.transact(account, func, args)
         return res
     

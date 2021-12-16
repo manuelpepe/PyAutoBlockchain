@@ -7,7 +7,7 @@ from pab.accounts import load_accounts
 
 from pab.blockchain import Blockchain
 from pab.config import load_configs
-from pab.strategy import RescheduleError, SpecificTimeRescheduleError, load_strategies
+from pab.strategy import load_strategies
 from pab.alert import alert_exception
 from pab.queue import QueueItem, QueueLoader
 
@@ -39,12 +39,6 @@ class PAB:
     def process_item(self, item: QueueItem):
         try:
             item.process()
-        except SpecificTimeRescheduleError as err:
-            self.logger.warning(err)
-            item.schedule_for(int(err.next_at))
-        except RescheduleError as err:
-            self.logger.warning(err)
-            item.reschedule()
         except Exception as err:
             self.logger.exception(err)
             alert_exception(err, self.config)

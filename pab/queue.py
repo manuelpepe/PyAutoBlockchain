@@ -6,7 +6,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 from pab.blockchain import Blockchain
-from pab.strategy import BaseStrategy
+from pab.strategy import BaseStrategy, RescheduleError, SpecificTimeRescheduleError
 from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
@@ -18,6 +18,7 @@ class QueueItem:
     RUN_NEVER = -20
 
     def __init__(self, id_: int, strat: BaseStrategy, next_at: int, repeat_every: Optional[dict] = None):
+        self.logger = logging.getLogger(f"Queued {strat}") 
         self.id = id_
         self.strategy = strat
         self.next_at = next_at
@@ -57,6 +58,16 @@ class QueueItem:
             raise ValueError(f"Wrong value {self.next_at} of type {type(self.next_at)} for QueuedItem.next_at #{self.id}")
 
     def process(self):
+        try:
+            self._process()
+        except SpecificTimeRescheduleError as err:
+            self.logger.warning(err)
+            self.schedule_for(int(err.next_at))
+        except RescheduleError as err:
+            self.logger.warning(err)
+            self.reschedule()
+
+    def _process(self):
         if self.is_ready():
             self.logger.info(f"Running task {self.strategy}")
             self.last_start = datetime.now().timestamp()

@@ -10,7 +10,7 @@ from pab.strategy import BaseStrategy, RescheduleError, SpecificTimeRescheduleEr
 from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
-class QueueItem:
+class Job:
     """ Container for a strategy to be executed in the future """ 
     logger = logging.getLogger("QueuedItem")
 
@@ -31,7 +31,7 @@ class QueueItem:
         self.schedule_for(next_run)
 
     def repeats(self) -> bool:
-        """ True if """
+        """ True if Job has repetition data. """
         return bool(self.repeat_every)
 
     def next_repetition_time(self) -> int:
@@ -82,8 +82,8 @@ class QueueItem:
 
 
 class Queue:
-    """ Wrapper for a list of QueueItems """
-    def __init__(self, items: List[QueueItem]):
+    """ Wrapper for a list of Jobs """
+    def __init__(self, items: List[Job]):
         self.items = items
 
     def __getitem__(self, key):
@@ -130,7 +130,7 @@ class QueueLoader:
         for ix, data in enumerate(tasks):
             strat = self._create_strat_from_data(data)
             repeat = data.get("repeat_every", {})
-            item = QueueItem(ix, strat, QueueItem.RUN_ASAP, repeat_every=repeat)
+            item = Job(ix, strat, Job.RUN_ASAP, repeat_every=repeat)
             out.append(item)
         return Queue(out)
 

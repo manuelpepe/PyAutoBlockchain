@@ -24,19 +24,31 @@ __all__ = [
 ]
 
 
+_STRATS_MODULE_NAME = "strategies"
+
+
 def load_strategies(root: Path) -> list['BaseStrategy']:
     import_strategies(root)
     return BaseStrategy.__subclasses__()
 
 
 def import_strategies(root: Path):
+    """ Imports `strategies` module from `root` directory. """
+    if not root.is_dir():
+        raise FileNotFoundError(f"Directory {root} not found")
     try:
         path = str(root)
-        sys.path.append(path)
-        importlib.import_module("strategies")
-        sys.path.remove(path)
+        if _STRATS_MODULE_NAME in sys.modules.keys():
+            # If a _STRATS_MODULE_NAME module is already loaded we remove it
+            # to avoid python reusing it https://docs.python.org/3/library/sys.html#sys.modules
+            del sys.modules[_STRATS_MODULE_NAME]
+        sys.path.insert(0, path)
+        importlib.import_module(_STRATS_MODULE_NAME)
+        removed = sys.path.pop(0)
+        if removed != path:
+            raise RuntimeError("Unexpected value removed from sys.path")
     except ModuleNotFoundError as err:
-        raise RuntimeError("Can't find any strategies. Create a 'strategies' module in your CWD.") from err
+        raise RuntimeError(f"Can't find any strategies. Create a '{_STRATS_MODULE_NAME}' module in your CWD.") from err
 
 
 class BaseStrategy(ABC):

@@ -13,6 +13,7 @@ polycompound.log
 build/
 dist/
 *.pyc
+pab.log
 
 # Allow config file in example
 !examples/guide-example/config.json

@@ -14,6 +14,7 @@ build/
 dist/
 *.pyc
 pab.log
+venv310/
 
 # Allow config file in example
 !examples/guide-example/config.json

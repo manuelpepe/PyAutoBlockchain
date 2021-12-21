@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 
@@ -8,6 +10,7 @@ from datetime import datetime, timedelta
 from pab.blockchain import Blockchain
 from pab.strategy import BaseStrategy, RescheduleError, SpecificTimeRescheduleError
 from pab.config import TASKS_FILE, DATETIME_FORMAT
+
 
 
 class Job:

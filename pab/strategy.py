@@ -6,9 +6,11 @@ from pathlib import Path
 from typing import Dict, Union, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
+
 if TYPE_CHECKING:
     from eth_account.account import Account
     from eth_account.signers.local import LocalAccount
+    from web3.types import TxReceipt
     from pab.contract import ContractManager
 
 from pab.blockchain import Blockchain
@@ -52,11 +54,12 @@ def import_strategies(root: Path):
 
 
 class BaseStrategy(ABC):
-    """ Base class for strategies. """
+    """ Abstract Base Class for custom strategies. """
     def __init__(self, blockchain: Blockchain, name: str):
         self.logger = logging.getLogger(f"{self.__class__.__name__}-{name}")
-        self.blockchain = blockchain
-        self.name = name
+        self.blockchain: Blockchain = blockchain
+        """ Current blockchain connection. """
+        self.name: str = name
 
     @property
     def accounts(self) -> Dict[int, Union['Account', 'LocalAccount']]:
@@ -75,10 +78,9 @@ class BaseStrategy(ABC):
         """ Strategy entrypoint. Must be defined by all childs. """
         raise NotImplementedError("Childs of BaseStrategy must implement 'run'")
 
-    def transact(self, account: 'Account', func: callable, args: tuple):
+    def transact(self, account: 'Account', func: callable, args: tuple) -> "TxReceipt":
         """ Makes a transaction on the current blockchain. """
-        res = self.blockchain.transact(account, func, args)
-        return res
+        return self.blockchain.transact(account, func, args)
     
     def __str__(self):
         return f"{self.name} on {self.blockchain}"

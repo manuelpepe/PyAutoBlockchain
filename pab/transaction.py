@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from web3 import Web3
+    from web3.types import TxReceipt
 
 from eth_account.datastructures import SignedTransaction
 from eth_account.account import Account
@@ -22,7 +23,7 @@ class TransactionHandler:
         self.chain_id = chain_id
         self.config = config
         
-    def transact(self, account: Account, func: callable, args: tuple, timeout: Optional[int] = None):
+    def transact(self, account: Account, func: callable, args: tuple, timeout: Optional[int] = None) -> "TxReceipt":
         """ Submits transaction and prints hash """
         if not timeout:
             timeout = self.config.get("transactions.timeout")
@@ -31,7 +32,7 @@ class TransactionHandler:
         rcpt = self.w3.eth.wait_for_transaction_receipt(sent, timeout=timeout)
         self.logger.info(f"Block Hash: {rcpt.blockHash.hex()}")
         self.logger.info(f"Gas Used: {rcpt.gasUsed}")
-        return sent, rcpt
+        return rcpt
     
     def _build_signed_txn(self, account: Account, func: callable, args: tuple) -> SignedTransaction:
         call = func(*args)

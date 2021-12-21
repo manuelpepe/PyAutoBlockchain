@@ -10,3 +10,6 @@ API
 
    strategy_api
    blockchain_api
+   contract_api
+   transaction_api
+   accounts_api

@@ -3,8 +3,7 @@ import logging
 from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from web3 import Web3
-    from web3.types import TxReceipt
+    import web3
 
 from eth_account.datastructures import SignedTransaction
 from eth_account.account import Account
@@ -17,7 +16,7 @@ class TransactionError(Exception):
 
 
 class TransactionHandler:
-    def __init__(self, w3: "Web3", chain_id: int, config: Config):
+    def __init__(self, w3: "web3.Web3", chain_id: int, config: Config):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
         self.chain_id = chain_id
@@ -40,7 +39,7 @@ class TransactionHandler:
         txn = call.buildTransaction(details)
         return self.w3.eth.account.sign_transaction(txn, private_key=account.key)
 
-    def _txn_details(self, account: Account, call: callable):
+    def _txn_details(self, account: Account, call: callable) -> dict:
         return {
             "chainId" : self.chain_id,
             "gas" : self.gas(call),
@@ -49,14 +48,17 @@ class TransactionHandler:
         }
 
     def gas(self, call: callable) -> int:
+        """ Returns gas allocated for transaction. Depending on the PAB configs it returns
+        an estimation or a fixed value.  """
         if self.config.get('transactions.gas.useEstimate'):
             return self._estimate_call_gas(call)
         return self.config.get('transactions.gas.exact')
     
     def _estimate_call_gas(self, call: callable) -> int:
+        """ Returns estimated gas for a given call. """
         return int(call.estimateGas())
 
-    def gas_price(self):
+    def gas_price(self)-> "web3.types.Wei":
         return self.w3.toWei(
             self.config.get('transactions.gasPrice.number'), 
             self.config.get('transactions.gasPrice.unit')

@@ -15,7 +15,8 @@ _logger = logging.getLogger("pab.accounts")
 ENVS_PREFIX = re.compile(r"^PAB_PK([0-9]*)")
 
 
-def create_keyfile(path: Path, private_key: str, password: str):
+def create_keyfile(path: Path, private_key: str, password: str) -> None:
+    """ Creates a keyfile using :ref:`Web3.eth.account.encrypt`. """
     from web3 import Web3
     if path.is_file():
         raise KeyfileOverrideException("Warning, trying to overwrite existing keyfile")

@@ -7,11 +7,12 @@ from typing import Dict, TYPE_CHECKING
 from pab.contract import ContractManager
 from pab.transaction import TransactionHandler
 from pab.config import Config
-from eth_account.account import Account
 
 if TYPE_CHECKING:
     from web3 import Web3
     from web3.types import TxReceipt
+    from eth_account.account import LocalAccount
+
 
 
 _logger = logging.getLogger("pab.blockchain")
@@ -20,7 +21,7 @@ _logger = logging.getLogger("pab.blockchain")
 class Blockchain:
     """ Web3 connection manager. """
 
-    def __init__(self, root: Path, config: Config, accounts: Dict[int, Account]):
+    def __init__(self, root: Path, config: Config, accounts: Dict[int, 'LocalAccount']):
         self.root = root
         self.config = config
         self.rpc: str = config.get('endpoint')
@@ -31,7 +32,7 @@ class Blockchain:
         """ Network name """
         self.w3: "Web3" = self._connect_web3()
         """ Internal Web3 connection"""
-        self.accounts: Dict[int, Account] = accounts
+        self.accounts: Dict[int, 'LocalAccount'] = accounts
         """ List of loaded accounts """
         self.contracts: ContractManager = ContractManager(self.w3, root)
         """ Initialized contract manager """
@@ -45,7 +46,7 @@ class Blockchain:
         w3.middleware_onion.inject(geth_poa_middleware, layer=0)
         return w3
 
-    def transact(self, account: Account, func: callable, args: tuple) -> "TxReceipt":
+    def transact(self, account: 'LocalAccount', func: callable, args: tuple) -> "TxReceipt":
         """ Uses internal transaction handler to submit a transaction. """
         return self._txn_handler.transact(account, func, args)
 

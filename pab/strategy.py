@@ -1,15 +1,16 @@
+from __future__ import annotations
+
 import sys
 import logging
 import importlib
 
 from pathlib import Path
-from typing import Dict, Union, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 
 if TYPE_CHECKING:
-    from eth_account.account import Account
-    from eth_account.signers.local import LocalAccount
+    from eth_account.account import LocalAccount
     from web3.types import TxReceipt
     from pab.contract import ContractManager
 
@@ -62,7 +63,7 @@ class BaseStrategy(ABC):
         self.name: str = name
 
     @property
-    def accounts(self) -> Dict[int, Union['Account', 'LocalAccount']]:
+    def accounts(self) -> Dict[int, 'LocalAccount']:
         """ Returns available accounts in current blockchain. 
         You can access specific accounts with numeric indexes"""
         return self.blockchain.accounts
@@ -78,7 +79,7 @@ class BaseStrategy(ABC):
         """ Strategy entrypoint. Must be defined by all childs. """
         raise NotImplementedError("Childs of BaseStrategy must implement 'run'")
 
-    def transact(self, account: 'Account', func: callable, args: tuple) -> "TxReceipt":
+    def transact(self, account: 'LocalAccount', func: callable, args: tuple) -> "TxReceipt":
         """ Makes a transaction on the current blockchain. """
         return self.blockchain.transact(account, func, args)
     

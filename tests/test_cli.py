@@ -2,7 +2,6 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from eth_account.account import Account
 from hexbytes.main import HexBytes
 from pab.accounts import load_accounts
 from pab.cli import main, parser

@@ -2,11 +2,12 @@ import logging
 
 from typing import TYPE_CHECKING, Optional
 
+
 if TYPE_CHECKING:
     import web3
 
 from eth_account.datastructures import SignedTransaction
-from eth_account.account import Account
+from eth_account.account import LocalAccount
 
 from pab.config import Config
 
@@ -22,7 +23,7 @@ class TransactionHandler:
         self.chain_id = chain_id
         self.config = config
         
-    def transact(self, account: Account, func: callable, args: tuple, timeout: Optional[int] = None) -> "TxReceipt":
+    def transact(self, account: LocalAccount, func: callable, args: tuple, timeout: Optional[int] = None) -> "TxReceipt":
         """ Submits transaction and prints hash """
         if not timeout:
             timeout = self.config.get("transactions.timeout")
@@ -33,13 +34,13 @@ class TransactionHandler:
         self.logger.info(f"Gas Used: {rcpt.gasUsed}")
         return rcpt
     
-    def _build_signed_txn(self, account: Account, func: callable, args: tuple) -> SignedTransaction:
+    def _build_signed_txn(self, account: LocalAccount, func: callable, args: tuple) -> SignedTransaction:
         call = func(*args)
         details = self._txn_details(account, call)
         txn = call.buildTransaction(details)
         return self.w3.eth.account.sign_transaction(txn, private_key=account.key)
 
-    def _txn_details(self, account: Account, call: callable) -> dict:
+    def _txn_details(self, account: LocalAccount, call: callable) -> dict:
         return {
             "chainId" : self.chain_id,
             "gas" : self.gas(call),

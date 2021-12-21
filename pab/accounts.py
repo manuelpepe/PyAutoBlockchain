@@ -7,12 +7,13 @@ import logging
 from typing import Dict, Optional
 from pathlib import Path
 
-from eth_account.account import Account
+from eth_account.account import Account, LocalAccount
 
 
 _logger = logging.getLogger("pab.accounts")
 
 ENVS_PREFIX = re.compile(r"^PAB_PK([0-9]*)")
+
 
 
 def create_keyfile(path: Path, private_key: str, password: str) -> None:
@@ -25,7 +26,7 @@ def create_keyfile(path: Path, private_key: str, password: str) -> None:
         json.dump(keydata, fp)
 
 
-def _load_keyfile(keyfile: Path) -> Optional[Account]:
+def _load_keyfile(keyfile: Path) -> Optional[LocalAccount]:
     if keyfile is None or not keyfile.is_file():
         _logger.warning(f"Keyfile at '{keyfile}' not found.")
         return
@@ -41,7 +42,7 @@ def _get_ix_from_name(name) -> Optional[int]:
     return None
 
 
-def _load_from_env() -> Dict[int, Account]:
+def _load_from_env() -> Dict[int, LocalAccount]:
     """ Private keys are loaded from the environment variables that follow the naming
     convention `PAB_PK<ix>`. `ix` will be the index in the accounts list. """
     accounts = {}
@@ -52,7 +53,7 @@ def _load_from_env() -> Dict[int, Account]:
     return accounts
 
 
-def load_accounts(keyfiles: list[Path]) -> Dict[int, Account]:
+def load_accounts(keyfiles: list[Path]) -> Dict[int, LocalAccount]:
     """ Load accounts from environment variables and keyfiles"""
     accounts = {}
     for keyfile in keyfiles:

@@ -11,7 +11,7 @@ PAB is a framework that helps with development and automation of periodic tasks 
 
 PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
 
-For a sample guide see [GUIDE.md](GUIDE.md), the example at [examples](examples/guide-example) or a more complex implementation at [PolyCompounder](https://github.com/manuelpepe/PolyCompounder).
+Check out our [documentation here!](https://pyautoblockchain.readthedocs.io/en/latest/index.html)
 
 ## Installation
 
@@ -246,9 +246,6 @@ Add the following to your `config.json`:
 
 
 ## Developing
-
-For details see [ARCHITECTURE.md](ARCHITECTURE.md)
-
 
 ### Testing
 

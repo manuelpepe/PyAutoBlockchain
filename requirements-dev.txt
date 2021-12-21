@@ -2,3 +2,5 @@ pytest
 pytest-cov
 flake8
 toml
+sphinx
+sphinx_rtd_theme

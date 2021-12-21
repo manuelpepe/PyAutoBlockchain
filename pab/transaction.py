@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     import web3
+    from web3.types import TxReceipt
 
 from eth_account.datastructures import SignedTransaction
 from eth_account.account import LocalAccount

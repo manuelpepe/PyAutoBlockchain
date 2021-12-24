@@ -16,21 +16,43 @@ RPC endpoint can be loaded from the `PAB_CONF_ENDPOINT` environment variable or 
 Loading Accounts
 ----------------
 
-Multiple accounts can be loaded dynamically loaded from the environment or keyfiles to use in the strategies.
+Multiple accounts can be dynamically loaded from the environment or keyfiles.
+All accounts can be used by any BaseStrategy child, for more info on how to use them see :ref:`Strategies InDept Accounts`
+and :ref:`Strategies InDept Transactions`.
+
+From Environment
+++++++++++++++++
 
 You can set the environment variables `PAB_PK1`, `PAB_PK2`, etc as the private keys for the accounts.
 
-Another option is to use keyfiles, which can be created with `pab create-keyfile`. You can specify keyfiles to load with `pab run --keyfiles key1.file,key2.file`. Accounts loaded through keyfiles require a one-time interactive authentication at the start of the execution.
-
-All accounts are then loaded for all strategies into `self.accounts[0]`, `self.accounts[1]`, etc...
-
-
-For example:
+For example: 
 
 .. code-block:: bash
 
     $ export PAB_PK0="0xSomePrivateKey"
     $ pab run
+
+
+From Keyfiles
++++++++++++++
+
+A keyfile is a file that contains your private key, encrypted with a password.
+You can create a keyfile with :code:`pab create-keyfile`.
+
+You can then load them with `pab run --keyfiles key1.file,key2.file`. 
+Accounts loaded through keyfiles require a one-time interactive authentication at the start of the execution.
+
+For example, to create a keyfile and use it:
+
+.. code-block:: bash
+
+    $ pab create-keyfile -o me.kf
+    Enter private key: 0xSomePrivateKey
+    Enter keyfile password: 
+    Repeat keyfile password: 
+    Keyfile written to 'me.kf'
+    $ pab run -k me.kf
+    Enter me.kf password: 
 
 
 .. _Registering Contracts:

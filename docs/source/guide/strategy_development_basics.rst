@@ -41,6 +41,7 @@ connection from `BaseStrategy.blockchain.w3` to get the account balance.
 Strategies In-Depth
 ###################
 
+.. _Strategies InDept Accounts:
 
 Accounts
 --------
@@ -50,6 +51,60 @@ and data. For info on how to configure a accounts in PAB read :ref:`Loading Acco
 
 To use configured accounts in a BaseStrategy subclass, you can access the :attr:`pab.strategy.BaseStrategy.accounts` attribute
 (e.g. `self.accounts[0]`, `self.accounts[1]`).
+
+
+.. code-block:: python
+
+    class MyStrategy(BaseStrategy):
+        def run(self):
+            user = self.accounts[0]
+
+
+Accounts Attributes
++++++++++++++++++++
+
+Accounts in `self.accounts` are instances of LocalAccount_.
+
+
+Loading Order
++++++++++++++
+
+As you see in :ref:`Loading Accounts`, there are two ways of loading accounts but only one list.
+The way the list is filled is by first loading accounts from environment variables into their fixed indexes,
+and then filling the gaps from 0 to N with keyfiles.
+
+This means that if you have the following environment variables:
+
+
+.. code-block:: bash
+
+    # .env.prod
+    PAB_PK1=ACC-A
+    PAB_PK2=0xACC-B
+    PAB_PK5=0xACC-C
+
+
+And you run with two keyfiles like this:
+
+.. code-block:: bash
+
+    $ pab run -e prod -k ACC-D.keyfile,ACC-E.keyfile
+
+
+The accounts dictionary for a strategy will look like this:
+
+.. code-block:: bash
+
+    >>> print(self.accounts)
+    {
+        0: LocalAccount("0xACC-D"),
+        1: LocalAccount("0xACC-A"),
+        2: LocalAccount("0xACC-B"),
+        3: LocalAccount("0xACC-E"),
+        5: LocalAccount("0xACC-C")
+    }
+
+To avoid the confusion that using both methods might cause, we recomend you stick to one method of loading accounts.
 
 
 Contracts
@@ -62,8 +117,12 @@ For example:
 
 .. code-block:: python
 
-    self.contracts.get("MY_CONTRACT")
+    class MyStrategy(BaseStrategy):
+        def run(self):
+            contract = self.contacts.get("MY_CONTRACT")
 
+
+.. _Strategies InDept Transactions:
 
 Transactions
 ------------
@@ -83,6 +142,24 @@ For example:
             rcpt = self.transact(user, contract.functions.someFunction, params)
 
 
+
+Read-Only Queries
+-----------------
+
+You can make readonly queries directly from the contract, without using `self.transact`.
+
+.. code-block:: python
+
+    class MyStrategy(BaseStrategy):
+        def run(self):
+            contract = self.contacts.get("MY_CONTRACT")
+            params = ("param1", 2)
+            some_data = contract.functions.getSomeData(*params).call()
+
+
+Read-Only queries do not consume gas.
+
+
 Blockchain and Web3
 -------------------
 
@@ -92,5 +169,5 @@ s :attr:`pab.strategy.BaseStrategy.blockchain`.
 
 
 
-
 .. _Web3: https://web3py.readthedocs.io/en/stable/index.html
+.. _LocalAccount: https://eth-account.readthedocs.io/en/latest/eth_account.signers.html#eth_account.signers.local.LocalAccount

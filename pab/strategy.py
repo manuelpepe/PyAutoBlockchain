@@ -94,12 +94,12 @@ class PABError(Exception):
 
 
 class RescheduleError(PABError):
-    """ Strategies can raise this exception to tell PAB to optionally reschedule them in known scenarios. """
+    """ Strategies can raise this exception to tell PAB to reschedule them in known scenarios. """
     pass
 
 
 class SpecificTimeRescheduleError(RescheduleError):
-    """ Same as `RescheduleError` but with specific a specific date and time. """
-    def __init__(self, message, next_at = None):
+    """ Same as `RescheduleError` but at a specific time passed as a timestamp. """
+    def __init__(self, message: str, next_at: int = None):
         super().__init__(message)
         self.next_at = next_at

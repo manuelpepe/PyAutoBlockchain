@@ -1,7 +1,4 @@
 import inspect
-import json
-
-from pathlib import Path
 
 from pab.strategy import BaseStrategy
 

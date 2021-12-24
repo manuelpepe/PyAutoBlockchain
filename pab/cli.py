@@ -77,7 +77,6 @@ def run(args, logger):
 
 def parser():
     p = ArgumentParser("pab", description=__doc__, formatter_class=RawDescriptionHelpFormatter)
-    p.add_argument("-e", "--envs", help="List of environments separated by commas.", default="")
     subparsers = p.add_subparsers(help="subcommands for pab")
 
     p_create = subparsers.add_parser("list-strategies", help="List strategies and parameters")
@@ -87,6 +86,7 @@ def parser():
 
     p_run = subparsers.add_parser("run", help="Run tasks")
     p_run.add_argument("-k", "--keyfiles", action="store", help="List of keyfiles separated by commas.", default='')
+    p_run.add_argument("-e", "--envs", help="List of environments separated by commas.", default="")
     p_run.set_defaults(func=run)
 
     p_createkf = subparsers.add_parser("create-keyfile", help="Create keyfile. You'll need your private key and a new password for the keyfile.")

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from pab.strategy import BaseStrategy, SpecificTimeRescheduleError
 from pab.core import PAB
-from pab.queue import Queue, Job
+from pab.queue import Queue, Task
 
 RANDOM_DELTA = timedelta(hours=4)
 RANDOM_DATE = datetime.now() + RANDOM_DELTA
@@ -27,7 +27,7 @@ class StrategyTestWorks(BaseStrategy):
 def test_item_runs(blockchain):
     strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
     strat.run = MagicMock(name="run")
-    item = Job(0, strat, Job.RUN_ASAP)
+    item = Task(0, strat, Task.RUN_ASAP)
     pab = PAB(blockchain.root)
     pab.queue = Queue([item])
     assert len(pab.queue) == 1
@@ -37,7 +37,7 @@ def test_item_runs(blockchain):
 
 def test_that_fails_is_rescheduled(blockchain):
     strat = StrategyTestHarvestNotAvailable(None, "Test Strategy")
-    item = Job(0, strat, Job.RUN_ASAP)
+    item = Task(0, strat, Task.RUN_ASAP)
     pab = PAB(blockchain.root)
     pab.queue = Queue([item])
     pab.process_queue()
@@ -55,7 +55,7 @@ def test_that_fails_is_rescheduled(blockchain):
 
 def test_failed_strategy_reschedules_using_repeat_every(blockchain):
     strat = StrategyTestWorks(None, "Test Strategy that works")
-    item = Job(0, strat, Job.RUN_ASAP, repeat_every={"days": 1, "hours": 1})
+    item = Task(0, strat, Task.RUN_ASAP, repeat_every={"days": 1, "hours": 1})
     pab = PAB(blockchain.root)
     pab.queue = Queue([item])
     pab.process_queue()

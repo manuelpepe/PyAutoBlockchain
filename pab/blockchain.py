@@ -14,10 +14,6 @@ if TYPE_CHECKING:
     from eth_account.account import LocalAccount
 
 
-
-_logger = logging.getLogger("pab.blockchain")
-
-
 class Blockchain:
     """ Web3 connection manager. """
 

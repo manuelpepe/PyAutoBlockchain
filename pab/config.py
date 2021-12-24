@@ -42,7 +42,7 @@ def flatten(dict_: dict, base_path: str = '') -> dict:
 
 
 class ConfigSource(ABC):
-    """ All childs of ConfigSource should implement `_load_data()` returning a 
+    """ Children of ConfigSource should implement `_load_data()` returning a 
     1-dimensional mapping of `path: value`. """
     def __init__(self):
         self.data = self._load_data()

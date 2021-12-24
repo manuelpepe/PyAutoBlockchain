@@ -9,7 +9,7 @@ from pab.blockchain import Blockchain
 from pab.config import load_configs
 from pab.strategy import load_strategies
 from pab.alert import alert_exception
-from pab.queue import Job, QueueLoader
+from pab.queue import Task, QueueLoader
 
 
 class PAB:
@@ -36,7 +36,7 @@ class PAB:
         for item in self.queue:
             self.process_item(item)
 
-    def process_item(self, item: Job):
+    def process_item(self, item: Task):
         try:
             item.process()
         except Exception as err:

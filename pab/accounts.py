@@ -27,15 +27,17 @@ def create_keyfile(path: Path, private_key: str, password: str) -> None:
 
 
 def _load_keyfile(keyfile: Path) -> Optional[LocalAccount]:
+    """ Loads accounts from keyfile. Asks for user input. """
     if keyfile is None or not keyfile.is_file():
         _logger.warning(f"Keyfile at '{keyfile}' not found.")
         return
     with open(keyfile) as fp:
-        wallet_pass = getpass.getpass("Enter wallet password: ")
+        wallet_pass = getpass.getpass(f"Enter {keyfile} password: ")
         return Account.from_key(Account.decrypt(json.load(fp), wallet_pass))
 
 
 def _get_ix_from_name(name) -> Optional[int]:
+    """ Returns the index from `PAB_PK<INDEX>`. """
     match = re.findall(ENVS_PREFIX, name)
     if match:
         return int(match[0])

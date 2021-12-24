@@ -13,7 +13,7 @@ from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
 
-class Job:
+class Task:
     """ Container for a strategy to be executed in the future """ 
     logger = logging.getLogger("QueuedItem")
 
@@ -34,7 +34,7 @@ class Job:
         self.schedule_for(next_run)
 
     def repeats(self) -> bool:
-        """ True if Job has repetition data. """
+        """ True if Task has repetition data. """
         return bool(self.repeat_every)
 
     def next_repetition_time(self) -> int:
@@ -85,8 +85,8 @@ class Job:
 
 
 class Queue:
-    """ Wrapper for a list of Jobs """
-    def __init__(self, items: List[Job]):
+    """ Wrapper for a list of Tasks """
+    def __init__(self, items: List[Task]):
         self.items = items
 
     def __getitem__(self, key):
@@ -133,7 +133,7 @@ class QueueLoader:
         for ix, data in enumerate(tasks):
             strat = self._create_strat_from_data(data)
             repeat = data.get("repeat_every", {})
-            item = Job(ix, strat, Job.RUN_ASAP, repeat_every=repeat)
+            item = Task(ix, strat, Task.RUN_ASAP, repeat_every=repeat)
             out.append(item)
         return Queue(out)
 

@@ -1,4 +1,4 @@
-from pab.queue import Queue, Job, QueueLoader
+from pab.queue import Queue, Task, QueueLoader
 from pab.strategy import load_strategies
 
 
@@ -13,4 +13,4 @@ def test_queue_loader_loads(blockchain):
     queue = QueueLoader(blockchain, strats).load()
     assert isinstance(queue, Queue)
     assert len(queue) > 0
-    assert all(isinstance(item, Job) for item in queue)
+    assert all(isinstance(item, Task) for item in queue)

@@ -13,7 +13,7 @@
 * Strategy API Change: Removed `BaseStrategy.blockchain.read_contract`, now use `BaseStrategy.contracts.get`
 * Strategy API Change: New property `BaseStrategy.contracts`. 
 * Strategy API Change: New property `BaseStrategy.accounts`. 
-* RTD documentation at (https://pyautoblockchain.readthedocs.io/)[https://pyautoblockchain.readthedocs.io/]
+* RTD documentation at [https://pyautoblockchain.readthedocs.io/](https://pyautoblockchain.readthedocs.io/)
 * Renamed `pab.queue` to `pab.task`. Renamed `QueueLoader` to `TaskFileParser`. 
 * Removed `Queue` in favor of `TaskList`.
 

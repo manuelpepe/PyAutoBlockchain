@@ -9,6 +9,10 @@
 
 PAB is a framework that helps with development and automation of periodic tasks on blockchains.
 
+With PAB, you quickstart your blockchain development and prototyping. After running pab init to create a new project, you can jump right into developing your own strategies.
+
+With little more configuration, you can connect to any Web3 compatible network using an RPC, load contracts from the network, and use any account you have the Private Key of to authenticate against the network (if you need to make transactions).
+
 PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
 
 Check out our [documentation here!](https://pyautoblockchain.readthedocs.io/en/latest/index.html)
@@ -50,6 +54,8 @@ Run project:
 ```bash
 (venv) $ pab run
 ```
+
+For a substantially more complete guide, head over to our [Official Documentation's Guide](https://pyautoblockchain.readthedocs.io/en/latest/guide/index.html) section.
 
 
 ## Sample Strategy
@@ -108,144 +114,10 @@ class CompoundAndLog(BaseStrategy):
 ```
 
 
-## Accounts
-
-Multiple accounts can be loaded dynamically loaded from the environment or keyfiles to use in the strategies.
-
-You can set the environment variables `PAB_PK1`, `PAB_PK2`, etc as the private keys for the accounts.
-
-Another option is to use keyfiles, which can be created with `pab create-keyfile`. You can specify keyfiles to load with `pab run --keyfiles key1.file,key2.file`. Accounts loaded through keyfiles require a one-time interactive authentication at the start of the execution.
-
-All accounts are then loaded for all strategies into `self.accounts[0]`, `self.accounts[1]`, etc...
+For more details, read our [Official Documentation's Strategies In-Depth](https://pyautoblockchain.readthedocs.io/en/latest/guide/strategy_development_basics.html#strategies-in-depth) section.
 
 
-## Contracts
-
-Contracts are loaded from the `contracts.json` file at the project root. An example would be:
-
-```
-{
-    "MYTOKEN": {
-        "address": "0x12345",
-        "abifile": "mytoken.abi"
-    }
-}
-```
-
-In this example, you also need to create the abifile at `abis/mytoken.abi` with the ABI data. You need to do this for all contracts.
-
-Strategies can then get and use this contract with `self.contracts.get("MYTOKEN")`.
-
-
-## Tasks
-
-Tasks are loaded from the `tasks.json` file at the project root.
-The  following example defines a single task to execute, using the strategy `BasicCompound` that repeats every 24hs.
-
-Multiple contract names (BNB, WBTC, PAIR, MASTERCHEF, ROUTER) are passed to the strategy as params. The strategy later uses these names to query the contracts from `BaseStrategy.contracts`.
-
-```json
-[
-    {
-        "strategy": "BasicCompound",
-        "name": "Compound BNB-WBTC",
-        "repeat_every": {
-            "days": 1
-        },
-        "params": {
-            "swap_path": ["BNB", "WBTC"],
-            "pair": "PAIR",
-            "masterchef": "MASTERCHEF",
-            "router": "ROUTER",
-            "pool_id": 11
-        }
-    }
-]
-```
-
-Tasks are defined as dictionaries with:
-
-* `strategy`: Class name of strategy (must be subclass of `pab.strategy.BaseStrategy`, see `pab list-strategies`)
-* `name`: Name, just for logging.
-* `params`: Dictionary with strategy parameters. (see `pab list-strategies -v`)
-* `repeat_every`: _Optional_. Dictionary with periodicity of the process, same arguments as `datetime.timedelta`.
-
-Run `pab list-strategies -v` to see available strategies and parameters.
-
-
-## Configuration
-
-Configs can be loaded from environment variables (optionally from a `.env` file) or from the `config.json` file.
-
-Environment variables follow the name schema `PAB_CONF_<PATH>`.
-
-For example, `transactions.timeout` can be set in `.env` as:
-
-```
-PAB_CONF_TRANSACTIONS_TIMEOUT=100
-```
-
-or in `config.json` as:
-
-```
-{
-    "transactions": {
-        "timeout": 100
-    }
-}
-```
-
-Multiple `.env.name` files can be loaded with `pab -e name,name2 run`.
-
-
-### RPC
-
-An RPC is needed for PAB to communicate with the blockchain networks.
-Some known RPCs with free tiers are [Infura](https://infura.io/) and [MaticVigil](https://rpc.maticvigil.com/).
-
-RPC endpoint can be loaded from the `PAB_CONF_ENDPOINT` environment variable or from the `endpoint` config.
-
-
-### Transaction settings
-
-Default transaction options are available through the following configs:
-
-```
-{
-    "transactions": {
-        "timeout": 200,
-        "gasPrice": {
-            "number": "1.1",
-            "unit": "gwei"
-        },
-        "gas": {
-            "useEstimate": false,
-            "exact": 200000
-        }
-    }
-}
-```
-
-### Email alerts
-
-You can setup email alerts for unhandled and handled exceptions.
-Add the following to your `config.json`:
-
-```json
-{
-    "emails": {
-        "enabled": true,
-        "host": "smtp.host.com",
-        "port": 465,
-        "user": "email@host.com",
-        "password": "password",
-        "recipient": "me@host.com"
-    }   
-}
-```
-
-
-## Developing
+## Development
 
 ### Testing
 

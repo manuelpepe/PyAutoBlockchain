@@ -1,7 +1,7 @@
 ## 0.5 (***WIP***)
 
 * New `init` command.
-* New `pab [-e/--envs]` option to load .env* files.
+* New `pab run [-e/--envs]` option to load .env* files.
 * Renamed `--keyfile` to `--keyfiles` to allow multiple accounts.
 * New optional `PyAutoBlockchain[ui]` extension to install [PABUI](https://github.com/manuelpepe/PABUI).
 * New config loading from ENVVARS/.env file for sensitive data (Personal 0xAddress, RPC, SMTP). 
@@ -9,10 +9,13 @@
 * Removed deprecated functions from `pab.utils`.
 * Multiple accounts.
 * Load accounts from ENVVARS named `PAB_PK<index>`. `index` will be the index in `BaseStrategy.accounts`.
-* Strategy API Change: Changed `BaseStrategy._transact(func, args)` to `BaseStrategy.transact(acc, func, args)`. First parameter should be an Account from `BaseStrategy.accounts`.
+* Strategy API Change: Changed `BaseStrategy._transact(func, args)` to `BaseStrategy.transact(acc, func, args) -> web3.types.TxReceipt`. First parameter should be an Account from `BaseStrategy.accounts`. Now returns `web3.types.TxReceipt`.
 * Strategy API Change: Removed `BaseStrategy.blockchain.read_contract`, now use `BaseStrategy.contracts.get`
 * Strategy API Change: New property `BaseStrategy.contracts`. 
 * Strategy API Change: New property `BaseStrategy.accounts`. 
+* RTD documentation at (https://pyautoblockchain.readthedocs.io/)[https://pyautoblockchain.readthedocs.io/]
+* Renamed `pab.queue` to `pab.task`. Renamed `QueueLoader` to `TaskFileParser`. 
+* Removed `Queue` in favor of `TaskList`.
 
 ## 0.4 (2021-11-11)
 

@@ -84,7 +84,7 @@ class BaseStrategy(ABC):
         return self.blockchain.transact(account, func, args)
     
     def __str__(self):
-        return f"{self.name} on {self.blockchain}"
+        return f"{self.name}"
 
 
 class PABError(Exception):

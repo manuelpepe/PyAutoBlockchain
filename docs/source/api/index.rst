@@ -13,3 +13,4 @@ API
    contract_api
    transaction_api
    accounts_api
+   task_api

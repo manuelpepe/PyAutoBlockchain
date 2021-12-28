@@ -18,11 +18,11 @@ from pab.blockchain import Blockchain
 
 
 __all__ = [
+    "import_strategies",
     "BaseStrategy",
     "PABError",
     "RescheduleError",
     "SpecificTimeRescheduleError",
-    "import_strategies",
     "load_strategies",
 ]
 

@@ -10,19 +10,18 @@ if TYPE_CHECKING:
     from pab.config import Config
 
 
-class TransactionError(Exception): 
-    pass
-
-
 class TransactionHandler:
     def __init__(self, w3: "web3.Web3", chain_id: int, config: "Config"):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.w3 = w3
+        """ Internal Web3 connection. """
         self.chain_id = chain_id
+        """ ChainID of current blockchain for transactions. """
         self.config = config
+        """ Config data. """
         
     def transact(self, account: "LocalAccount", func: callable, args: tuple, timeout: Optional[int] = None) -> "TxReceipt":
-        """ Submits transaction and prints hash """
+        """ Submits transaction and returns receitp. """
         if not timeout:
             timeout = self.config.get("transactions.timeout")
         stxn = self._build_signed_txn(account, func, args)
@@ -33,12 +32,14 @@ class TransactionHandler:
         return rcpt
     
     def _build_signed_txn(self, account: "LocalAccount", func: callable, args: tuple) -> "SignedTransaction":
+        """ Builds a signed transactoin ready to be sent to the network. """
         call = func(*args)
         details = self._txn_details(account, call)
         txn = call.buildTransaction(details)
         return self.w3.eth.account.sign_transaction(txn, private_key=account.key)
 
     def _txn_details(self, account: "LocalAccount", call: callable) -> dict:
+        """ Returns transaction details such as chainId, gas, gasPrice and nonce. """
         return {
             "chainId" : self.chain_id,
             "gas" : self.gas(call),
@@ -62,3 +63,7 @@ class TransactionHandler:
             self.config.get('transactions.gasPrice.number'), 
             self.config.get('transactions.gasPrice.unit')
         )
+
+
+class TransactionError(Exception): 
+    pass

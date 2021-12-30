@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 
-from typing import Any, Callable, Optional, List, NewType, TextIO
+from typing import Any, Callable, List, NewType, TextIO
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -103,6 +103,12 @@ class Task:
 
 
 class TaskFileParser:
+    REQUIRED_TASK_FIELDS: List[str] = [
+        "name",
+        "strategy"
+    ]
+    """ Fields that must be declared in all tasks. """
+
     """ Parses a tasks file and loads a TaskList. """
     def __init__(self, root: Path, blockchain: Blockchain, strategies: list[BaseStrategy]):
         self.root = root
@@ -117,24 +123,27 @@ class TaskFileParser:
         
     def _load_tasks_json_or_exception(self, fhandle: TextIO) -> RawTasksData:
         """ Parses TextIO input as JSON, validates and returns raw data.
-        May raise :exc:`TasksLoadError`. """
+        May raise :exc:`TasksFileParseError`. """
         try:
             data = json.load(fhandle)
             self._validate_raw_data(data)
             return RawTasksData(data)
         except json.JSONDecodeError as err:
-            raise TasksLoadError("Error loading tasks.json") from err
+            raise TasksFileParseError("Error parsing tasks.json as JSON") from err
 
     def _validate_raw_data(self, data: Any) -> None:
-        """ Validates raw tasks data format. """
+        """ Validates raw tasks data format. May raise :exc:`TasksFileParseError`. """
         if not isinstance(data, list):
-            raise TasksLoadError("Data should be a list of dicts")
-        for item in data:
-            if not isinstance(item, dict):
-                raise TasksLoadError("Data should be a list of dicts")
+            raise TasksFileParseError("tasks.json must be a list of dicts")
+        for task in data:
+            if not isinstance(task, dict):
+                raise TasksFileParseError("All tasks in tasks.json must dicts")
+            if not all(field in task.keys() for field in self.REQUIRED_TASK_FIELDS):
+                fields = ', '.join(self.REQUIRED_TASK_FIELDS)
+                raise TasksFileParseError(f"All tasks must declare all the following fields: {fields}")
 
     def _create_tasklist(self, tasks: RawTasksData) -> TaskList:
-        """ Creates a list of :class:`Task` objects from raw data. """
+        """ Creates a list of :class:`Task` objects from raw data. May raise :exc:`TaskLoadError`. """
         out = []
         for ix, data in enumerate(tasks):
             strat = self._create_strat_from_data(data)
@@ -144,9 +153,13 @@ class TaskFileParser:
         return TaskList(out)
 
     def _create_strat_from_data(self, data: dict) -> BaseStrategy:
-        """ Creates a single :class:`Task` object from raw data. """
+        """ Creates a single :class:`Task` object from raw data. May raise :exc:`TaskLoadError`. """
         strat_class = self._find_strat_by_name(data["strategy"])
-        return strat_class(self.blockchain, data["name"], **data.get("params", {}))
+        try:
+            return strat_class(self.blockchain, data["name"], **data.get("params", {}))
+        except TypeError as err:
+            msg = f"Error loading task '{data['name']}': {err}"
+            raise TaskLoadError(msg)
 
     def _find_strat_by_name(self, name: str) -> Callable | None:
         """ Finds a strategy by name. May raise :exc:`UnkownStrategyError`.  """
@@ -156,9 +169,16 @@ class TaskFileParser:
         raise UnkownStrategyError(f"Can't find strategy '{name}'")
 
 
-class TasksLoadError(Exception):
+class TasksFileParseError(Exception):
+    """ Error while parsing tasks.json """
     pass
 
 
-class UnkownStrategyError(TasksLoadError): 
+class TaskLoadError(Exception):
+    """ Error while loading a task """
+    pass
+
+
+class UnkownStrategyError(TaskLoadError): 
+    """ A strategy required by a task could not be found. """
     pass

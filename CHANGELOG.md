@@ -1,4 +1,4 @@
-## 0.5 (***WIP***)
+## 0.5 (2021-12-29)
 
 * New `init` command.
 * New `pab run [-e/--envs]` option to load .env* files.

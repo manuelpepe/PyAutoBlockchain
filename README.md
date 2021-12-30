@@ -7,11 +7,11 @@
 [![codecov](https://codecov.io/gh/manuelpepe/PyAutoBlockchain/branch/master/graph/badge.svg?token=6Hjb772RWB)](https://codecov.io/gh/manuelpepe/PyAutoBlockchain)
 
 
-PAB is a framework that helps with development and automation of periodic tasks on blockchains.
+PAB is a framework that helps with development and automation of blockchains related tasks.
 
-With PAB, you quickstart your blockchain development and prototyping. After running pab init to create a new project, you can jump right into developing your own strategies.
+With PAB, you quickstart your blockchain development and prototyping. After running pab init to create a new project, you can jump right into developing your own python strategies that interact with the blockchain.
 
-With little more configuration, you can connect to any Web3 compatible network using an RPC, load contracts from the network, and use any account you have the Private Key of to authenticate against the network (if you need to make transactions).
+With little configuration, you can connect to any Web3 compatible network using an RPC, load contracts from the network, and use any account you have the Private Key of to authenticate against the network (if you need to make transactions).
 
 PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
 

@@ -32,7 +32,7 @@ jobs:
 
     - name: Run pre-commit checks
       run: |
-        pre-commit run --show-diff-on-failure --from-ref origin/HEAD --to-ref HEAD
+        pre-commit run --show-diff-on-failure  --all-files
 
     - uses: codecov/codecov-action@v2
       with:

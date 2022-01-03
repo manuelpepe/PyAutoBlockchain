@@ -1,7 +1,7 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Unit Tests
+name: Unit Tests PRs
 
 on: [pull-request]
 
@@ -30,7 +30,7 @@ jobs:
 
     - name: Run pre-commit checks
       run: |
-        pre-commit run --show-diff-on-failure --from-ref origin/HEAD --to-ref HEAD
+        pre-commit run --show-diff-on-failure --all-files
 
     - uses: codecov/codecov-action@v2
       with:

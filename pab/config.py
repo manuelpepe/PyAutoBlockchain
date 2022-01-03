@@ -3,7 +3,7 @@ import json
 import difflib
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any, Optional
+from typing import Dict, Generic, List, Any, Optional, TypeVar
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -20,13 +20,17 @@ TASKS_FILE = Path("tasks.json")
 CONTRACTS_FILE = Path("contracts.json")
 
 
-class LCDict(dict):
+_KT = TypeVar("_KT", bound=str)
+_VT = TypeVar("_VT")
+
+
+class LCDict(dict, Generic[_KT, _VT]):
     """Lowercase dictionary for case-insensitive config names."""
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: _KT, value: _VT) -> None:
         return super().__setitem__(key.lower(), value)
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: _KT):
         return super().__getitem__(key.lower())
 
 

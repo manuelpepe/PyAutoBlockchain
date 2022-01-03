@@ -4,7 +4,7 @@
 [![Integration Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/integration-tests-main.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/integration-tests-main.yml)
 [![Unit Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/unit-tests-main.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/unit-tests-main.yml)
 [![Documentation Status](https://readthedocs.org/projects/pyautoblockchain/badge/?version=latest)](https://pyautoblockchain.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/manuelpepe/PyAutoBlockchain/branch/master/graph/badge.svg?token=6Hjb772RWB)](https://codecov.io/gh/manuelpepe/PyAutoBlockchain)
+[![codecov](https://codecov.io/gh/manuelpepe/PyAutoBlockchain/branch/main/graph/badge.svg?token=6Hjb772RWB)](https://codecov.io/gh/manuelpepe/PyAutoBlockchain)
 
 
 PAB is a framework that helps with development and automation of blockchains related tasks.

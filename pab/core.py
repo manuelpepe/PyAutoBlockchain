@@ -39,6 +39,7 @@ class PAB:
             self._sleep()
 
     def process_tasks(self):
+        raise Exception()
         for item in self.tasks:
             self.process_item(item)
 

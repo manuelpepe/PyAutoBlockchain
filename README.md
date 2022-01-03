@@ -1,8 +1,8 @@
 # PyAutoBlockchain (PAB)
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-310/)
-[![Integration Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/integration-tests.yml)
-[![Unit Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/python-app.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/python-app.yml)
+[![Integration Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/integration-tests-main.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/integration-tests-main.yml)
+[![Unit Tests](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/unit-tests-main.yml/badge.svg)](https://github.com/manuelpepe/PyAutoBlockchain/actions/workflows/unit-tests-main.yml)
 [![Documentation Status](https://readthedocs.org/projects/pyautoblockchain/badge/?version=latest)](https://pyautoblockchain.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/manuelpepe/PyAutoBlockchain/branch/master/graph/badge.svg?token=6Hjb772RWB)](https://codecov.io/gh/manuelpepe/PyAutoBlockchain)
 

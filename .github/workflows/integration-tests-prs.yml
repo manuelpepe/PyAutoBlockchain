@@ -3,7 +3,7 @@
 
 name: Integration Tests  PRs
 
-on: [pull-request]
+on: [pull_request]
 
 env:
   NODE_VERSION: '10.x'

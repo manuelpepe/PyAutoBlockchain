@@ -71,10 +71,8 @@ def initialize_project(args, logger):
 
 
 def run(args, logger):
-    envs = filter(lambda e: e != "", [env.strip() for env in args.envs.split(",")])
-    keyfiles = filter(
-        lambda kf: kf != "", [kf.strip() for kf in args.keyfiles.split(",")]
-    )
+    envs = [env.strip() for env in args.envs.split(",") if env.strip() != ""]
+    keyfiles = [kf.strip() for kf in args.keyfiles.split(",") if kf.strip() != ""]
     keyfiles_paths = [Path(kf) for kf in keyfiles]
     pab = PAB(Path.cwd(), keyfiles_paths, envs)
     sys.excepthook = exception_handler(logger, pab.config)

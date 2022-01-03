@@ -2,7 +2,7 @@ Setup Project
 =============
 
 
-Create project directory and venv 
+Create project directory and venv
 ---------------------------------
 
 First you need to create a directory to contain your project files

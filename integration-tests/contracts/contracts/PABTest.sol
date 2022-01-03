@@ -23,7 +23,7 @@ contract PABTest {
     function getOwner() public view returns(address) {
         return owner;
     }
-        
+
     function setBool(bool newBool) public {
         myBool = newBool;
     }
@@ -31,7 +31,7 @@ contract PABTest {
     function getBool() public view returns(bool) {
         return myBool;
     }
-        
+
     function setString(string memory newString) public {
         myString = newString;
     }
@@ -39,7 +39,7 @@ contract PABTest {
     function getString() public view returns(string memory) {
         return myString;
     }
-        
+
     function setInt(uint8 newInt) public {
         myInt = newInt;
     }
@@ -52,5 +52,5 @@ contract PABTest {
         require(msg.sender==owner,"Not the owner");
         return "You are the owner";
     }
-    
+
 }

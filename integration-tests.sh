@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # This script uses truffle to test and deploy the contracts from integration-tests/contracts
-# to a ganache-cli local blockchain. At deployment, contract addresses and accounts are stored 
+# to a ganache-cli local blockchain. At deployment, contract addresses and accounts are stored
 # and placed in an environment file that is loaded by the integration tests.
-#  
+#
 # To run the tests it calls `pytest integration-tests/`.
 # Exit Status of this script will be the same as the pytest call.
 

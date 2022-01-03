@@ -13,11 +13,17 @@ from pab.task import Task, TaskFileParser
 
 
 class PAB:
-    """ Loads configs, strategies, accounts and tasks. 
-    Handles main loop. """
+    """Loads configs, strategies, accounts and tasks.
+    Handles main loop."""
+
     ITERATION_SLEEP = 60
 
-    def __init__(self, root: Path, keyfiles: Optional[list[Path]] = None, envs: Optional[List[str]] = None):
+    def __init__(
+        self,
+        root: Path,
+        keyfiles: Optional[list[Path]] = None,
+        envs: Optional[List[str]] = None,
+    ):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.root = root
         self.config = load_configs(root, envs)
@@ -29,7 +35,7 @@ class PAB:
     def start(self):
         while True:
             self.process_tasks()
-            self.logger.debug(f"Tasks iteration finished.")
+            self.logger.debug("Tasks iteration finished.")
             self._sleep()
 
     def process_tasks(self):

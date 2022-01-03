@@ -43,10 +43,10 @@ $ pabui
 
 ## Usage
 
-Create project in current directory: 
+Create project in current directory:
 
 ```bash
-(venv) $ pab init 
+(venv) $ pab init
 ```
 
 Run project:
@@ -75,7 +75,7 @@ from datetime import datetime
 from pab.strategy import BaseStrategy
 
 class CompoundAndLog(BaseStrategy):
-    """ Finds pool in `masterchef` for `token`, compounds the given pool for 
+    """ Finds pool in `masterchef` for `token`, compounds the given pool for
     `self.accounts[account_index]` and logs relevant data into some csv file. """
 
     def __init__(self, *args, filepath: str = "compound.csv", token: str = '', masterchef: str = '', account_index: int = 0):
@@ -104,7 +104,7 @@ class CompoundAndLog(BaseStrategy):
             self.account.address,
             self.pool_id
         ).call()
-    
+
     def write_to_file(self, old_balance: int, new_balance: int):
         now = datetime.now().strftime('%Y-%m-%d %I:%M:%S')
         diff = new_balance - old_balance

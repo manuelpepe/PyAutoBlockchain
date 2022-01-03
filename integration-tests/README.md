@@ -1,6 +1,6 @@
 # Integration Testing Manual
 
-Integration Testing involves testing PAB Tasks agains live contracts deployed on 
+Integration Testing involves testing PAB Tasks agains live contracts deployed on
 local ganache blockchain.
 
 This document provides an overview of the Integration Testing system and it's parts.
@@ -53,7 +53,7 @@ $ ./integration-tests.sh
 To fully test integrations, solidity smart contracts are built and deployed
 from the `contracts/` directory.
 
-[Truffle Suite](https://trufflesuite.com/) is used to aid in the development, testing and 
+[Truffle Suite](https://trufflesuite.com/) is used to aid in the development, testing and
 deployment of the Smart Contracts.
 
 #### Local Setup
@@ -78,7 +78,7 @@ ones can be added.
 #### Contracts
 
 Contract addresses may change between test runs, as they are redeployed every time the integration
-tests run. The way to always point to the correct contract is by using the `{ContractName}` syntax in the 
+tests run. The way to always point to the correct contract is by using the `{ContractName}` syntax in the
 PAB Project's `contracts.json` as the contract address.
 
 For example, if you are deploying and using a contract name `TokenController`, the following `contracts.json` will
@@ -95,7 +95,7 @@ populate to the correct address when the tests run:
 
 ### Tests
 
-PAB provides a `setup_project(project_name)` fixture that automatically sets up 
+PAB provides a `setup_project(project_name)` fixture that automatically sets up
 the corresponding project (from `projects/{project_name}`).
 
 The setup includes:

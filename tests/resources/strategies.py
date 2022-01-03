@@ -5,7 +5,7 @@ from pab.blockchain import Blockchain
 
 
 class CustomStrategy(BaseStrategy):
-    """ Custom strategy for testing """
+    """Custom strategy for testing"""
 
     def __init__(self, blockchain: Blockchain, name: str, test_var: List[str]):
         super().__init__(blockchain, name)

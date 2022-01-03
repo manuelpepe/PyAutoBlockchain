@@ -1,5 +1,5 @@
 [GLOBAL]
-# Don't remove the "KEYS HERE" comment below, the pipeline replaces it 
+# Don't remove the "KEYS HERE" comment below, the pipeline replaces it
 # with the default accounts in ganache.
 ### KEYS HERE ###
 

@@ -9,8 +9,9 @@ RANDOM_DELTA = timedelta(hours=4)
 RANDOM_DATE = datetime.now() + RANDOM_DELTA
 
 
-class HarvestNotAvailable(SpecificTimeRescheduleError): 
-    """ Harvest wasn't available. Should retry when it unlocks. """
+class HarvestNotAvailable(SpecificTimeRescheduleError):
+    """Harvest wasn't available. Should retry when it unlocks."""
+
     pass
 
 
@@ -61,4 +62,6 @@ def test_failed_strategy_reschedules_using_repeat_every(blockchain):
     pab.process_tasks()
     item_next_exec = datetime.fromtimestamp(pab.tasks[0].next_at)
     difference_in_time = item_next_exec - datetime.now()
-    assert difference_in_time > timedelta(days=1) and difference_in_time < timedelta(days=1, hours=1, seconds=1)
+    assert difference_in_time > timedelta(days=1) and difference_in_time < timedelta(
+        days=1, hours=1, seconds=1
+    )

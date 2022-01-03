@@ -9,7 +9,7 @@ env="$2"
 
 # Funcs
 check_if_changelog_is_wip () {
-    grep "\*\*\*WIP\*\*\*" CHANGELOG.md > /dev/null && echo "CHANGELOG.md is WIP" && exit 1 
+    grep "\*\*\*WIP\*\*\*" CHANGELOG.md > /dev/null && echo "CHANGELOG.md is WIP" && exit 1
 }
 
 confirm () {

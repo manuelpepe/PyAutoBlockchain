@@ -14,20 +14,21 @@ from pab.init import chdir
 
 @contextmanager
 def temp_environ():
-    prev_environ = {**os.environ}
+    prev_environ = os.environ.copy()
     yield
-    os.environ = prev_environ
+    os.environ.clear()
+    os.environ.update(prev_environ)
 
 
 def _load_envvars_mapping():
-    """ ENVS are loaded from the file `integration-tests/envs.toml`. """
-    envs_file = Path(__file__).parent / 'envs.toml'
-    with envs_file.open('r') as fp:
+    """ENVS are loaded from the file `integration-tests/envs.toml`."""
+    envs_file = Path(__file__).parent / "envs.toml"
+    with envs_file.open("r") as fp:
         return toml.load(fp)
 
 
 ENVS = _load_envvars_mapping()
-DEV_CONTRACTS_FILE = Path(__file__).parent / ".contracts.map" 
+DEV_CONTRACTS_FILE = Path(__file__).parent / ".contracts.map"
 
 
 def _copy_project(project_name: str, dest: Path) -> Path:
@@ -55,7 +56,9 @@ def _replace_contracts_in_data(contracts: dict, data: str) -> str:
         data = data.replace(f"{{{name}}}", address.strip())
     unreplaced = re.findall(r"\"{([a-zA-Z0-9]*)}\"", data, re.MULTILINE)
     if unreplaced:
-        raise RuntimeError(f"Couldn't replace addresses for contracts: {', '.join(unreplaced)}")
+        raise RuntimeError(
+            f"Couldn't replace addresses for contracts: {', '.join(unreplaced)}"
+        )
     return data
 
 
@@ -69,23 +72,22 @@ def _set_dev_contract_addresses(project_path: Path):
 
 
 def _set_envfile(project_path: Path, envs: dict):
-    envfile = project_path / '.env'
-    data = '\n'.join(f'{k}="{v}"' for k, v in envs.items())
+    envfile = project_path / ".env"
+    data = "\n".join(f'{k}="{v}"' for k, v in envs.items())
     envfile.write_text(data)
 
 
 @contextmanager
-def _setup_project(project_name: str) -> PAB:
+def _setup_project(project_name: str):
     with TemporaryDirectory() as tmpdir:
         project_path = _copy_project(project_name, Path(tmpdir))
         _set_dev_contract_addresses(project_path)
-        _set_envfile(project_path, ENVS.get('GLOBAL', {}) | ENVS.get(project_name, {}))
+        _set_envfile(project_path, ENVS.get("GLOBAL", {}) | ENVS.get(project_name, {}))
         with temp_environ():
             with chdir(project_path):
                 yield PAB(project_path)
 
 
 @pytest.fixture
-def setup_project() -> PAB:
+def setup_project():
     return _setup_project
-

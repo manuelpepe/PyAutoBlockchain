@@ -5,4 +5,3 @@ Blockchain API
 
 .. automodule:: pab.blockchain
    :members:
-

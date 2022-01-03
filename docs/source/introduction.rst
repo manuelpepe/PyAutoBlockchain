@@ -5,7 +5,7 @@ Introduction
 
 With PAB, you quickstart your blockchain development and prototyping.
 After running `pab init` to create a new project, you can jump right into developing your
-own strategies. 
+own strategies.
 
 With little more configuration, you can connect to any Web3 compatible network using
 an RPC, load contracts from the network, and use any account you have the Private Key of to
@@ -27,7 +27,7 @@ Here's a basic sample strategy to give you an idea of the :ref:`Strategy API`:
     from pab.strategy import BaseStrategy
 
     class CompoundAndLog(BaseStrategy):
-        """ Finds pool in `controller` for `token`, compounds the given pool for 
+        """ Finds pool in `controller` for `token`, compounds the given pool for
         `self.accounts[account_index]` and logs relevant data into a csv file. """
 
         def __init__(self, *args, filepath: str = "compound.csv", token: str = '', controller: str = '', account_index: int = 0):
@@ -59,7 +59,7 @@ Here's a basic sample strategy to give you an idea of the :ref:`Strategy API`:
                 self.account.address,
                 self.pool_id
             ).call()
-        
+
         def write_to_file(self, old_balance: int, new_balance: int):
             """ Write some number to a file. """
             now = datetime.now().strftime('%Y-%m-%d %I:%M:%S')

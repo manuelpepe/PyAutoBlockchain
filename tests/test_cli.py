@@ -16,10 +16,11 @@ def test_create_keyfile():
     filepass = "MYPASS"
     pk = "0x00f02cb8ad2ab4bdd67a59d50535f431d2c89d42144c3ed2fe06c79617ea3a86"
     inputs = [pk, filepass, filepass, filepass]
-    with patch('getpass.getpass', new=lambda x: inputs.pop(0)), \
-         TemporaryDirectory() as tmpdir:
-        keyfile = Path(tmpdir) / 'keyfile'
-        main(['create-keyfile', '-o', str(keyfile)])
+    with patch(
+        "getpass.getpass", new=lambda x: inputs.pop(0)
+    ), TemporaryDirectory() as tmpdir:
+        keyfile = Path(tmpdir) / "keyfile"
+        main(["create-keyfile", "-o", str(keyfile)])
         assert keyfile.is_file()
         accs = load_accounts([keyfile])
         assert len(accs) == 1

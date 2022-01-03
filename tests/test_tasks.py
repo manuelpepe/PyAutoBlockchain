@@ -1,4 +1,4 @@
-from pab.task import TaskList, Task, TaskFileParser
+from pab.task import Task, TaskFileParser
 from pab.strategy import load_strategies
 
 

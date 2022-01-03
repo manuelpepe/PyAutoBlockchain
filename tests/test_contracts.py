@@ -6,6 +6,7 @@ def test_contracts_load_from_file(blockchain):
     assert mgr.contracts
     assert "WBTC" in mgr.contracts.keys()
 
+
 def test_contract_read(blockchain):
     mgr = ContractManager(blockchain.w3, blockchain.root)
     assert mgr.get("WBTC")

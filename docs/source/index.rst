@@ -13,4 +13,3 @@ It also comes with a simple scheduler so you can setup jobs and forget about the
    introduction
    guide/index
    api/index
-

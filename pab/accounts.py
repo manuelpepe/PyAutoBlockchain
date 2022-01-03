@@ -15,10 +15,10 @@ _logger = logging.getLogger("pab.accounts")
 ENVS_PREFIX = re.compile(r"^PAB_PK([0-9]*)")
 
 
-
 def create_keyfile(path: Path, private_key: str, password: str) -> None:
-    """ Creates a keyfile using :ref:`Web3.eth.account.encrypt`. """
+    """Creates a keyfile using :ref:`Web3.eth.account.encrypt`."""
     from web3 import Web3
+
     if path.is_file():
         raise KeyfileOverrideException("Warning, trying to overwrite existing keyfile")
     keydata = Web3().eth.account.encrypt(private_key, password)
@@ -27,7 +27,7 @@ def create_keyfile(path: Path, private_key: str, password: str) -> None:
 
 
 def _load_keyfile(keyfile: Path) -> Optional[LocalAccount]:
-    """ Loads accounts from keyfile. Asks for user input. """
+    """Loads accounts from keyfile. Asks for user input."""
     if keyfile is None or not keyfile.is_file():
         _logger.warning(f"Keyfile at '{keyfile}' not found.")
         return
@@ -37,7 +37,7 @@ def _load_keyfile(keyfile: Path) -> Optional[LocalAccount]:
 
 
 def _get_ix_from_name(name) -> Optional[int]:
-    """ Returns the index from `PAB_PK<INDEX>`. """
+    """Returns the index from `PAB_PK<INDEX>`."""
     match = re.findall(ENVS_PREFIX, name)
     if match:
         return int(match[0])
@@ -45,8 +45,8 @@ def _get_ix_from_name(name) -> Optional[int]:
 
 
 def _load_from_env() -> Dict[int, LocalAccount]:
-    """ Private keys are loaded from the environment variables that follow the naming
-    convention `PAB_PK<ix>`. `ix` will be the index in the accounts list. """
+    """Private keys are loaded from the environment variables that follow the naming
+    convention `PAB_PK<ix>`. `ix` will be the index in the accounts list."""
     accounts = {}
     for name, value in os.environ.items():
         acc_ix = _get_ix_from_name(name)
@@ -56,7 +56,7 @@ def _load_from_env() -> Dict[int, LocalAccount]:
 
 
 def load_accounts(keyfiles: list[Path]) -> Dict[int, LocalAccount]:
-    """ Load accounts from environment variables and keyfiles"""
+    """Load accounts from environment variables and keyfiles"""
     accounts = {}
     for keyfile in keyfiles:
         acc = _load_keyfile(keyfile)
@@ -73,5 +73,5 @@ class AccountsError(Exception):
     pass
 
 
-class KeyfileOverrideException(Exception): 
+class KeyfileOverrideException(Exception):
     pass

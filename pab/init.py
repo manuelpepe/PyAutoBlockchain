@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import os
 import json
 
 from abc import ABC, abstractmethod
 from contextlib import AbstractContextManager
 from pathlib import Path
-from typing import List, Optional
 
 from pab.config import ConfigSchema
 
@@ -38,9 +39,9 @@ class Node(ABC):
 
 
 class Directory(Node):
-    def __init__(self, path: Path, childs: List[Node] = []):
+    def __init__(self, path: str, childs: list[Node] | None = None):
         super().__init__(path)
-        self.childs = childs
+        self.childs = childs or []
 
     def create(self):
         self.path.mkdir()
@@ -50,7 +51,13 @@ class Directory(Node):
 
 
 class File(Node):
-    def __init__(self, path: Path, content: str, optional: bool = False, warning: Optional[str] = None):
+    def __init__(
+        self,
+        path: str,
+        content: str,
+        optional: bool = False,
+        warning: str | None = None,
+    ):
         super().__init__(path)
         self.content = content
         self.optional = optional
@@ -64,16 +71,16 @@ class File(Node):
                 return
             raise FileExistsError(self.path)
         self.path.write_text(self.content)
-    
+
     def warn(self):
         print(self.warning)
-        
+
 
 class Tree:
-    def __init__(self, nodes: List[Node]):
+    def __init__(self, nodes: list[Node]):
         self.nodes = nodes
 
-    def create(self, directory: Path):
+    def create(self, directory: Path | str):
         with chdir(directory):
             for node in self.nodes:
                 node.create()
@@ -123,22 +130,16 @@ pab.log
 GITIGNORE_WARNING = "Warning! .gitignore was not created because it already exists. You should probably gitignore .env* files."
 
 
-
 TREE = [
-    Directory("abis", [
-        File("MyContract.abi", SAMPLE_ABI_DATA)
-    ]),
-    Directory("strategies", [
-        File("__init__.py", SAMPLE_STRATEGIES_DATA)
-    ]),
+    Directory("abis", [File("MyContract.abi", SAMPLE_ABI_DATA)]),
+    Directory("strategies", [File("__init__.py", SAMPLE_STRATEGIES_DATA)]),
     File("config.json", SAMPLE_CONFIG_DATA),
     File("tasks.json", SAMPLE_TASKS_DATA),
     File("contracts.json", SAMPLE_CONTRACTS_DATA),
-    File(".gitignore", GITIGNORE_CONTENT, optional=True, warning=GITIGNORE_WARNING)
+    File(".gitignore", GITIGNORE_CONTENT, optional=True, warning=GITIGNORE_WARNING),
 ]
 
 
 def initialize_project(directory: Path):
     tree = Tree(TREE)
     tree.create(directory)
-        

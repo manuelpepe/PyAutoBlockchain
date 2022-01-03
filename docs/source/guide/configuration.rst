@@ -25,7 +25,7 @@ From Environment
 
 You can set the environment variables `PAB_PK1`, `PAB_PK2`, etc as the private keys for the accounts.
 
-For example: 
+For example:
 
 .. code-block:: bash
 
@@ -39,7 +39,7 @@ From Keyfiles
 A keyfile is a file that contains your private key, encrypted with a password.
 You can create a keyfile with :code:`pab create-keyfile`.
 
-You can then load them with `pab run --keyfiles key1.file,key2.file`. 
+You can then load them with `pab run --keyfiles key1.file,key2.file`.
 Accounts loaded through keyfiles require a one-time interactive authentication at the start of the execution.
 
 For example, to create a keyfile and use it:
@@ -48,11 +48,11 @@ For example, to create a keyfile and use it:
 
     $ pab create-keyfile -o me.kf
     Enter private key: 0xSomePrivateKey
-    Enter keyfile password: 
-    Repeat keyfile password: 
+    Enter keyfile password:
+    Repeat keyfile password:
     Keyfile written to 'me.kf'
     $ pab run -k me.kf
-    Enter me.kf password: 
+    Enter me.kf password:
 
 
 .. _Registering Contracts:

@@ -9,10 +9,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
-DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 RESOURCES_DIR = Path(__file__).parent / Path("resources")
-DEFAULTS_SCHEMA_FILE = RESOURCES_DIR / "config.schema.json" 
+DEFAULTS_SCHEMA_FILE = RESOURCES_DIR / "config.schema.json"
 
 ABIS_DIR = Path("abis")
 CONFIG_FILE = Path("config.json")
@@ -21,19 +21,20 @@ CONTRACTS_FILE = Path("contracts.json")
 
 
 class LCDict(dict):
-    """ Lowercase dictionary for case-insensitive config names. """
+    """Lowercase dictionary for case-insensitive config names."""
+
     def __setitem__(self, key: str, value: Any) -> None:
         return super().__setitem__(key.lower(), value)
 
     def __getitem__(self, key: str):
         return super().__getitem__(key.lower())
-    
 
-def flatten(dict_: dict, base_path: str = '') -> dict:
+
+def flatten(dict_: dict, base_path: str = "") -> dict:
     out = {}
     for key, value in dict_.items():
-        cur_path = base_path + '.' + key
-        cur_path = cur_path.strip('.')
+        cur_path = base_path + "." + key
+        cur_path = cur_path.strip(".")
         if isinstance(value, dict):
             out |= flatten(value, cur_path)
         else:
@@ -42,44 +43,47 @@ def flatten(dict_: dict, base_path: str = '') -> dict:
 
 
 class ConfigSource(ABC):
-    """ Children of ConfigSource should implement `_load_data()` returning a 
-    1-dimensional mapping of `path: value`. """
+    """Children of ConfigSource should implement `_load_data()` returning a
+    1-dimensional mapping of `path: value`."""
+
     def __init__(self):
         self.data = self._load_data()
-    
+
     def items(self):
         return self.data.items()
 
     @abstractmethod
     def _load_data(self) -> Dict[str, Any]:
-        """ Must return a dict of `path: value` mappings. """
+        """Must return a dict of `path: value` mappings."""
         pass
 
 
 class JSONSource(ConfigSource):
-    """ Loads configs from `config.json` file. """
+    """Loads configs from `config.json` file."""
+
     def __init__(self, root: Path):
         self.file = root / CONFIG_FILE
         super().__init__()
-    
+
     def _load_data(self) -> Dict[str, Any]:
         if not self.file.is_file():
             return {}
-        with self.file.open('r') as fp:
+        with self.file.open("r") as fp:
             data = json.load(fp)
         return flatten(data)
 
 
 class ENVSource(ConfigSource):
-    """ Loads `.env` files and parses configs from environment. """
+    """Loads `.env` files and parses configs from environment."""
+
     PREFIX = "PAB_CONF_"
 
     def __init__(self, root: Path, envs: Optional[List[str]] = None):
         self.root = root
         self.envs = set(envs or [])
-        self.base_envfile = root / '.env'
+        self.base_envfile = root / ".env"
         super().__init__()
-    
+
     def _load_data(self) -> Dict[str, Any]:
         if self.base_envfile.is_file():
             load_dotenv(self.base_envfile)
@@ -89,7 +93,7 @@ class ENVSource(ConfigSource):
                 raise FileNotFoundError(str(envfile))
             load_dotenv(envfile)
         return self._parse_environ()
-        
+
     def _parse_environ(self) -> dict:
         output = {}
         for name, value in os.environ.items():
@@ -99,13 +103,13 @@ class ENVSource(ConfigSource):
         return output
 
     def _get_config_name(self, name: str) -> str:
-        name = name.replace(ENVSource.PREFIX, '')
-        return name.replace('_', '.')
+        name = name.replace(ENVSource.PREFIX, "")
+        return name.replace("_", ".")
 
 
 def _list_formatter(value):
     if isinstance(value, str):
-        return value.split(',')
+        return value.split(",")
     elif isinstance(value, list):
         return value
     raise InvalidConfigValue("Invalid value for list.")
@@ -114,9 +118,11 @@ def _list_formatter(value):
 def _bool_formatter(value):
     if isinstance(value, str):
         value = value.lower()
-        if value in ('1', '0', 'true', 'false'):
-            return value in ('1', 'true')
-        raise InvalidConfigValue("Invalid value for bool. Accepted string values are: 1, 0, true, false")
+        if value in ("1", "0", "true", "false"):
+            return value in ("1", "true")
+        raise InvalidConfigValue(
+            "Invalid value for bool. Accepted string values are: 1, 0, true, false"
+        )
     return bool(value)
 
 
@@ -155,7 +161,8 @@ class ConfigDef:
 
 
 class ConfigSchema:
-    """ Loads default schema. `schema` is a mapping of `path: ConfigDef`. """
+    """Loads default schema. `schema` is a mapping of `path: ConfigDef`."""
+
     def __init__(self):
         self.schema: LCDict = self._load()
 
@@ -176,7 +183,7 @@ class ConfigSchema:
 
     def keys(self):
         return self.schema.keys()
-    
+
     def items(self):
         return self.schema.items()
 
@@ -187,7 +194,9 @@ class ConfigSchema:
         return defaults
 
 
-def _merge_sources_and_format(schema: ConfigSchema, sources: List[ConfigSource]) -> LCDict:
+def _merge_sources_and_format(
+    schema: ConfigSchema, sources: List[ConfigSource]
+) -> LCDict:
     data = LCDict()
     for config in sources:
         for path, value in config.items():
@@ -198,7 +207,7 @@ def _merge_sources_and_format(schema: ConfigSchema, sources: List[ConfigSource])
 
 def _add_path_to_tree(tree: dict, path: str, value: Any):
     curnode = tree
-    parts = path.split('.')
+    parts = path.split(".")
     for part in parts[:-1]:
         curnode = curnode.setdefault(part, {})
     curnode[parts[-1]] = value
@@ -206,7 +215,8 @@ def _add_path_to_tree(tree: dict, path: str, value: Any):
 
 
 class Config:
-    """ Readonly config interface. Loads and merges config data from multiple sources."""
+    """Readonly config interface. Loads and merges config data from multiple sources."""
+
     def __init__(self, root: Path, envs: Optional[List[str]] = None):
         self.root = root
         self.envs = envs
@@ -214,28 +224,25 @@ class Config:
         self.data: LCDict = LCDict()
 
     def load(self):
-        self.data: LCDict = _merge_sources_and_format(self.schema,
-            [
-                JSONSource(self.root),
-                ENVSource(self.root, self.envs)
-            ]
+        self.data: LCDict = _merge_sources_and_format(
+            self.schema, [JSONSource(self.root), ENVSource(self.root, self.envs)]
         )
         return self
-    
-    def get(self, path: str):
+
+    def get(self, path: str) -> Any:
         path = path.lower()
         if path in self.data.keys():
             return self.data[path]
-        if any((name.startswith(path) and name != path for name in self.schema.keys())):
+        if any(name.startswith(path) and name != path for name in self.schema.keys()):
             return self._get_tree(path)
         return self.schema[path].default
-     
+
     def _get_tree(self, path: str):
         tree = {}
         for name, def_ in self.schema.items():
             if name.startswith(path):
                 value = self.data.get(name, def_.default)
-                subpath = name[len(path) + 1:]  # +1 accounts for last '.'
+                subpath = name[len(path) + 1 :]  # +1 accounts for last '.'
                 tree = _add_path_to_tree(tree, subpath, value)
         return tree
 
@@ -246,6 +253,7 @@ def load_configs(root: Path, envs: Optional[List[str]] = None):
 
 class InvalidConfigValue(ValueError):
     pass
+
 
 class ConfigNotDefined(ValueError):
     pass

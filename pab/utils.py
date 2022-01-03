@@ -4,7 +4,7 @@ from pab.strategy import BaseStrategy
 
 
 def amountToDecimal(amount: int, decimals: int = 18) -> float:
-    """ Available for strategies to convert between integers and decimal values. """
+    """Available for strategies to convert between integers and decimal values."""
     return amount / 10 ** decimals
 
 
@@ -25,11 +25,11 @@ def json_strats():
     return {
         strat.__name__: {
             "params": [
-                str(param) for name, param in
-                inspect.signature(strat).parameters.items()
+                str(param)
+                for name, param in inspect.signature(strat).parameters.items()
                 if name not in NOSHOW
             ],
-            "doc": strat.__doc__
-        } 
+            "doc": strat.__doc__,
+        }
         for strat in BaseStrategy.__subclasses__()
     }

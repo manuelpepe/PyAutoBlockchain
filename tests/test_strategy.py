@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 from pab.strategy import load_strategies
 
-STRATEGY_TEMPLATE="""
+STRATEGY_TEMPLATE = """
 from pab.strategy import BaseStrategy
 
 class {name}(BaseStrategy):
@@ -15,15 +15,21 @@ class {name}(BaseStrategy):
         pass
 """
 
+
 def randname(size: int = 15):
-    return ''.join(random.choice(string.ascii_letters) for i in range(size))
+    return "".join(random.choice(string.ascii_letters) for i in range(size))
+
 
 @contextmanager
-def template_strat_in_temp_dir(name: str) -> Path:
-    with TemporaryDirectory() as tmp:
-        startsfile = Path(tmp) / "strategies.py"
-        startsfile.write_text(STRATEGY_TEMPLATE.format(name=name))
-        yield Path(tmp)
+def template_strat_in_temp_dir(name: str):
+    try:
+        with TemporaryDirectory() as tmp:
+            startsfile = Path(tmp) / "strategies.py"
+            startsfile.write_text(STRATEGY_TEMPLATE.format(name=name))
+            yield Path(tmp)
+    finally:
+        pass
+
 
 def test_import_strategies_from_outside_cwd():
     NAME = randname()

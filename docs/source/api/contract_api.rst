@@ -7,4 +7,3 @@ Contract API
    :members:
    :undoc-members:
    :private-members:
-

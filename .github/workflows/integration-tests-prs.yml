@@ -42,7 +42,3 @@ jobs:
     - name: Run tests
       run: |
         bash integration-tests.sh
-
-    - uses: codecov/codecov-action@v2
-      with:
-        flags: integrationtests

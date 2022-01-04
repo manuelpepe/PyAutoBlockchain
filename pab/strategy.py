@@ -5,7 +5,7 @@ import logging
 import importlib
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, TypeAlias
 from abc import ABC, abstractmethod
 
 
@@ -18,6 +18,7 @@ from pab.blockchain import Blockchain
 
 
 __all__ = [
+    "StrategiesDict",
     "import_strategies",
     "BaseStrategy",
     "PABError",
@@ -30,9 +31,13 @@ __all__ = [
 _STRATS_MODULE_NAME = "strategies"
 
 
-def load_strategies(root: Path) -> list[type[BaseStrategy]]:
+StrategiesDict: TypeAlias = dict[str, type["BaseStrategy"]]
+""" TypeAlias for a mapping of `strategy_name: strategy_class`"""
+
+
+def load_strategies(root: Path) -> StrategiesDict:
     import_strategies(root)
-    return BaseStrategy.__subclasses__()
+    return {s.__name__: s for s in BaseStrategy.__subclasses__()}
 
 
 def import_strategies(root: Path):

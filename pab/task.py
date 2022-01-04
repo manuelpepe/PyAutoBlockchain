@@ -8,12 +8,17 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 from pab.blockchain import Blockchain
-from pab.strategy import BaseStrategy, RescheduleError, SpecificTimeRescheduleError
+from pab.strategy import (
+    BaseStrategy,
+    RescheduleError,
+    SpecificTimeRescheduleError,
+    StrategiesDict,
+)
 from pab.config import TASKS_FILE, DATETIME_FORMAT
 
 
 TaskList = NewType("TaskList", list["Task"])
-""" Type for an explicit list of Tasks"""
+""" Type for an explicit list of Tasks. """
 
 RawTasksData = NewType("RawTasksData", List[dict])
 """ Type for an explicit list of task data dictionaries.  """
@@ -115,17 +120,18 @@ class Task:
 
 
 class TaskFileParser:
+    """Parses a tasks file and loads a TaskList."""
+
     REQUIRED_TASK_FIELDS: list[str] = ["name", "strategy"]
     """ Fields that must be declared in all tasks. """
 
-    """ Parses a tasks file and loads a TaskList. """
-
-    def __init__(
-        self, root: Path, blockchain: Blockchain, strategies: list[type[BaseStrategy]]
-    ):
+    def __init__(self, root: Path, blockchain: Blockchain, strategies: StrategiesDict):
         self.root: Path = root
+        """ Root of the project. """
         self.blockchain: Blockchain = blockchain
-        self.strategies: list[type[BaseStrategy]] = strategies
+        """ :class:`Blockchain` used by tasks. """
+        self.strategies: StrategiesDict = strategies
+        """ Strategies dictionary. """
 
     def load(self) -> TaskList:
         """Loads TaskList from tasks file."""
@@ -177,9 +183,8 @@ class TaskFileParser:
 
     def _find_strat_by_name(self, name: str) -> type[BaseStrategy]:
         """Finds a strategy by name. May raise :exc:`UnkownStrategyError`."""
-        for class_ in self.strategies:
-            if class_.__name__ == name:
-                return class_
+        if name in self.strategies.keys():
+            return self.strategies[name]
         raise UnkownStrategyError(f"Can't find strategy '{name}'")
 
 

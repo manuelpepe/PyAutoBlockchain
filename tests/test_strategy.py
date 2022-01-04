@@ -36,4 +36,4 @@ def test_import_strategies_from_outside_cwd():
     with template_strat_in_temp_dir(NAME) as tmpdir:
         strats = load_strategies(tmpdir)
         assert NAME in Path(tmpdir / "strategies.py").read_text()
-        assert NAME in [s.__name__ for s in strats]
+        assert NAME in strats.keys()

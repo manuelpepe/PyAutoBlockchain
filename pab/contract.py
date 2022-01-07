@@ -13,8 +13,11 @@ from pab.config import ABIS_DIR, CONTRACTS_FILE
 
 @dataclass
 class ContractData:
-    abifile: str
+    """Stores smart contract data"""
+
+    name: str
     address: str
+    abi: str
 
 
 class ContractManager:
@@ -30,7 +33,7 @@ class ContractManager:
         self.contracts: Dict[str, "ContractData"] = self._load_contracts()
 
     def _load_contracts(self) -> Dict[str, "ContractData"]:
-        """Reads `contracts.json` from `self.root` and checks format."""
+        """Reads and parses `contracts.json`."""
         with open(self.root / CONTRACTS_FILE) as fp:
             contracts = json.load(fp)
             if not isinstance(contracts, dict):
@@ -38,9 +41,21 @@ class ContractManager:
             for _name, data in contracts.items():
                 self._check_valid_contract_data(data)
                 self._check_abifile_exists(data["abifile"])
-        return {name: ContractData(**data) for name, data in contracts.items()}
+        return self._parse_contract_data(contracts)
+
+    def _parse_contract_data(
+        self, contracts_data: dict[str, dict]
+    ) -> Dict[str, "ContractData"]:
+        """Replaces the raw contract data from `contracts.json` with the :class:`ContractData` dataclass."""
+        contracts = {}
+        for name, data in contracts_data.items():
+            abifile = Path(self.abisdir, data["abifile"])
+            abi = abifile.read_text()
+            contracts[name] = ContractData(name, data["address"], abi)
+        return contracts
 
     def _check_valid_contract_data(self, data: dict) -> None:
+        """Validates that the data loaded from `contracts.json` is valid."""
         if not isinstance(data, dict):
             raise ContractDefinitionError(
                 "Contract data must be a dict with address and abifile."
@@ -52,6 +67,7 @@ class ContractManager:
             )
 
     def _check_abifile_exists(self, abifile) -> None:
+        """Validates that all abifiles defined in `contracts.json` exist."""
         filepath = Path(self.abisdir / abifile)
         if not filepath.is_file():
             raise ContractDefinitionError(f"ABI file at abis/{abifile} not found.")
@@ -63,10 +79,9 @@ class ContractManager:
         if name not in self.contracts.keys():
             raise ValueError("Contract not found.")
         contract = self.contracts[name]
-        with open(self.abisdir / contract.abifile) as fp:
-            return self.w3.eth.contract(
-                address=Web3.toChecksumAddress(contract.address), abi=fp.read()
-            )
+        return self.w3.eth.contract(
+            address=Web3.toChecksumAddress(contract.address), abi=contract.abi
+        )
 
 
 class ContractDefinitionError(Exception):

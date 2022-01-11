@@ -37,6 +37,12 @@ class Node(ABC):
     def create(self):
         ...
 
+    def __str__(self) -> str:
+        return f"{self.path}"
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} '{self.path}'>"
+
 
 class Directory(Node):
     def __init__(self, path: str, childs: list[Node] | None = None):
@@ -48,6 +54,9 @@ class Directory(Node):
         with chdir(self.path):
             for child in self.childs:
                 child.create()
+
+    def __iter__(self):
+        return self.childs.__iter__()
 
 
 class File(Node):
@@ -88,17 +97,18 @@ class Tree:
 
 SAMPLE_ABI_DATA = '[{"This ABI is not valid. Only serves as an example."}]'
 SAMPLE_CONFIG_DATA = json.dumps(ConfigSchema().defaults(), indent=4)
-SAMPLE_TASKS_DATA = """{
-    "name": "Example Task",
-    "strategy": "SampleStrategy",
-    "params": {
-        "contract_name": "MyContract",
-        "some_param": 3.1416
-    },
-    "repeat_every": {
-        "hours": 1
-    }
-}"""
+SAMPLE_TASKS_DATA = """[
+    {
+        "name": "Example Task",
+        "strategy": "SampleStrategy",
+        "params": {
+            "contract_name": "MyContract",
+            "some_param": 3.1416
+        },
+        "repeat_every": {
+            "hours": 1
+        }
+]"""
 SAMPLE_CONTRACTS_DATA = """{
     "MyContract": {
         "address": "0x000",

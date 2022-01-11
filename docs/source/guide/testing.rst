@@ -15,7 +15,7 @@ Example Use Case
 ================
 
 Say you have a strategy that increments a counter on a Smart Contract every time it runs
-by calling a `incrementCounter()` method on the contract.
+by calling a ``incrementCounter()`` method on the contract.
 
 Maybe a good test would be to deploy a contract into a test network, run the strategy a
 couple of times and check that the counter is correctly updated. The PAB.test plugin eases
@@ -63,11 +63,9 @@ Then, you can write a test like this:
             assert strat.vault_token.functions.getCounter().call() == 2
 
 
-Keep in mind that `Counter` must be a registered as a contract name (see :ref:`Registering Contracts`).
-
-That's it, when the plugin loads it will deploy the `Counter` contract into a test server
-and automatically replace the contract address that you have on your `contracts.json` with the
-correct one for the test environment.
+That's it, when the plugin loads it will deploy the ``Counter`` contract into a test server
+and automatically register the contract with the correct test address and ABI.
+``Counter`` **doesn't** need to be registered as a contract name.
 
 
 .. _PAB Testing Plugin:
@@ -75,16 +73,16 @@ correct one for the test environment.
 PAB Testing Plugin
 ==================
 
-The `pab.test` plugin will start a local Ganache_ server, test and deploy
+The ``pab.test`` plugin will start a local Ganache_ server, test and deploy
 your contracts with Truffle_ and install some usefull fixtures for your tests.
 
 It works in the following way:
 
 When a pytest session is created, the plugin starts a local Ganache server by spawning a
-`ganache-cli` subprocess. It will parse the ganache startup output and collect the connection data
+``ganache-cli`` subprocess. It will parse the ganache startup output and collect the connection data
 (host, port) and the auto-generated private keys.
 
-After the Ganache server is running, it will run `truffle deploy` on all directories
+After the Ganache server is running, it will run ``truffle deploy`` on all directories
 specified in the ``pab-contracts-sources`` config (see :ref:`Plugin Configuration`). The output
 of the deployments is parsed to collect the relevant contract data. The default network for deployment
 is ```development`` but it can be changed with the ``pab-truffle-network`` config. All contract sources
@@ -131,7 +129,7 @@ and asserts that a side-effect (in this case, a value change on some contract at
 Plugin Configuration
 --------------------
 
-To enable the plugin you need to add `pab.test` to `pytest_plugins` in your `conftest.py`:
+To enable the plugin you need to add ``pab.test`` to ``pytest_plugins`` in your ``conftest.py``:
 
 .. code-block:: python
     :linenos:
@@ -141,7 +139,7 @@ To enable the plugin you need to add `pab.test` to `pytest_plugins` in your `con
     pytest_plugins = ["pab.test"]
 
 
-You can also change some configurations in your `pytest.ini`:
+You can also change some configurations in your ``pytest.ini``:
 
 
 .. code-block:: ini
@@ -159,7 +157,7 @@ Ganache Configuration
 ---------------------
 
 There's not much configuration that's necessary for ganache.
-PAB starts the process by running `ganache-cli` without extra parameters.
+PAB starts the process by running ``ganache-cli`` without extra parameters.
 By default, this starts a server in at ``127.0.0.1:8545``.
 
 
@@ -177,11 +175,11 @@ For example, in your ``truffle-config.js``:
     {
         # More configs above
         networks: {
-        development: {
-            host: "127.0.0.1",
-            port: 8545,
-            network_id: "*",
-        }
+            development: {
+                host: "127.0.0.1",
+                port: 8545,
+                network_id: "*",
+            }
         }
         # More configs below
     }

@@ -84,7 +84,7 @@ Configuring Tasks
 Tasks are loaded from the `tasks.json` file at the project root.
 The  following example defines a single task to execute, using the strategy `BasicCompound` that repeats every 24hs.
 
-Multiple contract names (BNB, WBTC, PAIR, MASTERCHEF, ROUTER) are passed to the strategy as params. The strategy later uses these names to query the contracts from `BaseStrategy.contracts`.
+Multiple contract names (BNB, WBTC, PAIR, CONTROLLER, ROUTER) are passed to the strategy as params. The strategy later uses these names to query the contracts from `BaseStrategy.contracts`.
 
 .. code-block:: json
 
@@ -98,7 +98,7 @@ Multiple contract names (BNB, WBTC, PAIR, MASTERCHEF, ROUTER) are passed to the 
             "params": {
                 "swap_path": ["BNB", "WBTC"],
                 "pair": "PAIR",
-                "masterchef": "MASTERCHEF",
+                "controller": "CONTROLLER",
                 "router": "ROUTER",
                 "pool_id": 11
             }

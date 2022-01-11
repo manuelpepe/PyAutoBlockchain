@@ -4,12 +4,14 @@ Introduction
 ============
 
 With PAB, you quickstart your blockchain development and prototyping.
-After running `pab init` to create a new project, you can jump right into developing your
-own strategies.
+After running `pab init` to create a new project, you can jump right into your
+strategy development.
 
 With little more configuration, you can connect to any Web3 compatible network using
 an RPC, load contracts from the network, and use any account you have the Private Key of to
 authenticate against the network (if you need to make transactions).
+
+PAB also comes with a pytest plugin that allows for easy strategy testing (see :ref:`Testing`).
 
 
 .. _Sample Strategy:
@@ -72,4 +74,4 @@ Here's a basic sample strategy to give you an idea of the :ref:`Strategy API`:
 BaseStrategy childs can use `self.accounts`, `self.contracts` and `self.transact`. They also need
 to implement the `run()` method.
 
-For more information on the Strategy API see :ref:`Strategy API` docs.
+For more information on the Strategy API see :ref:`Strategy API` and :ref:`Strategy Development` docs.

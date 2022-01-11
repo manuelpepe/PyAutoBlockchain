@@ -9,11 +9,11 @@
 
 PAB is a framework that helps with development and automation of blockchains related tasks.
 
-With PAB, you quickstart your blockchain development and prototyping. After running pab init to create a new project, you can jump right into developing your own python strategies that interact with the blockchain.
+With PAB, you can quickstart your blockchain development and prototyping. After running `pab init` to create a new project, you can jump right into developing your own python strategies.
 
 With little configuration, you can connect to any Web3 compatible network using an RPC, load contracts from the network, and use any account you have the Private Key of to authenticate against the network (if you need to make transactions).
 
-PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions.
+PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions. It also comes with a [pytest plugin](https://pyautoblockchain.readthedocs.io/en/latest/guide/testing.html) included, read the docs for more information on how to use it!
 
 Check out our [documentation here!](https://pyautoblockchain.readthedocs.io/en/latest/index.html)
 
@@ -23,22 +23,6 @@ Using pip:
 
 ```bash
 $ pip install PyAutoBlockchain
-```
-
-
-### With PABUI
-
-Install with [PABUI](https://github.com/manuelpepe/pabui) extension:
-
-```bash
-$ pip install PyAutoBlockchain[ui]
-```
-
-And run PABUI from your projects directory:
-```bash
-$ ls
-abis/  config.json  contracts.json  strategies.py  tasks.json  venv/
-$ pabui
 ```
 
 ## Usage
@@ -126,7 +110,8 @@ For more details, read our [Official Documentation's Strategies In-Depth](https:
 To run unit tests:
 
 ```bash
-(venv) $ pip install -e requirements-dev.txt
+(venv) $ pip install -e .
+(venv) $ pip install requirements-dev.txt
 (venv) $ ./tests.sh
 ```
 

@@ -24,7 +24,7 @@ if [[ ! -d integration-tests ]]; then
 fi
 
 echo "[i] Starting ganache"
-ganache-cli > /tmp/ganache.log &
+ganache-cli --port 8546 > /tmp/ganache.log &
 GANACHE_PID=$!
 
 echo "[i] Setting up contracts"
@@ -52,6 +52,7 @@ echo "[i] Parsing accounts into envs.toml"
 cd ..
 tmpf=$(mktemp)
 grep "Private Keys" -A11 /tmp/ganache.log | grep "0x" | sed -e 's/(\([0-9]\)) \(0x.\{64\}\)/PAB_PK\1="\2"/g' > "$tmpf"
+cp envs.toml envs.toml.backup
 awk "/### KEYS HERE ###/{system(\"cat $tmpf\");next}1" envs.toml > envs.toml.new
 mv envs.toml.new envs.toml
 
@@ -59,6 +60,8 @@ echo "[i] Running tests"
 cd ..
 pytest integration-tests/ --cov=pab --cov-report xml --cov-report term
 tests_result=$?
+
+mv envs.toml.backup envs.toml
 
 echo "[i] Stopping ganache"
 kill $GANACHE_PID

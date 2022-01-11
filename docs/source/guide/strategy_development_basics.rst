@@ -1,3 +1,5 @@
+.. _Strategy Development:
+
 Strategy Development
 ====================
 

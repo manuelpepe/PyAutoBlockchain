@@ -14,3 +14,5 @@ API
    transaction_api
    accounts_api
    task_api
+   core_api
+   test_api

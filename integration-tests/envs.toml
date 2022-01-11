@@ -1,10 +1,11 @@
 [GLOBAL]
 # Don't remove the "KEYS HERE" comment below, the pipeline replaces it
 # with the default accounts in ganache.
+
 ### KEYS HERE ###
 
 
 [BasicProject]
-PAB_CONF_ENDPOINT = "http://127.0.0.1:8545/"
+PAB_CONF_ENDPOINT = "http://127.0.0.1:8546/"
 PAB_CONF_BLOCKCHAIN = "Ganache"
 PAB_CONF_CHAINID = "1337"

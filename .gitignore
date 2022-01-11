@@ -15,6 +15,9 @@ dist/
 *.pyc
 pab.log
 venv310/
+htmlcov/
+
+envs.toml.backup
 
 # Allow config file in example
 !examples/guide-example/config.json

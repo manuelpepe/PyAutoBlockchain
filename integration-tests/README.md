@@ -102,10 +102,5 @@ The setup includes:
 
 * Copying the project files to a temp directory
 * Changing the CWD to the new temp directory
-* Setting the basic config values for testing ( # TODO )
-    * blockchain: Ganache
-    * chainId: 1337
-    * endpoint: `http://127.0.0.1:8545/`
-    * accounts from ganache
 * Setting all environments variables related to the given project, as defined in the `envs.toml` file.
 * Replacing the contract addresses in `contracts.json` with the matching addresses in the development network.

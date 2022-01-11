@@ -77,7 +77,7 @@ class ContractManager:
         from web3 import Web3
 
         if name not in self.contracts.keys():
-            raise ValueError("Contract not found.")
+            raise ValueError(f"Contract '{name}' not found.")
         contract = self.contracts[name]
         return self.w3.eth.contract(
             address=Web3.toChecksumAddress(contract.address), abi=contract.abi

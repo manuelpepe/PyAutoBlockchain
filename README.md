@@ -13,7 +13,7 @@ With PAB, you can quickstart your blockchain development and prototyping. After 
 
 With little configuration, you can connect to any Web3 compatible network using an RPC, load contracts from the network, and use any account you have the Private Key of to authenticate against the network (if you need to make transactions).
 
-PAB allows you to quickly implement Strategies without worring about some Web3 implementation details, like connecting to a blockchain, retrieving contracts and sending transactions. It also comes with a [pytest plugin](https://pyautoblockchain.readthedocs.io/en/latest/guide/testing.html) included, read the docs for more information on how to use it!
+PAB also comes with a [pytest plugin](https://pyautoblockchain.readthedocs.io/en/latest/guide/testing.html) to make strategy testing easier, read the docs for more information on how to use it!
 
 Check out our [documentation here!](https://pyautoblockchain.readthedocs.io/en/latest/index.html)
 
@@ -39,7 +39,7 @@ Run project:
 (venv) $ pab run
 ```
 
-For a substantially more complete guide, head over to our [Official Documentation's Guide](https://pyautoblockchain.readthedocs.io/en/latest/guide/index.html) section.
+For a substantially more complete guide, head over to our [Official Documentation's Guide](https://pyautoblockchain.readthedocs.io/en/latest/guide/index.html).
 
 
 ## Sample Strategy
@@ -59,18 +59,18 @@ from datetime import datetime
 from pab.strategy import BaseStrategy
 
 class CompoundAndLog(BaseStrategy):
-    """ Finds pool in `masterchef` for `token`, compounds the given pool for
+    """ Finds pool in `controller` for `token`, compounds the given pool for
     `self.accounts[account_index]` and logs relevant data into some csv file. """
 
-    def __init__(self, *args, filepath: str = "compound.csv", token: str = '', masterchef: str = '', account_index: int = 0):
+    def __init__(self, *args, filepath: str = "compound.csv", token: str = '', controller: str = '', account_index: int = 0):
         super().__init__(*args)
         self.filepath = filepath
         self.account = self.accounts[account_index]
         self.token = self.contracts.get(token)
-        self.masterchef = self.contracts.get(masterchef)
-        self.pool_id = self.masterchef.functions.getPoolId(self.token.address).call()
+        self.controller = self.contracts.get(controller)
+        self.pool_id = self.controller.functions.getPoolId(self.token.address).call()
         if not self.pool_id:
-            raise Exception(f"Pool not found for {self.token} in {self.masterchef}")
+            raise Exception(f"Pool not found for {self.token} in {self.controller}")
 
     def run(self):
         """ Strategy entrypoint. """
@@ -80,11 +80,11 @@ class CompoundAndLog(BaseStrategy):
         self.logger.info(f"Current balance is {balance}")
 
     def compound(self) -> int:
-        self.transact(self.account, self.masterchef.functions.compound, (self.pool_id, ))
+        self.transact(self.account, self.controller.functions.compound, (self.pool_id, ))
         return self.get_balance()
 
     def get_balance(self) -> int:
-        return self.masterchef.functions.balanceOf(
+        return self.controller.functions.balanceOf(
             self.account.address,
             self.pool_id
         ).call()
@@ -97,8 +97,46 @@ class CompoundAndLog(BaseStrategy):
             writer.writerow([now, new_balance, diff])
 ```
 
+For more details, read our [Official Documentation's Strategies In-Depth Guide](https://pyautoblockchain.readthedocs.io/en/latest/guide/strategy_development_basics.html#strategies-in-depth).
 
-For more details, read our [Official Documentation's Strategies In-Depth](https://pyautoblockchain.readthedocs.io/en/latest/guide/strategy_development_basics.html#strategies-in-depth) section.
+
+## Sample Test
+
+This sample test uses two mock contracts to test the sample strategy against a local network:
+
+```python
+from strategies import CompoundAndLog
+
+def test_compound_and_log(setup_project, get_strat):
+    with setup_project() as pab:
+        outfile = Path("/tmp/test.txt")
+        params = {
+            "filepath": str(outfile),
+            "token": "TokenMock",
+            "controller": "ControllerMock",
+            "account_index": 1,
+        }
+        strat: CompoundAndLog = get_strat(pab, "CompoundAndLog", params)
+        account, controller = strat.account, strat.controller
+        # we start with balance 0
+        assert (
+            controller.functions.balanceOf(account.address, strat.pool_id).call() == 0
+        )
+        # stake 10 and check balance
+        strat.transact(account, controller.functions.stake, (strat.pool_id, 10))
+        assert (
+            controller.functions.balanceOf(account.address, strat.pool_id).call() == 10
+        )
+        # and after the strategy compounds balance should be 20
+        strat.run()
+        assert (
+            controller.functions.balanceOf(account.address, strat.pool_id).call() == 20
+        )
+        # also check log was generated correctly
+        assert outfile.read_text().strip() == "10,20,10"
+```
+
+For more details, read our [Official Documentation's Testing Guide](https://pyautoblockchain.readthedocs.io/en/latest/guide/strategy_development_basics.html#strategies-in-depth).
 
 
 ## Development

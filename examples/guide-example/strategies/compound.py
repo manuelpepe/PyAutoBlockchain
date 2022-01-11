@@ -4,7 +4,7 @@ from pab.strategy import BaseStrategy
 
 
 class CompoundAndLog(BaseStrategy):
-    """Finds pool in `masterchef` for `token`, compounds the given pool for
+    """Finds pool in for `token` in `controller` contract, compounds the given pool for
     `self.accounts[account_index]` and logs relevant data into some csv file."""
 
     def __init__(
@@ -12,17 +12,17 @@ class CompoundAndLog(BaseStrategy):
         *args,
         filepath: str = "compound.csv",
         token: str = "",
-        masterchef: str = "",
+        controller: str = "",
         account_index: int = 0,
     ):
         super().__init__(*args)
         self.filepath = filepath
         self.account = self.accounts[account_index]
         self.token = self.contracts.get(token)
-        self.masterchef = self.contracts.get(masterchef)
-        self.pool_id = self.masterchef.functions.getPoolId(self.token.address).call()
+        self.controller = self.contracts.get(controller)
+        self.pool_id = self.controller.functions.getPoolId(self.token.address).call()
         if not self.pool_id:
-            return RuntimeError(f"Pool not found for {self.token} in {self.masterchef}")
+            return Exception(f"Pool not found for {self.token} in {self.controller}")
 
     def run(self):
         balance = self.get_balance()
@@ -31,11 +31,11 @@ class CompoundAndLog(BaseStrategy):
         self.logger.info(f"Current balance is {balance}")
 
     def compound(self) -> int:
-        self.transact(self.account, self.masterchef.functions.compound, (self.pool_id,))
+        self.transact(self.account, self.controller.functions.compound, (self.pool_id,))
         return self.get_balance()
 
     def get_balance(self) -> int:
-        return self.masterchef.functions.balanceOf(
+        return self.controller.functions.getBalance(
             self.account.address, self.pool_id
         ).call()
 

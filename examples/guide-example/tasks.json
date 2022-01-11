@@ -8,8 +8,8 @@
         "params": {
             "filepath": "compound-history-0.txt",
             "token": "MATIC",
-            "masterchef": "MASTERCHEF-PI",
-            "accounts_index": 0
+            "controller": "CONTROLLER",
+            "account_index": 0
         }
     },
     {
@@ -21,8 +21,8 @@
         "params": {
             "filepath": "compound-history-1.txt",
             "token": "MATIC",
-            "masterchef": "MASTERCHEF-PI",
-            "accounts_index": 1
+            "controller": "CONTROLLER",
+            "account_index": 1
         }
     }
 ]

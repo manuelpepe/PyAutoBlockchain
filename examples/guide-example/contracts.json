@@ -3,8 +3,8 @@
         "address": "0x1111111111111111111111111111111111111111",
         "abifile": "matic.abi"
     },
-    "MASTERCHEF-PI": {
+    "CONTROLLER": {
         "address": "0x2222222222222222222222222222222222222222",
-        "abifile": "masterchef.abi"
+        "abifile": "controller.abi"
     }
 }

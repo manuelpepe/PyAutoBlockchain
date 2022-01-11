@@ -336,7 +336,7 @@ def setup_project(pytestconfig):
                 Path(tmpdir), pytestconfig._pab.ignored_patterns
             )
             _set_test_envfile(project_path, env_data, pytestconfig._pab)
-            pab = PAB(project_path, envs=["test"])
+            pab = PAB(project_path, envs=["test"], load_tasks=False)
             _replace_contracts(pab, pytestconfig._pab)
             with _temp_environ():
                 with chdir(project_path):

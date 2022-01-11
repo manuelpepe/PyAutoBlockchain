@@ -1,15 +1,16 @@
+from __future__ import annotations
+
 import time
 import logging
 
 from pathlib import Path
-from typing import List, Optional
 from pab.accounts import load_accounts
 
 from pab.blockchain import Blockchain
 from pab.config import load_configs
 from pab.strategy import load_strategies
 from pab.alert import alert_exception
-from pab.task import Task, TaskFileParser
+from pab.task import Task, TaskFileParser, TaskList
 
 
 class PAB:
@@ -21,8 +22,9 @@ class PAB:
     def __init__(
         self,
         root: Path,
-        keyfiles: Optional[list[Path]] = None,
-        envs: Optional[List[str]] = None,
+        keyfiles: list[Path] | None = None,
+        envs: list[str] | None = None,
+        load_tasks: bool = True,
     ):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.root = root
@@ -30,7 +32,9 @@ class PAB:
         self.strategies = load_strategies(root)
         self.accounts = load_accounts(keyfiles or [])
         self.blockchain = Blockchain(self.root, self.config, self.accounts)
-        self.tasks = TaskFileParser(root, self.blockchain, self.strategies).load()
+        self.tasks: TaskList | list = []
+        if load_tasks:
+            self.tasks = TaskFileParser(root, self.blockchain, self.strategies).load()
 
     def start(self):
         while True:

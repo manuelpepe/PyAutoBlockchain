@@ -11,7 +11,7 @@ To initialize the PAB process that periodically runs all tasks:
 Enviornments
 ------------
 
-To load a `.env.<env_name>` with PAB you can use:
+To load a ``.env.<env_name>`` with PAB you can use:
 
 
 .. code-block:: bash
@@ -20,3 +20,4 @@ To load a `.env.<env_name>` with PAB you can use:
 
 
 You can load multiple envfiles separating them with commas. They must be located at the project root.
+``.env`` file is always loaded, additional environments are loaded in order, overriding existing values.

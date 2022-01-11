@@ -95,7 +95,7 @@ class ENVSource(ConfigSource):
             envfile = self.root / f".env.{env}"
             if not envfile.is_file():
                 raise FileNotFoundError(str(envfile))
-            load_dotenv(envfile)
+            load_dotenv(envfile, override=True)
         return self._parse_environ()
 
     def _parse_environ(self) -> dict:

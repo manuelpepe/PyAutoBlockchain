@@ -25,10 +25,10 @@ contract('Controller', (accounts) => {
 
     it('should add 10 on compound', async () => {
         const poolId = await Controller.pools(Token.address);
-        assert.equal(await Controller.getBalance(owner, poolId), 0);
+        assert.equal(await Controller.balanceOf(owner, poolId), 0);
         await Controller.stake(poolId, 10, { from: owner });
-        assert.equal(await Controller.getBalance(owner, poolId), 10);
+        assert.equal(await Controller.balanceOf(owner, poolId), 10);
         await Controller.compound(poolId, { from: owner });
-        assert.equal(await Controller.getBalance(owner, poolId), 20);
+        assert.equal(await Controller.balanceOf(owner, poolId), 20);
     });
 });

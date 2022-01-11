@@ -24,7 +24,7 @@ contract Controller {
         return pools[token];
     }
 
-    function getBalance(address account, uint8 poolId)
+    function balanceOf(address account, uint8 poolId)
         public
         view
         returns (uint8)

@@ -35,7 +35,7 @@ class CompoundAndLog(BaseStrategy):
         return self.get_balance()
 
     def get_balance(self) -> int:
-        return self.controller.functions.getBalance(
+        return self.controller.functions.balanceOf(
             self.account.address, self.pool_id
         ).call()
 

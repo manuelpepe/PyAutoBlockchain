@@ -11,3 +11,4 @@ Guide
    configuration
    running_pab
    testing
+   all_configs

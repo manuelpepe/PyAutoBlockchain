@@ -17,6 +17,9 @@ pab.log
 venv310/
 htmlcov/
 
+docs/source/all_configs.inc
+docs/source/_build/
+
 envs.toml.backup
 
 # Allow config file in example

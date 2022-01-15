@@ -78,9 +78,11 @@ def init_tree(path):
         ],
     )
     tree = TREE.copy()
+    # Replace strategies
     tree[1] = File("strategies.py", STRATEGY_CODE)
-    tree[3].content = "[]"  # Clear tasks.json
-    tree[4].content = "{}"  # Clear contracts.json
+    tree[5].content = "[]"  # Clear tasks.json
+    tree[6].content = "{}"  # Clear contracts.json
+    del tree[2]  # Remove basic tests directory
     tree.append(extra)
     Tree(tree).create(path)
 

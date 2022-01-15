@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from pab.init import Tree, TREE, File
 
 from _pytest.config import ExitCode
@@ -21,15 +23,18 @@ def init_tree(path, pycontent=STRATEGY_CODE):
 
 
 def test_plugin_loads_fixtures(testdir):
-    init_tree(testdir.tmpdir)
-    testdir.makepyfile(
+    with patch("shutil.which") as mocked_which:
+        init_tree(testdir.tmpdir)
+        testdir.makepyfile(
+            """
+        pytest_plugins = ("pab.test", )
+        def test_starts(setup_project, get_strat, pytestconfig):
+            assert setup_project
+            assert get_strat
+            assert pytestconfig._pab
         """
-    pytest_plugins = ("pab.test", )
-    def test_starts(setup_project, get_strat, pytestconfig):
-        assert setup_project
-        assert get_strat
-        assert pytestconfig._pab
-    """
-    )
-    result = testdir.runpytest()
-    assert result.ret == ExitCode.OK
+        )
+        mocked_which.return_value = True
+        result = testdir.runpytest()
+        assert result.ret == ExitCode.OK
+        assert mocked_which.call_count == 2

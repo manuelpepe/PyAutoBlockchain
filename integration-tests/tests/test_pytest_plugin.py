@@ -85,15 +85,15 @@ def init_tree(path):
     Tree(tree).create(path)
 
 
-def test_plugin_loads_fixtures(testdir):
-    init_tree(testdir.tmpdir)
-    testdir.makeconftest(
+def test_plugin_loads_fixtures(pytester):
+    init_tree(pytester.path)
+    pytester.makeconftest(
         """
     import pytest
     pytest_plugins = ("pab.test", )
     """
     )
-    testdir.makepyfile(
+    pytester.makepyfile(
         """
     def test_starts(setup_project, get_strat, pytestconfig):
         with setup_project() as pab:
@@ -108,5 +108,5 @@ def test_plugin_loads_fixtures(testdir):
             assert strat.contract.functions.getString().call() == "NEW"
     """
     )
-    result = testdir.runpytest()
+    result = pytester.runpytest()
     assert result.ret == ExitCode.OK

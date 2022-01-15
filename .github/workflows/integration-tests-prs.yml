@@ -10,7 +10,7 @@ env:
   PYTHON_VERSION: 3.10.0
 
 jobs:
-  integration-tests:
+  integration-tests-prs:
 
     runs-on: ubuntu-latest
 

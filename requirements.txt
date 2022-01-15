@@ -1,3 +1,4 @@
 web3
 hexbytes
 python-dotenv
+projectutils

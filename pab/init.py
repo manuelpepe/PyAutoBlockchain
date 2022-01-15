@@ -3,11 +3,11 @@ from __future__ import annotations
 import os
 import json
 
-from abc import ABC, abstractmethod
 from contextlib import AbstractContextManager
 from pathlib import Path
 
-from pab.config import ConfigSchema
+from projectutils.init import Directory, File, Tree
+from pab.config import SCHEMA
 
 
 class chdir(AbstractContextManager):
@@ -26,77 +26,8 @@ class chdir(AbstractContextManager):
         os.chdir(self._old_cwd.pop())
 
 
-class Node(ABC):
-    def __init__(self, path: str):
-        self.path = Path(path)
-        if "/" in str(self.path):
-            raise ValueError("Path can't traverse nodes.")
-        self.errors = []
-
-    @abstractmethod
-    def create(self):
-        ...
-
-    def __str__(self) -> str:
-        return f"{self.path}"
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} '{self.path}'>"
-
-
-class Directory(Node):
-    def __init__(self, path: str, childs: list[Node] | None = None):
-        super().__init__(path)
-        self.childs = childs or []
-
-    def create(self):
-        self.path.mkdir()
-        with chdir(self.path):
-            for child in self.childs:
-                child.create()
-
-    def __iter__(self):
-        return self.childs.__iter__()
-
-
-class File(Node):
-    def __init__(
-        self,
-        path: str,
-        content: str,
-        optional: bool = False,
-        warning: str | None = None,
-    ):
-        super().__init__(path)
-        self.content = content
-        self.optional = optional
-        self.warning = warning
-
-    def create(self):
-        if self.path.exists():
-            if self.warning:
-                self.warn()
-            if self.optional:
-                return
-            raise FileExistsError(self.path)
-        self.path.write_text(self.content)
-
-    def warn(self):
-        print(self.warning)
-
-
-class Tree:
-    def __init__(self, nodes: list[Node]):
-        self.nodes = nodes
-
-    def create(self, directory: Path | str):
-        with chdir(directory):
-            for node in self.nodes:
-                node.create()
-
-
 SAMPLE_ABI_DATA = '[{"This ABI is not valid. Only serves as an example."}]'
-SAMPLE_CONFIG_DATA = json.dumps(ConfigSchema().defaults(), indent=4)
+SAMPLE_CONFIG_DATA = json.dumps(SCHEMA.defaults(), indent=4)
 SAMPLE_TASKS_DATA = """[
     {
         "name": "Example Task",
@@ -139,13 +70,64 @@ pab.log
 """
 GITIGNORE_WARNING = "Warning! .gitignore was not created because it already exists. You should probably gitignore .env* files."
 
+README_DATA = """
+# PAB Project
+
+This project was created with using `pab init`.
+
+[Read the docs!](https://pyautoblockchain.readthedocs.io/en/latest/).
+"""
+
+TESTS_README_DATA = """
+# Strategy Testing
+
+For strategy testing you should have installed `ganache-cli` and `truffle`.
+
+[Read the docs!](https://pyautoblockchain.readthedocs.io/en/latest/guide/testing.html).
+
+
+## First steps
+
+Initialize your truffle project at `tests/truffle`.
+
+```
+$ cd tests/truffle
+$ truffle init
+```
+"""
+
+CONFTEST_CONTENT = """
+import pab.test  # noqa: F401
+
+pytest_plugins = ["pab.test"]
+"""
+
 
 TREE = [
     Directory("abis", [File("MyContract.abi", SAMPLE_ABI_DATA)]),
     Directory("strategies", [File("__init__.py", SAMPLE_STRATEGIES_DATA)]),
+    Directory(
+        "tests",
+        [
+            Directory(
+                "truffle",
+                [
+                    File(
+                        "README.md",
+                        "Initialize your truffle project here with `truffle init`",
+                    )
+                ],
+            ),
+            File("README.md", TESTS_README_DATA),
+            File("conftest.py", CONFTEST_CONTENT),
+        ],
+    ),
+    File("README.md", README_DATA),
     File("config.json", SAMPLE_CONFIG_DATA),
     File("tasks.json", SAMPLE_TASKS_DATA),
     File("contracts.json", SAMPLE_CONTRACTS_DATA),
+    File("requirements-dev.txt", "pytest\n"),
+    File("requirements.txt", "PyAutoBlockchain\n"),
     File(".gitignore", GITIGNORE_CONTENT, optional=True, warning=GITIGNORE_WARNING),
 ]
 

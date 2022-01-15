@@ -26,6 +26,6 @@ setup(
         "pab",
         "pab.resources",
     ],
-    install_requires=["web3", "hexbytes", "python-dotenv"],
+    install_requires=["web3", "hexbytes", "python-dotenv", "projectutils"],
     extras_require={"ui": ["pabui"]},
 )

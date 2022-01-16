@@ -4,10 +4,11 @@ import json
 import getpass
 import logging
 
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING
 from pathlib import Path
 
-from eth_account.account import Account, LocalAccount
+if TYPE_CHECKING:
+    from eth_account.signers.local import LocalAccount
 
 
 _logger = logging.getLogger("pab.accounts")
@@ -26,7 +27,9 @@ def create_keyfile(path: Path, private_key: str, password: str) -> None:
         json.dump(keydata, fp)
 
 
-def _load_keyfile(keyfile: Path) -> Optional[LocalAccount]:
+def _load_keyfile(keyfile: Path) -> Optional["LocalAccount"]:
+    from eth_account.account import Account
+
     """Loads accounts from keyfile. Asks for user input."""
     if keyfile is None or not keyfile.is_file():
         _logger.warning(f"Keyfile at '{keyfile}' not found.")
@@ -44,9 +47,11 @@ def _get_ix_from_name(name) -> Optional[int]:
     return None
 
 
-def _load_from_env() -> Dict[int, LocalAccount]:
+def _load_from_env() -> Dict[int, "LocalAccount"]:
     """Private keys are loaded from the environment variables that follow the naming
     convention `PAB_PK<ix>`. `ix` will be the index in the accounts list."""
+    from eth_account.account import Account
+
     accounts = {}
     for name, value in os.environ.items():
         acc_ix = _get_ix_from_name(name)
@@ -55,7 +60,7 @@ def _load_from_env() -> Dict[int, LocalAccount]:
     return accounts
 
 
-def load_accounts(keyfiles: list[Path]) -> Dict[int, LocalAccount]:
+def load_accounts(keyfiles: list[Path]) -> Dict[int, "LocalAccount"]:
     """Load accounts from environment variables and keyfiles"""
     accounts = {}
     for keyfile in keyfiles:

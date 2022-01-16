@@ -21,4 +21,5 @@ SCHEMA = ConfigSchema.from_json_file(DEFAULTS_SCHEMA_FILE)
 
 
 def load_configs(root: Path, envs: list[str] | None = None):
-    return Config(SCHEMA, [JSONSource(root), ENVSource(ENV_VARS_PREFIX, root, envs)])
+    jsoncfg = root / CONFIG_FILE
+    return Config(SCHEMA, [JSONSource(jsoncfg), ENVSource(ENV_VARS_PREFIX, root, envs)])

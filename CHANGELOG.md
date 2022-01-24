@@ -1,3 +1,13 @@
+## 1.0 (***WIP***)
+
+* New `pab.test` pytest plugin.
+* Improved documentation.
+* Improved task file validations.
+* `pab init` creates a more complete structure.
+* Migrated some code to `projectutils` module.
+* New `pab run` separated into `pab run strat` and `pab run tasks`.
+
+
 ## 0.5 (2021-12-29)
 
 * New `init` command.

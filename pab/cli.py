@@ -11,7 +11,7 @@ from pathlib import Path
 from contextlib import contextmanager
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 
-from pab.core import PAB
+from pab.core import PAB, TasksRunner, SingleStrategyRunner
 from pab.config import DATETIME_FORMAT, Config
 from pab.strategy import import_strategies
 from pab.utils import print_strats, json_strats
@@ -38,7 +38,7 @@ def _create_logger():
     return logger
 
 
-def _create_keyfile(args, logger):
+def _create_keyfile(args, extra, logger):
     private_key = getpass.getpass("Enter private key: ")
     password = getpass.getpass("Enter keyfile password: ")
     pass_repeat = getpass.getpass("Repeat keyfile password: ")
@@ -54,7 +54,7 @@ def _create_keyfile(args, logger):
     logger.info(f"Keyfile written to '{out}'")
 
 
-def list_strats(args, logger):
+def list_strats(args, extra, logger):
     import_strategies(Path.cwd())
     if args.json:
         json.dump(json_strats(), sys.stdout)
@@ -63,20 +63,34 @@ def list_strats(args, logger):
         print_strats(args.verbose)
 
 
-def initialize_project(args, logger):
+def initialize_project(args, extra, logger):
     directory = args.directory
     if directory is None:
         directory = Path.cwd()
     _initialize_project(directory)
 
 
-def run(args, logger):
+def _parse_run_args(args) -> tuple:
     envs = [env.strip() for env in args.envs.split(",") if env.strip() != ""]
     keyfiles = [kf.strip() for kf in args.keyfiles.split(",") if kf.strip() != ""]
     keyfiles_paths = [Path(kf) for kf in keyfiles]
-    pab = PAB(Path.cwd(), keyfiles_paths, envs)
+    return envs, keyfiles_paths
+
+
+def run_tasks(args, extra, logger):
+    envs, keyfiles = _parse_run_args(args)
+    pab = PAB(Path.cwd(), keyfiles, envs)
+    runner = TasksRunner(pab)
     sys.excepthook = exception_handler(logger, pab.config)
-    pab.start()
+    runner.run()
+
+
+def run_strat(args, extra, logger):
+    envs, keyfiles = _parse_run_args(args)
+    pab = PAB(Path.cwd(), keyfiles, envs)
+    runner = SingleStrategyRunner(pab, strategy=args.strategy, params=extra)
+    sys.excepthook = exception_handler(logger, pab.config)
+    runner.run()
 
 
 def parser():
@@ -96,7 +110,7 @@ def parser():
     )
     p_create.set_defaults(func=list_strats)
 
-    p_run = subparsers.add_parser("run", help="Run tasks")
+    p_run = subparsers.add_parser("run", help="Run PAB")
     p_run.add_argument(
         "-k",
         "--keyfiles",
@@ -107,7 +121,20 @@ def parser():
     p_run.add_argument(
         "-e", "--envs", help="List of environments separated by commas.", default=""
     )
-    p_run.set_defaults(func=run)
+
+    p_run_subparsers = p_run.add_subparsers(help="subcommands for pab run")
+    p_run_tasks = p_run_subparsers.add_parser(
+        "tasks", description="Run and schedule all tasks from 'tasks.json'."
+    )
+    p_run_tasks.set_defaults(func=run_tasks)
+
+    p_run_strat = p_run_subparsers.add_parser(
+        "strat", description="Run a single strategy by name."
+    )
+    p_run_strat.add_argument(
+        "--strategy", type=str, help="Name of the strategy to run", required=True
+    )
+    p_run_strat.set_defaults(func=run_strat)
 
     p_createkf = subparsers.add_parser(
         "create-keyfile",
@@ -163,10 +190,10 @@ def exception_handler(logger, config: Config):
 
 def main(args):
     logger = _create_logger()
-    args = parser().parse_args(args)
+    args, extra = parser().parse_known_args(args)
     if hasattr(args, "func"):
         with _catch_ctrlc():
-            args.func(args, logger)
+            args.func(args, extra, logger)
     else:
         parser().print_help()
 

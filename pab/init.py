@@ -49,7 +49,7 @@ SAMPLE_CONTRACTS_DATA = """{
 SAMPLE_STRATEGIES_DATA = """from pab.strategy import BaseStrategy
 
 class SampleStrategy(BaseStrategy):
-    def __init__(self, *args, contract_name: str = '', some_param: int = -1):
+    def __init__(self, *args, contract_name: str, some_param: int):
         super().__init__(*args)
         self.some_param = some_param
         self.contract = self.contracts.get(contract_name)

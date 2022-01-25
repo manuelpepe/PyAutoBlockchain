@@ -8,7 +8,7 @@ pytest_plugins = ("pytester",)
 STRATEGY_CODE = """from pab.strategy import BaseStrategy
 
 class ChangeValue(BaseStrategy):
-    def __init__(self, *args, contract: str = "", value: str = ""):
+    def __init__(self, *args, contract: str, value: str):
         super().__init__(*args)
         self.contract = self.contracts.get(contract)
         self.value = value

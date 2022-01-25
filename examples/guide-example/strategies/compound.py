@@ -10,9 +10,9 @@ class CompoundAndLog(BaseStrategy):
     def __init__(
         self,
         *args,
+        token: str,
+        controller: str,
         filepath: str = "compound.csv",
-        token: str = "",
-        controller: str = "",
         account_index: int = 0,
     ):
         super().__init__(*args)

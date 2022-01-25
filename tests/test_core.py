@@ -37,7 +37,7 @@ class StrategyTestWithParams(BaseStrategy):
 
 def test_run_single(blockchain):
     pab = PAB(blockchain.root)
-    runner = SingleStrategyRunner(pab, strategy="StrategyTestWorks")
+    runner = SingleStrategyRunner(pab, strategy="StrategyTestWorks", params=[])
     assert isinstance(runner.strat, StrategyTestWorks)
     runner.strat.run = MagicMock(name="run")
     runner.run()

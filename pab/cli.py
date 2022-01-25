@@ -99,17 +99,20 @@ def parser():
     )
     subparsers = p.add_subparsers(help="subcommands for pab")
 
-    p_create = subparsers.add_parser(
-        "list-strategies", help="List strategies and parameters"
+    # Init
+    p_init = subparsers.add_parser(
+        "init", help="Initialize PAB project in current directory."
     )
-    p_create.add_argument(
-        "-v", "--verbose", action="store_true", help="Print strategy parameters"
+    p_init.add_argument(
+        "-d",
+        "--directory",
+        action="store",
+        help="Initialize project in diferent directory.",
+        default=None,
     )
-    p_create.add_argument(
-        "-j", "--json", action="store_true", help="Print strategies as JSON"
-    )
-    p_create.set_defaults(func=list_strats)
+    p_init.set_defaults(func=initialize_project)
 
+    # Run
     p_run = subparsers.add_parser("run", help="Run PAB")
     p_run.add_argument(
         "-k",
@@ -136,6 +139,19 @@ def parser():
     )
     p_run_strat.set_defaults(func=run_strat)
 
+    # List Strategies
+    p_list_strats = subparsers.add_parser(
+        "list-strategies", help="List strategies and parameters"
+    )
+    p_list_strats.add_argument(
+        "-v", "--verbose", action="store_true", help="Print strategy parameters"
+    )
+    p_list_strats.add_argument(
+        "-j", "--json", action="store_true", help="Print strategies as JSON"
+    )
+    p_list_strats.set_defaults(func=list_strats)
+
+    # Create Keyfile
     p_createkf = subparsers.add_parser(
         "create-keyfile",
         help="Create keyfile. You'll need your private key and a new password for the keyfile.",
@@ -148,18 +164,6 @@ def parser():
         default="key.file",
     )
     p_createkf.set_defaults(func=_create_keyfile)
-
-    p_init = subparsers.add_parser(
-        "init", help="Initialize PAB project in current directory."
-    )
-    p_init.add_argument(
-        "-d",
-        "--directory",
-        action="store",
-        help="Initialize project in diferent directory.",
-        default=None,
-    )
-    p_init.set_defaults(func=initialize_project)
     return p
 
 

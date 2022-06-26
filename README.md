@@ -62,7 +62,7 @@ class CompoundAndLog(BaseStrategy):
     """ Finds pool in `controller` for `token`, compounds the given pool for
     `self.accounts[account_index]` and logs relevant data into some csv file. """
 
-    def __init__(self, *args, filepath: str = "compound.csv", token: str = '', controller: str = '', account_index: int = 0):
+    def __init__(self, *args, token: str, controller: str, filepath: str = "compound.csv", account_index: int = 0):
         super().__init__(*args)
         self.filepath = filepath
         self.account = self.accounts[account_index]
